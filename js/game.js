@@ -51,9 +51,14 @@ game.init = function () {
     g.options.init = true;
 };
 game.display = function () {
-    $("#ressources-display").html("Hydrogen : " + fix(g.ressources.owned[0], 0) + "<br>Oxygen : " + fix(g.ressources.owned[1], 0) + "<br>Helium : " +
-        fix(g.ressources.owned[2], 0) + "<br>Water : " + fix(g.ressources.owned[3], 0) + " mL<br>Meat : " + fix(g.ressources.owned[5], 2) +
-        "<br>Cells : " + fix(g.ressources.owned[4], 0) + "/" + fix(h.maxCells(), 0));
+    $("#ressources-display").html(
+        "Hydrogen : " + fix(g.ressources.owned[0], 0) + "<br>" +
+        "Oxygen : " + fix(g.ressources.owned[1], 0) + "<br>" +
+        "Helium : " + fix(g.ressources.owned[2], 0) + "<br>" +
+        "Water : " + fix(g.ressources.owned[3], 0) + " mL<br>" +
+        "Meat : " + fix(g.ressources.owned[5], 2) +
+        "<br>Cells : " + fix(g.ressources.owned[4], 0) + "/" + fix(h.maxCells(), 0)
+    );
 };
 game.buttons = function () {
     $("#btn-1-1").html("Create hydrogen (+" + fix(g.ressources.perClick[0], 0) + ")");
@@ -147,7 +152,7 @@ game.earn = function (type) {
         }
     }
     if (g.t.fast.check == true) {
-        return;
+
     } else {
         g.t.check();
     }

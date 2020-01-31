@@ -15,8 +15,8 @@ save.loadData = function () {
     if (localStorage.getItem(save.key) === null)
         console.warn("No save found!");
     else {
-        var savegame = s = JSON.parse(localStorage.getItem(save.key));
-        var sg = s.game;
+        var savegame = JSON.parse(localStorage.getItem(save.key));
+        var sg = savegame.game;
 
         if (sg.options.version !== g.options.version)
             console.warn('Warning : loading save from an older version.');
