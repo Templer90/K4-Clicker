@@ -2,44 +2,55 @@ g.builds = g.b = {};
 g.b.owned = [];
 g.b.multiplier = [];
 
-game.builds.create = function (name, desc, price, priceName, reward, rewardName, inflation) {
+game.builds.create = function (name, desc, price, valuePerSec, reward, inflation) {
     this.name = name;
     this.desc = desc;
     this.price = price;
-    this.priceName = priceName;
+
     this.reward = reward;
-    this.rewardName = rewardName;
+    this.valuePerSec = valuePerSec;
     this.inflation = inflation;
+
+    this.buyable = function () {
+        return g.ressources.owned[this.price.type] >= this.price.amount;
+    }
 };
 game.builds.init = function () {
     for (let i = 0; i < g.b.list.length; i++) {
         g.b.owned.push(0);
         g.b.multiplier.push(1);
-        $("#builds-panelbody").append('<div id="builds-row-' + i + '" class="row bottom-spacer">'
-            + '<div class="col-md-8"><p id="builds-infos-' + i + '" class="no-margin">' + g.b.list[i].name + " : " + g.b.list[i].reward + " " + g.b.list[i].rewardName.toLowerCase() + "/sec<br>"
-            + g.b.owned[i] + " owned : " + h.buildReward(i) + " " + g.b.list[i].rewardName.toLowerCase() + "/sec"
-            + "<br>Cost " + fix(h.buildPrice(i), 0) + " " + g.b.list[i].priceName.toLowerCase() + '</p></div>'
-            + '<div class="col-md-4"><a id="builds-btn-' + i + '" type="button" class="btn btn-primary btn-block" onclick="g.b.buy(' + i + ')">Buy build</a></div>'
-            + '</div>');
+
+        let main = $(document.createElement("div"));
+        main.attr('id', 'builds-row-' + i);
+        main.attr('class', 'row bottom-spacer');
+
+        let infoBox = $('<div class="col-md-8"><p id="builds-infos-' + i + '" class="no-margin">' + g.b.list[i].name + " : " + g.b.list[i].reward.type + " " + g.b.list[i].price.type.toLowerCase() + "/sec<br>" + g.b.owned[i] + " owned : " + h.buildReward(i) + " " + g.b.list[i].price.type.toLowerCase() + "/sec" + "<br>Cost " + fix(h.buildPrice(i), 0) + " " + g.b.list[i].price.type.toLowerCase() + '</p></div>');
+        let buyButton = $('<div class="col-md-4"><a id="builds-btn-' + i + '" type="button" class="btn btn-primary btn-block" onclick="g.b.buy(' + i + ',\'' + g.b.list[i].name + '\')">Buy build</a></div>');
+
+        main.append(infoBox);
+        main.append(buyButton);
+
+        $("#builds-panelbody").append(main);
     }
 };
-game.builds.buy = function (i) {
-    let index = g.ressources.list.indexOf(g.b.list[i].priceName);
-    let price = h.buildPrice(i);
-    if (g.ressources.owned[index] >= price) {
-        g.ressources.owned[index] -= price;
-        g.b.owned[i]++;
+game.builds.buy = function (index, name) {
+    let price = g.b.list[index].price.amount;
+    let type = g.b.list[index].price.type;
+
+    if (g.ressources.owned[type] >= price) {
+        g.ressources.owned[type] -= price;
+        g.b.owned[index]++;
         g.b.update();
     }
 };
-game.builds.earn = function (times) { // todo
+game.builds.earn = function (times) {
     for (let i = 0; i < g.b.list.length; i++) {
-        let index = g.ressources.list.indexOf(g.b.list[i].rewardName);
-        for (let e = 0; e < g.ressources.owned.length; e++) {
-            if (index === e) {
-                g.ressources.owned[e] += (h.buildReward(i) * times) / g.options.fps;
-            }
+        if (g.b.owned[i] > 0) {
+            g.b.list[i].reward(g.b.list[i].valuePerSec * g.b.owned[i] * g.b.multiplier[i], times / g.options.fps);
         }
+
+        //TODO this is missing vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+        //g.ressources.owned[e] += (h.buildReward(i) * times) / g.options.fps;
     }
 };
 game.builds.checkSave = function () {
@@ -51,15 +62,49 @@ game.builds.checkSave = function () {
 };
 game.builds.update = function () {
     for (let i = 0; i < g.b.list.length; i++) {
-        $("#builds-infos-" + i).html(g.b.list[i].name + " : " + fix(g.b.list[i].reward, 2) + " " + g.b.list[i].rewardName.toLowerCase() + "/sec<br>" + 
-            fix(g.b.owned[i], 0) + " owned : " + fix(h.buildReward(i), 2) + " " + g.b.list[i].rewardName.toLowerCase() + "/sec" + "<br>"+
-            "Cost " + fix(h.buildPrice(i), 0) + " " + g.b.list[i].priceName.toLowerCase())
+        let string = g.b.list[i].name + " : " + fix(g.b.list[i].valuePerSec, 2) + " " + g.b.list[i].price.type.toLowerCase() + "/sec<br>" +
+            fix(g.b.owned[i], 0) + " owned : " + fix(g.b.list[i].valuePerSec * g.b.owned[i] * g.b.multiplier[i], 2) + " " + g.b.list[i].price.type.toLowerCase() + "/sec" + "<br>" +
+            "Cost " + fix(h.buildPrice(i), 0) + " " + g.b.list[i].price.type.toLowerCase()
+
+        $("#builds-infos-" + i).html(string);
     }
 };
 
 g.b.list = [
-    new g.b.create("Hydrogen build", "Create some hydrogen", 25, 'Hydrogen', 1, 'Hydrogen', 1.15),
-    new g.b.create("Oxygen build", "Create some oxygen", 25, 'Oxygen', 1, 'Oxygen', 1.15),
-    new g.b.create("Helium build", "Create some helium", 25, 'Helium', 1, 'Helium', 1.15),
-    new g.b.create("Water generator", "Generate some water", 1500, 'Hydrogen', 0.5, 'Water', 1.15)
+    new g.b.create("Hydrogen build", "Create some hydrogen", {
+            amount: 25,
+            type: 'Hydrogen'
+        },
+        1,
+        function (value, delta) {
+            game.ressources.owned.Hydrogen += value * delta;
+        },
+        1.15),
+    new g.b.create("Oxygen build", "Create some oxygen", {
+            amount: 25,
+            type: 'Oxygen'
+        },
+        1,
+        function (value, delta) {
+            game.ressources.owned.Oxygen += value * delta;
+        },
+        1.15),
+    new g.b.create("Helium build", "Create some helium", {
+            amount: 25,
+            type: 'Helium'
+        },
+        1,
+        function (value, delta) {
+            game.ressources.owned.Helium += value * delta;
+        },
+        1.15),
+    new g.b.create("Water generator", "Generate some water", {
+            amount: 1500,
+            type: 'Hydrogen'
+        },
+        1,
+        function (value, delta) {
+            game.ressources.owned.Water += value * delta;
+        },
+        1.15)
 ];

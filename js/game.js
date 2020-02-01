@@ -193,7 +193,6 @@ game.ressources.init = function () {
 
 // GAME FUNCTIONS
 game.earn = function (type) {
-    const a = g.ressources.owned;
     const str = h.capitalizeFirstLetter(type);
     if (g.ressources.perClick[str].can(g.ressources.owned)) {
         g.ressources.perClick[str].click(g.ressources.owned)

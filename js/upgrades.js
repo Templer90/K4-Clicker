@@ -6,12 +6,16 @@ game.upgrades.create = function (name, desc, price, buyFunction) {
     this.desc = desc;
     this.price = price;
     this.func = buyFunction;
+
+    this.buyable = function (index) {
+        return g.ressources.owned[this.price.type] >= this.price.amount && g.u.owned[index] === false;
+    }
 };
 
 game.upgrades.buy = function (i) {
     let obj = g.u.list[i];
 
-    if (g.ressources.owned[obj.price.type] >= obj.price.amount && g.u.owned[i] === false) {
+    if (obj.buyable(i)) {
         g.ressources.owned[obj.price.type] -= obj.price.amount;
         obj.func();
         g.u.owned[i] = true;
