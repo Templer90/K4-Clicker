@@ -6,11 +6,11 @@ helpers.capitalizeFirstLetter = function (string) {
 helpers.removeCursor = function () {
     $(".typed-cursor").remove();
 };
-helpers.earnRessources = function (type, src) {
+helpers.earnRessource = function (type, src) {
     var str = h.capitalizeFirstLetter(type);
-    var index = g.ressources.list.indexOf(str);
-    window["game"]["ressources"]["owned"][index] += src;
-    window["game"]["ressources"]["total"][index] += src;
+    let windowGame = window["game"].ressources;
+    windowGame.owned[str] += src;
+    windowGame.total[str] += src;
 };
 helpers.maxCells = function () {
     return Math.floor(g.ressources.owned[3] * g.cellsPerWater);

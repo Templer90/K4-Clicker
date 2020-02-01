@@ -50,6 +50,7 @@ game.tutorial.intro = function () {
     if (g.t.fast.check == true) {
         g.t.intro1.string = 'Dev mode enabled.';
         $(g.t.allElements).fadeIn('slow');
+        return;
     }
     if (g.t.intro1.check == false) {
         $("#log-well").append('<p class="no-margin"><span id="intro-text-1"></span></p>');
@@ -109,19 +110,19 @@ game.tutorial.intro = function () {
     }
 };
 game.tutorial.check = function () {
-    if (g.t.intro1.check == false && g.ressources.owned[0] >= 20 && g.ressources.owned[1] >= 10) {
+    if (g.t.intro1.check === false && g.ressources.owned["Hydrogen"] >= 20 && g.ressources.owned["Oxygen"] >= 10) {
         g.t.intro1.check = true;
         g.t.intro();
     }
-    if (g.t.intro2.check == false && g.ressources.owned[3] >= 3) {
+    if (g.t.intro2.check === false && g.ressources.owned["Water"] >= 3) {
         g.t.intro2.check = true;
         g.t.intro();
     }
-    if (g.t.intro3.check == false && g.ressources.owned[6] == 1) {
+    if (g.t.intro3.check === false && g.ressources.owned["Sun"] === 1) {
         g.t.intro3.check = true;
         g.t.intro();
     }
-    if (g.t.intro4.check == false && g.ressources.owned[7] == 1) {
+    if (g.t.intro4.check === false && g.ressources.owned["Atmosphere Generator"] === 1) {
         g.t.intro4.check = true;
         g.t.intro();
         g.t.intro5.check = true;

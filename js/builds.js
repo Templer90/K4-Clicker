@@ -12,7 +12,7 @@ game.builds.create = function (name, desc, price, priceName, reward, rewardName,
     this.inflation = inflation;
 };
 game.builds.init = function () {
-    for (var i = 0; i < g.b.list.length; i++) {
+    for (let i = 0; i < g.b.list.length; i++) {
         g.b.owned.push(0);
         g.b.multiplier.push(1);
         $("#builds-panelbody").append('<div id="builds-row-' + i + '" class="row bottom-spacer">'
@@ -24,8 +24,8 @@ game.builds.init = function () {
     }
 };
 game.builds.buy = function (i) {
-    var index = g.ressources.list.indexOf(g.b.list[i].priceName);
-    var price = h.buildPrice(i);
+    let index = g.ressources.list.indexOf(g.b.list[i].priceName);
+    let price = h.buildPrice(i);
     if (g.ressources.owned[index] >= price) {
         g.ressources.owned[index] -= price;
         g.b.owned[i]++;
@@ -33,10 +33,10 @@ game.builds.buy = function (i) {
     }
 };
 game.builds.earn = function (times) { // todo
-    for (var i = 0; i < g.b.list.length; i++) {
-        var index = g.ressources.list.indexOf(g.b.list[i].rewardName);
-        for (var e = 0; e < g.ressources.owned.length; e++) {
-            if (index == e) {
+    for (let i = 0; i < g.b.list.length; i++) {
+        let index = g.ressources.list.indexOf(g.b.list[i].rewardName);
+        for (let e = 0; e < g.ressources.owned.length; e++) {
+            if (index === e) {
                 g.ressources.owned[e] += (h.buildReward(i) * times) / g.options.fps;
             }
         }
@@ -44,14 +44,16 @@ game.builds.earn = function (times) { // todo
 };
 game.builds.checkSave = function () {
     if (g.b.owned.length !== g.b.list.length) {
-        var a = (g.b.list.length - g.b.owned.length);
-        for (var i = 0; i < a; i++)
+        let a = (g.b.list.length - g.b.owned.length);
+        for (let i = 0; i < a; i++)
             g.b.owned.push(0);
     }
 };
 game.builds.update = function () {
-    for (var i = 0; i < g.b.list.length; i++) {
-        $("#builds-infos-" + i).html(g.b.list[i].name + " : " + fix(g.b.list[i].reward, 2) + " " + g.b.list[i].rewardName.toLowerCase() + "/sec<br>" + fix(g.b.owned[i], 0) + " owned : " + fix(h.buildReward(i), 2) + " " + g.b.list[i].rewardName.toLowerCase() + "/sec" + "<br>Cost " + fix(h.buildPrice(i), 0) + " " + g.b.list[i].priceName.toLowerCase())
+    for (let i = 0; i < g.b.list.length; i++) {
+        $("#builds-infos-" + i).html(g.b.list[i].name + " : " + fix(g.b.list[i].reward, 2) + " " + g.b.list[i].rewardName.toLowerCase() + "/sec<br>" + 
+            fix(g.b.owned[i], 0) + " owned : " + fix(h.buildReward(i), 2) + " " + g.b.list[i].rewardName.toLowerCase() + "/sec" + "<br>"+
+            "Cost " + fix(h.buildPrice(i), 0) + " " + g.b.list[i].priceName.toLowerCase())
     }
 };
 
