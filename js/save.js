@@ -1,5 +1,5 @@
 var save = {};
-save.key = "UniverseGod_Save";
+save.key = "K4Clicker_Save";
 save.tosave = {game: game, builds: builds, upgrades: upgrades};
 
 save.saveData = function () {

@@ -7,12 +7,12 @@ game.upgrades.create = function (name, desc, price, buyFunction) {
     this.price = price;
     this.func = buyFunction;
 
-    this.buyable = function (index) {
+    this.buyable = (index) => {
         return g.ressources.owned[this.price.type] >= this.price.amount && g.u.owned[index] === false;
     }
 };
 
-game.upgrades.buy = function (i) {
+game.upgrades.buy = (i) => {
     let obj = g.u.list[i];
 
     if (obj.buyable(i)) {
@@ -30,7 +30,7 @@ game.upgrades.buy = function (i) {
     }
 };
 
-game.upgrades.init = function () {
+game.upgrades.init = () => {
     for (let i = 0; i < g.u.list.length; i++) {
         g.u.owned.push(false);
         let main = $(document.createElement("div"));
@@ -46,7 +46,7 @@ game.upgrades.init = function () {
         $("#upgrades-panelbody").append(main);
     }
 };
-game.upgrades.hide = function () { // todo
+game.upgrades.hide = () => { // todo
     let a = document.getElementById('upgrades-checkbox');
     if (a.checked === true) {
         for (let i = 0; i < g.u.list.length; i++) {
@@ -60,7 +60,7 @@ game.upgrades.hide = function () { // todo
         }
     }
 };
-game.upgrades.check = function () {
+game.upgrades.check = () => {
     for (let i = 0; i < g.u.list.length; i++) {
         if (g.u.owned[i] === true) {
             let upgradeBTN = $("#upgrades-btn-" + i);
@@ -71,7 +71,7 @@ game.upgrades.check = function () {
         }
     }
 };
-game.upgrades.checkSave = function () {
+game.upgrades.checkSave = () => {
     if (g.u.owned.length !== g.u.list.length) {
         let a = (g.u.list.length - g.u.owned.length);
         for (let i = 0; i < a.length; i++)
@@ -81,15 +81,33 @@ game.upgrades.checkSave = function () {
 
 g.u.owned = [];
 g.u.list = [
-    new g.u.create("Hydrogen I", "Hydrogen/click x2", {amount:10, type:'Hydrogen'}, function(){game.ressources.perClick.Hydrogen.amount *= 2;}),
-    new g.u.create("Hydrogen II", "Hydrogen/click x2", {amount:75, type:'Hydrogen'}, function(){game.ressources.perClick.Hydrogen.amount *= 2;}),
-    new g.u.create("Hydrogen III", "Hydrogen/click x1.5",{amount:1000, type:'Hydrogen'}, function(){game.ressources.perClick.Hydrogen.amount *= 1.5;}),
-    
-    new g.u.create("Oxygen I", "Oxygen/click x2", {amount:10, type:'Oxygen'}, function(){game.ressources.perClick.Oxygen.amount *= 2;}),
-    new g.u.create("Oxygen II", "Oxygen/click x2", {amount:75, type:'Oxygen'}, function(){game.ressources.perClick.Oxygen.amount *= 2;}),
-    new g.u.create("Oxygen III", "Oxygen/click x1.5", {amount:1000, type:'Oxygen'}, function(){game.ressources.perClick.Oxygen.amount *= 1.5;}),
-    
-    new g.u.create("Helium I", "Helium/click x2", {amount:10, type:'Helium'}, function(){game.ressources.perClick.Helium.amount *= 2;}),
-    new g.u.create("Helium II", "Helium/click x2", {amount:75, type:'Helium'}, function(){game.ressources.perClick.Helium.amount *= 2;}),
-    new g.u.create("Helium III", "Helium/click x1.5", {amount:1000, type:'Helium'}, function(){game.ressources.perClick.Helium.amount *= 1.5;})
+    new g.u.create("Hydrogen I", "Hydrogen/click x2", {amount: 10, type: 'Hydrogen'}, () => {
+        game.ressources.perClick.Hydrogen.amount *= 2;
+    }),
+    new g.u.create("Hydrogen II", "Hydrogen/click x2", {amount: 75, type: 'Hydrogen'}, () => {
+        game.ressources.perClick.Hydrogen.amount *= 2;
+    }),
+    new g.u.create("Hydrogen III", "Hydrogen/click x1.5", {amount: 1000, type: 'Hydrogen'}, () => {
+        game.ressources.perClick.Hydrogen.amount *= 1.5;
+    }),
+
+    new g.u.create("Oxygen I", "Oxygen/click x2", {amount: 10, type: 'Oxygen'}, () => {
+        game.ressources.perClick.Oxygen.amount *= 2;
+    }),
+    new g.u.create("Oxygen II", "Oxygen/click x2", {amount: 75, type: 'Oxygen'}, () => {
+        game.ressources.perClick.Oxygen.amount *= 2;
+    }),
+    new g.u.create("Oxygen III", "Oxygen/click x1.5", {amount: 1000, type: 'Oxygen'}, () => {
+        game.ressources.perClick.Oxygen.amount *= 1.5;
+    }),
+
+    new g.u.create("Helium I", "Helium/click x2", {amount: 10, type: 'Helium'}, () => {
+        game.ressources.perClick.Helium.amount *= 2;
+    }),
+    new g.u.create("Helium II", "Helium/click x2", {amount: 75, type: 'Helium'}, () => {
+        game.ressources.perClick.Helium.amount *= 2;
+    }),
+    new g.u.create("Helium III", "Helium/click x1.5", {amount: 1000, type: 'Helium'}, () => {
+        game.ressources.perClick.Helium.amount *= 1.5;
+    })
 ];

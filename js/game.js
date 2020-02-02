@@ -49,7 +49,7 @@ game.init = function () {
     if (g.options.hold !== 0) {
         $(".multiClickable").each(function (index, item) {
             $(item).on('mousedown', () => {
-                game.holding = window.setInterval(function () {
+                game.holding = window.setInterval(() => {
                     item.click();
                 }, game.options.hold);
 
@@ -89,19 +89,19 @@ game.buttons = function () {
     $("#btn-1-1").html("Create hydrogen (+" + fix(g.ressources.perClick.Hydrogen.amount, 0) + ")");
     $("#btn-1-2").html("Create oxygen (+" + fix(g.ressources.perClick.Oxygen.amount, 0) + ")");
     $("#btn-1-3").html("Create helium (+" + fix(g.ressources.perClick.Helium.amount, 0) + ")");
-    
+
     let waterButton = $("#btn-2-1");
     waterButton.html("Generate water (+" + fix(g.ressources.perClick.Water.amount * g.buyMultiplier, 0) + " mL)");
     waterButton.attr('data-original-title', 'Cost ' + fix((20 * g.buyMultiplier), 0) + ' hydrogen, ' + fix((10 * g.buyMultiplier), 0) + ' oxygen');
-    
+
     let cellButton = $("#btn-3-1");
     cellButton.html("Generate cell (+" + fix(g.ressources.perClick.Cells.amount * g.buyMultiplier, 0) + ")");
     cellButton.attr('data-original-title', 'Cost ' + fix((g.cellCost * g.buyMultiplier), 0) + ' helium');
 
-    if (g.ressources.owned.Sun === 1){
+    if (g.ressources.owned.Sun === 1) {
         $("#btn-3-2").css('display', 'none');
     }
-    if (g.ressources.owned["Atmosphere Generator"] === 1){
+    if (g.ressources.owned["Atmosphere Generator"] === 1) {
         $("#btn-3-3").css('display', 'none');
     }
 };
@@ -136,7 +136,7 @@ game.ressources.init = function () {
             }
         };
     }
-    
+
     g.ressources.perClick.Water = {
         amount: 1,
         can: function (owned) {
@@ -213,11 +213,11 @@ game.ressources.init = function () {
             }
         }
     };
-    
+
 };
 
 // GAME FUNCTIONS
-game.earn = (type) => {
+game.earn = function (type) {
     const str = h.capitalizeFirstLetter(type);
     if (g.ressources.perClick[str].can(g.ressources.owned)) {
         g.ressources.perClick[str].click(g.ressources.owned)
@@ -229,10 +229,10 @@ game.earn = (type) => {
         g.t.check();
     }
 };
-game.cellsEarn = (times) => {
+game.cellsEarn = function (times) {
     g.ressources.owned.Meat += (h.cellsMeat() * times) / g.options.fps;
 };
-game.changeBuy = () => {
+game.changeBuy = function () {
     if (g.buyMultiplier === 1) {
         g.buyMultiplier = 10;
     } else if (g.buyMultiplier === 10) {
@@ -242,11 +242,11 @@ game.changeBuy = () => {
     } else if (g.buyMultiplier === 1000) {
         g.buyMultiplier = 1;
     }
-    
+
     $("#btn-buy-multiplier").html("Buy x" + fix(g.buyMultiplier, 0));
     game.buttons();
 };
-game.devMode = () => {
+game.devMode = function () {
     if (g.options.devMode === true) {
         console.warn("Dev mode enabled!");
         g.t.fast.check = true;
@@ -263,6 +263,16 @@ game.changeSaveInterval = function () {
         save.saveData();
     }, game.options.saveIntervalTime);
 };
+
+game.changeHoldInterval = function () {
+    let val = $("#holdIntervalSlider").val();
+    if (val <= 10) {
+        $("#holdText").html("No Holdig");
+    } else {
+        $("#holdText").html("Click every 1/" + val + "sec");
+    }
+};
+
 
 // INTERVALS + ONLOAD
 window.onload = function () {

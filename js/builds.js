@@ -11,15 +11,15 @@ game.builds.create = function (name, desc, price, valuePerSec, reward, inflation
     this.valuePerSec = valuePerSec;
     this.inflation = inflation;
 
-    this.buildPrice = function (index) {
+    this.buildPrice = (index) => {
         return g.b.list[index].price.amount * Math.pow(g.b.list[index].inflation, g.b.owned[index]);
     };
 
-    this.buyable = function (index) {
+    this.buyable = (index) => {
         return g.ressources.owned[g.b.list[index].price.type] >= g.b.list[index].buildPrice(index);
     }
 };
-game.builds.init = function () {
+game.builds.init = () => {
     for (let i = 0; i < g.b.list.length; i++) {
         g.b.owned.push(0);
         g.b.multiplier.push(1);
@@ -37,36 +37,33 @@ game.builds.init = function () {
         $("#builds-panelbody").append(main);
     }
 };
-game.builds.buy = function (index, name) {
+game.builds.buy = (index, name) => {
     let price = g.b.list[index].price.amount;
     let type = g.b.list[index].price.type;
 
-    if ( g.b.list[index].buyable(index)) {
+    if (g.b.list[index].buyable(index)) {
         g.ressources.owned[type] -= price;
         g.b.owned[index]++;
         g.b.update();
     }
 };
-game.builds.earn = function (times) {
+game.builds.earn = (times) => {
     for (let i = 0; i < g.b.list.length; i++) {
         if (g.b.owned[i] > 0) {
             g.b.list[i].reward(g.b.list[i].valuePerSec * g.b.owned[i] * g.b.multiplier[i], times / g.options.fps);
         }
-
-        //TODO this is missing vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-        //g.ressources.owned[e] += (h.buildReward(i) * times) / g.options.fps;
     }
 };
-game.builds.checkSave = function () {
+game.builds.checkSave = () => {
     if (g.b.owned.length !== g.b.list.length) {
         let a = (g.b.list.length - g.b.owned.length);
         for (let i = 0; i < a; i++)
             g.b.owned.push(0);
     }
 };
-game.builds.update = function () {
+game.builds.update = () => {
     for (let i = 0; i < g.b.list.length; i++) {
-        let obj=g.b.list[i];
+        let obj = g.b.list[i];
         let string = obj.name + " : " + fix(obj.valuePerSec, 2) + " " + obj.price.type.toLowerCase() + "/sec<br>" +
             fix(g.b.owned[i], 0) + " owned : " + fix(obj.valuePerSec * g.b.owned[i] * g.b.multiplier[i], 2) + " " + obj.price.type.toLowerCase() + "/sec" + "<br>" +
             "Cost " + fix(obj.buildPrice(i), 0) + " " + obj.price.type.toLowerCase();
@@ -81,7 +78,7 @@ g.b.list = [
             type: 'Hydrogen'
         },
         1,
-        function (value, delta) {
+        (value, delta) => {
             game.ressources.owned.Hydrogen += value * delta;
         },
         1.15),
@@ -90,7 +87,7 @@ g.b.list = [
             type: 'Oxygen'
         },
         1,
-        function (value, delta) {
+        (value, delta) => {
             game.ressources.owned.Oxygen += value * delta;
         },
         1.15),
@@ -99,7 +96,7 @@ g.b.list = [
             type: 'Helium'
         },
         1,
-        function (value, delta) {
+        (value, delta) => {
             game.ressources.owned.Helium += value * delta;
         },
         1.15),
@@ -108,7 +105,7 @@ g.b.list = [
             type: 'Hydrogen'
         },
         1,
-        function (value, delta) {
+        (value, delta) => {
             game.ressources.owned.Water += value * delta;
         },
         1.15)

@@ -7,8 +7,16 @@
                 data</a></div>
             <div class="col-md-4"><a type="button" class="btn btn-info btn-block" onclick="save.loadData();">Load
                 data</a></div>
-            <div class="col-md-12"><h4 class="text-center"><b id="intervalText">The game autosaves every 10 seconds.</b>
-            </h4></div>
+        </div>
+        <div class="row">
+            <div class="col-md-12"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="text-center">
+                    <b id="intervalText">The game autosaves every 10 seconds.</b>
+                </h4>
+            </div>
             <div class="col-md-12"><label for="saveIntervalSlider"></label><input type="range" class="custom-range"
                                                                                   min="10" max="60"
                                                                                   id="saveIntervalSlider"
@@ -16,5 +24,16 @@
                                                                                   oninput="game.changeSaveInterval()">
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-4"><b id="holdText">Click every 1/10sec</b>
+            </div>
+            <div class="col-md-8"><label for="saveIntervalSlider"></label><input type="range" class="custom-range"
+                                                                                 min="0" max="100"
+                                                                                 id="holdIntervalSlider"
+                                                                                 onchange=""
+                                                                                 oninput="game.changeHoldInterval()">
+            </div>
+        </div>
     </div>
 </div>
+
