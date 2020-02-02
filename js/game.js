@@ -48,28 +48,31 @@ game.init = function () {
 
     if (g.options.hold !== 0) {
         $(".multiClickable").each(function (index, item) {
-            let func = function () {
-                item.click()
-            };
-
-            $(item).on('mousedown', function () {
+            $(item).on('mousedown', () => {
                 game.holding = window.setInterval(function () {
-                    func();
+                    item.click();
                 }, game.options.hold);
 
-            }).on('mouseup mouseleave', function () {
+            }).on('mouseup mouseleave', () => {
                 window.clearInterval(game.holding);
             });
         });
     }
-    
+
     $('[data-toggle="tooltip"]').tooltip();
     $('.header-small').html(g.options.version);
 
     let saveInterval = game.options.saveIntervalTime / 1000;
     $("#saveIntervalSlider").val(saveInterval);
     $("#intervalText").html("The game autosaves every " + saveInterval + " seconds.");
-    
+
+
+    //Workaround because bootstrap has a bug
+    $('#menu a').click(function (e) {
+        e.preventDefault();
+        $(this).tab('show');
+    });
+
     g.options.init = true;
 };
 game.display = function () {
@@ -214,22 +217,22 @@ game.ressources.init = function () {
 };
 
 // GAME FUNCTIONS
-game.earn = function (type) {
+game.earn = (type) => {
     const str = h.capitalizeFirstLetter(type);
     if (g.ressources.perClick[str].can(g.ressources.owned)) {
         g.ressources.perClick[str].click(g.ressources.owned)
     }
- 
+
     if (g.t.fast.check === true) {
 
     } else {
         g.t.check();
     }
 };
-game.cellsEarn = function (times) {
+game.cellsEarn = (times) => {
     g.ressources.owned.Meat += (h.cellsMeat() * times) / g.options.fps;
 };
-game.changeBuy = function () {
+game.changeBuy = () => {
     if (g.buyMultiplier === 1) {
         g.buyMultiplier = 10;
     } else if (g.buyMultiplier === 10) {
@@ -243,7 +246,7 @@ game.changeBuy = function () {
     $("#btn-buy-multiplier").html("Buy x" + fix(g.buyMultiplier, 0));
     game.buttons();
 };
-game.devMode = function () {
+game.devMode = () => {
     if (g.options.devMode === true) {
         console.warn("Dev mode enabled!");
         g.t.fast.check = true;
@@ -253,21 +256,33 @@ game.devMode = function () {
 game.changeSaveInterval = function () {
     let val = $("#saveIntervalSlider").val();
     $("#intervalText").html("The game autosaves every " + val + " seconds.");
-    game.options.saveIntervalTime = val*1000;
+    game.options.saveIntervalTime = val * 1000;
     window.clearInterval(game.saveInterval);
-    
-    game.saveInterval = window.setInterval(function () {
+
+    game.saveInterval = window.setInterval(() => {
         save.saveData();
     }, game.options.saveIntervalTime);
 };
 
 // INTERVALS + ONLOAD
 window.onload = function () {
-    g.init();
+    let fragments = $("div[data-frag]");
+    window.loadCounter = fragments.length;
+    fragments.each(function (index, item) {
+        let jItem = $(item);
+        jItem.load(jItem.data("frag"), null, () => {
+
+            window.loadCounter--;
+            if (window.loadCounter === 0) {
+                window.loadCounter = null;
+                g.init();
+            }
+        });
+    });
 };
-g.coreLoop = window.setInterval(function () {
+g.coreLoop = window.setInterval(() => {
     g.loop();
 }, g.options.interval);
-g.saveInterval = window.setInterval(function () {
-    save.saveData();
+g.saveInterval = window.setInterval(() => {
+    //save.saveData();
 }, g.options.saveIntervalTime);
