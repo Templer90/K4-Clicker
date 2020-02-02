@@ -3,6 +3,7 @@ var game = g = {};
 g.options = {};
 g.options.devMode = true;
 g.options.fps = 60;
+g.options.hold = 100;
 g.options.saveIntervalTime = 10000;
 g.options.interval = (1000 / g.options.fps);
 g.options.init = false;
@@ -23,6 +24,7 @@ g.cellCost = 5;
 g.buyMultiplier = 1;
 
 g.username = undefined;
+g.holding = null;
 
 // CORE FUNCTIONS
 game.init = function () {
@@ -42,12 +44,32 @@ game.init = function () {
     g.builds.update();
     g.buttons();
 
-    if (g.t.intro5.check !== true)
-        g.tutorial.intro();
+    if (g.t.intro5.check !== true) g.tutorial.intro();
 
+    if (g.options.hold !== 0) {
+        $(".multiClickable").each(function (index, item) {
+            let func = function () {
+                item.click()
+            };
+
+            $(item).on('mousedown', function () {
+                game.holding = window.setInterval(function () {
+                    func();
+                }, game.options.hold);
+
+            }).on('mouseup mouseleave', function () {
+                window.clearInterval(game.holding);
+            });
+        });
+    }
+    
     $('[data-toggle="tooltip"]').tooltip();
     $('.header-small').html(g.options.version);
 
+    let saveInterval = game.options.saveIntervalTime / 1000;
+    $("#saveIntervalSlider").val(saveInterval);
+    $("#intervalText").html("The game autosaves every " + saveInterval + " seconds.");
+    
     g.options.init = true;
 };
 game.display = function () {
@@ -228,6 +250,17 @@ game.devMode = function () {
     }
 };
 
+game.changeSaveInterval = function () {
+    let val = $("#saveIntervalSlider").val();
+    $("#intervalText").html("The game autosaves every " + val + " seconds.");
+    game.options.saveIntervalTime = val*1000;
+    window.clearInterval(game.saveInterval);
+    
+    game.saveInterval = window.setInterval(function () {
+        save.saveData();
+    }, game.options.saveIntervalTime);
+};
+
 // INTERVALS + ONLOAD
 window.onload = function () {
     g.init();
@@ -236,5 +269,5 @@ g.coreLoop = window.setInterval(function () {
     g.loop();
 }, g.options.interval);
 g.saveInterval = window.setInterval(function () {
-    //save.saveData();
+    save.saveData();
 }, g.options.saveIntervalTime);

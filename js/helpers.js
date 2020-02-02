@@ -18,9 +18,7 @@ helpers.maxCells = function () {
 helpers.cellsMeat = function () {
     return g.ressources.owned.Cells * g.cellMeat;
 };
-helpers.buildPrice = function (i) {
-    return (g.b.list[i].price.amount * Math.pow(g.b.list[i].inflation, g.b.owned[i]));
-};
+
 helpers.buildReward = function (i) {
     return (g.b.list[i].reward * g.b.owned[i]) * g.b.multiplier[i];
 };

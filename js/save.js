@@ -22,6 +22,7 @@ save.loadData = function () {
             console.warn('Warning : loading save from an older version.');
 
         g.options.before = sg.options.before;
+        g.options.saveIntervalTime = sg.options.saveIntervalTime;
         g.ressources.owned = sg.ressources.owned;
         g.ressources.total = sg.ressources.total;
         g.ressources.perClick = sg.ressources.perClick;
