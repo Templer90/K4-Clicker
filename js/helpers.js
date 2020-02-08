@@ -18,7 +18,18 @@ helpers.maxCells = function () {
 helpers.cellsMeat = function () {
     return g.ressources.owned.Cells * g.cellMeat;
 };
-
 helpers.buildReward = function (i) {
     return (g.b.list[i].reward * g.b.owned[i]) * g.b.multiplier[i];
+};
+helpers.genCostString = function (price) {
+    if (!Array.isArray(price)) {
+        price = [price];
+    }
+
+    let costString = 'Cost: ';
+    for (let i = 0; i < price.length - 1; i++) {
+        costString += fix(price[i].amount, 0) + " " + price[i].type.toLowerCase() + " & ";
+    }
+    costString += fix(price[price.length - 1].amount, 0) + " " + price[price.length - 1].type.toLowerCase();
+    return costString;
 };

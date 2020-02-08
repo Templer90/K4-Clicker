@@ -120,6 +120,11 @@ game.loop = function () {
         g.display();
     }
 };
+game.status = function () {
+    g.upgrades.checkBuyStatus();
+    g.builds.checkBuyStatus();
+};
+
 game.ressources.init = function () {
     for (let i = 0; i < g.ressources.list.length; i++) {
         let resource = g.ressources.list[i];
@@ -293,6 +298,10 @@ window.onload = function () {
 g.coreLoop = window.setInterval(() => {
     g.loop();
 }, g.options.interval);
+
+g.statusLoop = window.setInterval(() => {
+    g.status();
+}, 500);
 g.saveInterval = window.setInterval(() => {
     //save.saveData();
 }, g.options.saveIntervalTime);

@@ -2,34 +2,58 @@ g.upgrades = g.u = {};
 g.u.owned = {};
 
 game.upgrades.create = function (name, desc, price, boughtFunction, dependsOn = undefined) {
-    this.name = name;
+    this.name = name.replace(/ /g,"_");
+    this.displayName = name;
     this.desc = desc;
-    this.price = price;
-    this.boughtFunction = boughtFunction;
-    this.depends = () => {
-        return true;
-    };
 
-    if (dependsOn !== undefined) {
-        this.depends = dependsOn;
+    if (!Array.isArray(price)) {
+        price = [price];
     }
+    this.price = {
+        checkResources: () => {
+            for (let i = 0; i < price.length; i++) {
+                if (g.ressources.owned[price[i].type] < price[i].amount) {
+                    return false;
+                }
+            }
+            return true;
+
+        },
+        pay: () => {
+            for (let i = 0; i < price.length; i++) {
+                g.ressources.owned[price[i].type] -= price[i].amount;
+            }
+        },
+        costString: helpers.genCostString(price)
+    };
+    
+    this.boughtFunction = boughtFunction;
+    this.depends = dependsOn;
+
+    this.buyable = () => {
+        let dependency = true;
+        if (this.depends !== undefined) {
+            dependency = this.depends();
+        }
+        
+        return dependency && this.price.checkResources() && g.u.owned[this.name] === false;
+    };
 };
 
-game.upgrades.buyable = (name) => {
-    let obj = g.u.list[name];
-    return g.ressources.owned[obj.price.type] >= obj.price.amount && g.u.owned[name] === false;
-};
+game.upgrades.buy = (thing) => {
+    let obj = thing;
+    if (typeof (thing) === "string") {
+        obj = g.u.list[thing];
+    }
 
-game.upgrades.buy = (name) => {
-    let obj = g.u.list[name];
-
-    if (game.upgrades.buyable(name) && obj.depends()) {
-        g.ressources.owned[obj.price.type] -= obj.price.amount;
+    if (obj.buyable()) {
+        obj.price.pay();
         obj.boughtFunction();
-        g.u.owned[name] = true;
+        g.u.owned[obj.name] = true;
         g.buttons();
+        g.status();
 
-        let upgradeBTN = document.getElementById("upgrades-btn-" + name);
+        let upgradeBTN = document.getElementById("upgrades-btn-" + obj.name);
         upgradeBTN.setAttribute('onclick', '');
         upgradeBTN.classList.replace('btn-primary', 'btn-success');
         upgradeBTN.innerHTML = 'Owned';
@@ -53,7 +77,7 @@ game.upgrades.init = () => {
 
         let paragraph = document.createElement("p");
         paragraph.setAttribute('class', 'no-margin');
-        paragraph.innerHTML = obj.name + " : " + obj.desc + "<br>Cost " + fix(obj.price.amount, 0) + " " + obj.price.type.toLowerCase();
+        paragraph.innerHTML = obj.displayName + " : " + obj.desc + "<br>" + obj.price.costString;
         infoBox.append(paragraph);
 
         let buyButton = document.createElement("div");
@@ -63,16 +87,28 @@ game.upgrades.init = () => {
         buyLink.setAttribute('class', 'btn btn-primary btn-block');
         buyLink.setAttribute('type', 'button');
         buyLink.onclick = () => {
-            g.u.buy(obj.name);
+            g.u.buy(obj);
         };
         buyLink.innerHTML = 'Buy upgrade';
+        obj.buylink = buyLink;
+
 
         buyButton.append(buyLink);
-
         main.append(infoBox);
         main.append(buyButton);
-
         panel.append(main);
+    }
+};
+game.upgrades.checkBuyStatus = function () {
+    for (let i = 0; i < g.u.list.length; i++) {
+        let obj = g.u.list[i];
+        if (obj.buyable()) {
+            obj.buylink.removeAttribute('disabled');
+            obj.buylink.classList.remove('disabled');
+        }else{
+            obj.buylink.setAttribute('disabled','disabled');
+            obj.buylink.classList.add('disabled');
+        }
     }
 };
 game.upgrades.hide = () => { // todo
@@ -109,44 +145,3 @@ game.upgrades.checkSave = () => {
             g.u.owned.push(0);
     }
 };
-
-g.u.list = [
-    new g.u.create("Hydrogen I", "Hydrogen/click x2", {amount: 10, type: 'Hydrogen'}, () => {
-        game.ressources.perClick.Hydrogen.amount *= 2;
-    }),
-    new g.u.create("Hydrogen II", "Hydrogen/click x2", {amount: 75, type: 'Hydrogen'}, () => {
-        game.ressources.perClick.Hydrogen.amount *= 2;
-    }),
-    new g.u.create("Hydrogen III", "Hydrogen/click x1.5", {amount: 1000, type: 'Hydrogen'}, () => {
-        game.ressources.perClick.Hydrogen.amount *= 1.5;
-    }),
-
-    new g.u.create("Hydrogen Manufacture", "Auto Hydrogen=clicks", {amount: 2000, type: 'Hydrogen'}, () => {
-        for (let i = 0; i < g.b.multiplier.length; i++) {
-            game.builds.multiplier[i] *= game.ressources.perClick.Hydrogen.amount;
-            game.builds.update();
-        }
-    }, () => {
-        return g.u.owned["Hydrogen III"];
-    }),
-
-    new g.u.create("Oxygen I", "Oxygen/click x2", {amount: 10, type: 'Oxygen'}, () => {
-        game.ressources.perClick.Oxygen.amount *= 2;
-    }),
-    new g.u.create("Oxygen II", "Oxygen/click x2", {amount: 75, type: 'Oxygen'}, () => {
-        game.ressources.perClick.Oxygen.amount *= 2;
-    }),
-    new g.u.create("Oxygen III", "Oxygen/click x1.5", {amount: 1000, type: 'Oxygen'}, () => {
-        game.ressources.perClick.Oxygen.amount *= 1.5;
-    }),
-
-    new g.u.create("Helium I", "Helium/click x2", {amount: 10, type: 'Helium'}, () => {
-        game.ressources.perClick.Helium.amount *= 2;
-    }),
-    new g.u.create("Helium II", "Helium/click x2", {amount: 75, type: 'Helium'}, () => {
-        game.ressources.perClick.Helium.amount *= 2;
-    }),
-    new g.u.create("Helium III", "Helium/click x1.5", {amount: 1000, type: 'Helium'}, () => {
-        game.ressources.perClick.Helium.amount *= 1.5;
-    })
-];
