@@ -17,12 +17,11 @@ game.upgrades.create = function (name, desc, price, boughtFunction, dependsOn = 
                 }
             }
             return true;
-
         },
         pay: () => {
-            for (let i = 0; i < price.length; i++) {
-                g.ressources.owned[price[i].type] -= price[i].amount;
-            }
+            price.forEach((p) => {
+                g.ressources.owned[p.type] -= p.amount;
+            });
         },
         costString: helpers.genCostString(price)
     };
@@ -63,10 +62,10 @@ game.upgrades.buy = (thing) => {
 
 game.upgrades.init = () => {
     let panel = document.getElementById('upgrades-panelbody');
-    for (let i = 0; i < g.u.list.length; i++) {
-        let obj = g.u.list[i];
+    g.u.list.forEach((obj, i) => {
         g.u.list[obj.name] = obj;
         g.u.owned[obj.name] = false;
+     
 
         let main = document.createElement("div");
         main.setAttribute('id', 'upgrades-row-' + i);
@@ -91,17 +90,16 @@ game.upgrades.init = () => {
         };
         buyLink.innerHTML = 'Buy upgrade';
         obj.buylink = buyLink;
-
+        obj.mainDiv=main;
 
         buyButton.append(buyLink);
         main.append(infoBox);
         main.append(buyButton);
         panel.append(main);
-    }
+    });
 };
 game.upgrades.checkBuyStatus = function () {
-    for (let i = 0; i < g.u.list.length; i++) {
-        let obj = g.u.list[i];
+    g.u.list.forEach((obj, i) => {
         if (obj.buyable()) {
             obj.buylink.removeAttribute('disabled');
             obj.buylink.classList.remove('disabled');
@@ -109,34 +107,41 @@ game.upgrades.checkBuyStatus = function () {
             obj.buylink.setAttribute('disabled','disabled');
             obj.buylink.classList.add('disabled');
         }
-    }
+    });
 };
-game.upgrades.hide = () => { // todo
-    let a = document.getElementById('upgrades-checkbox');
-    if (a.checked === true) {
-        for (let i = 0; i < g.u.list.length; i++) {
-            let obj = g.u.list[i];
-            if (g.u.owned[obj.name] === true)
-                document.getElementById("upgrades-row-" + i).style.display = 'block';
-        }
-    } else {
-        for (let i = 0; i < g.u.list.length; i++) {
-            let obj = g.u.list[i];
-            if (g.u.owned[obj.name] === true)
-                document.getElementById("upgrades-row-" + i).style.display = 'none';
-        }
+game.upgrades.hide = () => {
+    let funcHide = (obj, i) => {
+        obj.mainDiv.style.display = 'none';
+    };
+    let funcShow = (obj, i) => {
+        obj.mainDiv.style.display = 'block';
+    };
+    let func = funcHide;
+    if (document.getElementById('upgrades-checkbox').checked === true) {
+        func = funcShow;
     }
+
+    g.u.list.filter((obj) => g.u.owned[obj.name] === true).forEach(func);
+};
+game.upgrades.onlyBuyable = () => {
+   //g.u.list.forEach((obj, i) => {
+   //    if (obj.buyable()) {
+   //        obj.mainDiv.style.display = '';
+   //    }else{
+   //        obj.mainDiv.style.display = 'none';
+   //    }
+   //});
 };
 game.upgrades.check = () => {
-    for (let i = 0; i < g.u.list.length; i++) {
-        let obj = g.u.list[i];
+    g.u.onlyBuyable();
+    g.u.list.forEach((obj, i) => {
         if (g.u.owned[obj.name] === true) {
-            let upgradeBTN = document.getElementById("upgrades-btn-" + i);
+            let upgradeBTN =  obj.mainDiv.getElementById("upgrades-btn-" + i);
             upgradeBTN.setAttribute('onclick', '');
             upgradeBTN.classList.replace('btn-primary', 'btn-success');
             upgradeBTN.innerHTML = 'Owned';
         }
-    }
+    });
 };
 game.upgrades.checkSave = () => {
     if (g.u.owned.length !== g.u.list.length) {

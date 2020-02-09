@@ -47,16 +47,7 @@ game.init = function () {
     if (g.t.intro5.check !== true) g.tutorial.intro();
 
     if (g.options.hold !== 0) {
-        $(".multiClickable").each(function (index, item) {
-            $(item).on('mousedown', () => {
-                game.holding = window.setInterval(() => {
-                    item.click();
-                }, game.options.hold);
-
-            }).on('mouseup mouseleave', () => {
-                window.clearInterval(game.holding);
-            });
-        });
+        game.addHoldingFunction();
     }
 
     $('[data-toggle="tooltip"]').tooltip();
@@ -74,6 +65,25 @@ game.init = function () {
     });
 
     g.options.init = true;
+};
+game.addHoldingFunction=function(){
+    window.clearInterval(game.holding);
+    game.removeHoldingFunction();
+    $(".multiClickable").each(function (index, item) {
+        $(item).on('mousedown', () => {
+            game.holding = window.setInterval(() => {
+                item.click();
+            }, game.options.hold);
+        }).on('mouseup mouseleave', () => {
+            window.clearInterval(game.holding);
+        });
+    });
+};
+game.removeHoldingFunction=function(){
+    window.clearInterval(game.holding);
+    $(".multiClickable").each(function (index, item) {
+        $(item).off('mousedown').off('mouseup mouseleave');
+    });
 };
 game.display = function () {
     $("#ressources-display").html(
@@ -126,8 +136,7 @@ game.status = function () {
 };
 
 game.ressources.init = function () {
-    for (let i = 0; i < g.ressources.list.length; i++) {
-        let resource = g.ressources.list[i];
+    g.ressources.list.forEach((resource, i) => {
         g.ressources.owned[resource] = 0;
         g.ressources.total[resource] = 0;
         g.ressources.perClick[resource] = {
@@ -140,7 +149,7 @@ game.ressources.init = function () {
                 return this.amount;
             }
         };
-    }
+    });
 
     g.ressources.perClick.Water = {
         amount: 1,
@@ -259,7 +268,7 @@ game.devMode = function () {
 };
 
 game.changeSaveInterval = function () {
-    let val = $("#saveIntervalSlider").val();
+    let val = document.getElementById('saveIntervalSlider').value;
     $("#intervalText").html("The game autosaves every " + val + " seconds.");
     game.options.saveIntervalTime = val * 1000;
     window.clearInterval(game.saveInterval);
@@ -270,11 +279,15 @@ game.changeSaveInterval = function () {
 };
 
 game.changeHoldInterval = function () {
-    let val = $("#holdIntervalSlider").val();
-    if (val <= 10) {
-        $("#holdText").html("No Holdig");
+    let val = document.getElementById('holdIntervalSlider').value;
+    if (val < 10) {
+        g.options.hold = 0;
+        g.removeHoldingFunction();
+        document.getElementById("holdText").innerHTML = "No Holdig";
     } else {
-        $("#holdText").html("Click every 1/" + val + "sec");
+        g.options.hold = val;
+        g.addHoldingFunction();
+        document.getElementById("holdText").innerHTML = "Click every 1/" + val + "sec";
     }
 };
 

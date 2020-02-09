@@ -50,8 +50,7 @@ game.builds.create = function (name, desc, price, valuePerSec, reward, inflation
 };
 game.builds.init = () => {
     let panel = document.getElementById('builds-panelbody');
-    for (let i = 0; i < g.b.list.length; i++) {
-        let obj = g.b.list[i];
+    g.b.list.forEach((obj, i) => {
         g.b.owned.push(0);
         g.b.multiplier.push(1);
 
@@ -66,7 +65,7 @@ game.builds.init = () => {
         paragraph.id = "builds-infos-" + i;
         paragraph.setAttribute('class', 'no-margin');
 
-        let line1 = obj.displayName + " : " + obj.reward.type + " " + obj.valuePerSec + "/sec";
+        let line1 = obj.displayName + " : " + obj.valuePerSec.type + " " + obj.valuePerSec.perSec + "/sec";
         let line2 = g.b.owned[i] + " owned : " + h.buildReward(i) + " " + obj.price.type.toLowerCase() + "/sec";
         let line3 = "Cost " + obj.costString;
         paragraph.innerHTML = line1 + "<br>" + line2 + "<br>" + line3;
@@ -89,7 +88,7 @@ game.builds.init = () => {
         main.append(infoBox);
         main.append(buyButton);
         panel.append(main);
-    }
+    });
 };
 game.builds.checkBuyStatus = function () {
     for (let i = 0; i < g.b.list.length; i++) {
@@ -114,7 +113,7 @@ game.builds.earn = (times) => {
     let delta = times / g.options.fps;
     for (let i = 0; i < g.b.list.length; i++) {
         if (g.b.owned[i] > 0) {
-            g.b.list[i].reward.func(g.b.list[i].valuePerSec * g.b.owned[i] * g.b.multiplier[i], delta);
+            g.b.list[i].reward.func(g.b.list[i].valuePerSec.perSec * g.b.owned[i] * g.b.multiplier[i], delta);
         }
     }
 };
@@ -128,8 +127,8 @@ game.builds.checkSave = () => {
 game.builds.update = () => {
     for (let i = 0; i < g.b.list.length; i++) {
         let obj = g.b.list[i];
-        let line1 = obj.name + " : " + fix(obj.valuePerSec, 2) + " " + obj.price.type.toLowerCase() + "/sec";
-        let line2 = fix(g.b.owned[i], 0) + " owned : " + fix(obj.valuePerSec * g.b.owned[i] * g.b.multiplier[i], 2) + " " + obj.price.type.toLowerCase() + "/sec";
+        let line1 = obj.name + " : " + fix(obj.valuePerSec.perSec, 2) + " " + obj.valuePerSec.type.toLowerCase() + "/sec";
+        let line2 = fix(g.b.owned[i], 0) + " owned : " + fix(obj.valuePerSec.perSec * g.b.owned[i] * g.b.multiplier[i], 2) + " " + obj.price.type.toLowerCase() + "/sec";
         let line3 = "Cost " + fix(obj.buildPrice(i), 0) + " " + obj.price.type.toLowerCase();
         document.getElementById("builds-infos-" + i).innerHTML = line1 + "<br>" + line2 + "<br>" + line3 + "<br>";
     }
@@ -140,7 +139,7 @@ g.b.list = [
             amount: 25,
             type: 'Hydrogen'
         },
-        1,
+        {perSec:1, type: "Hydrogen"},
         {
             type: "Hydrogen",
             func: (value, delta) => {
@@ -152,7 +151,7 @@ g.b.list = [
             amount: 25,
             type: 'Oxygen'
         },
-        1,
+        {perSec:1, type: "Oxygen"},
         {
             type: "Oxygen",
             func: (value, delta) => {
@@ -164,7 +163,7 @@ g.b.list = [
             amount: 25,
             type: 'Helium'
         },
-        1,
+        {perSec:1, type: "Helium"},
         {
             type: "Helium",
             func: (value, delta) => {
@@ -176,7 +175,7 @@ g.b.list = [
             amount: 1500,
             type: 'Hydrogen'
         },
-        1,
+        {perSec:1, type: "Water"},
         {
             type: "Water",
             func: (value, delta) => {
