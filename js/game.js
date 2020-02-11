@@ -31,6 +31,7 @@ game.init = function () {
     g.ressources.init();
     g.upgrades.init();
     g.builds.init();
+    g.collider.init();
 
     save.loadData();
     save.checkSave();
