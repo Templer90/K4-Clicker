@@ -27,7 +27,7 @@ g.t.intro3 = {
     string: "Nice, your planet now got some <b>water</b>, but this water is cold.<br> " +
         "You need to raise the <b>temperature</b>.<br> " +
         "Let's create a <b>sun</b>. To make it, you need :<br> " +
-        "75 hydrogen, 15 helium and 10 oxygen.<br> " +
+        "75 hydrogen, 15 Energy and 10 oxygen.<br> " +
         "Then, create the Sun." + g.t.spacer
 };
 g.t.intro4 = {

@@ -1,11 +1,5 @@
 g.collider = g.c = {};
 g.collider.borders = [];
-g.collider.createHolder = function (x, y, radius) {
-    return new Holder(x, y, radius);
-};
-g.collider.createEmitter = function (x, y, radius, angle, id, dir) {
-    return new Emitter(x, y, radius, angle, id, dir);
-};
 g.collider.intersect = function (x1, y1, x2, y2,
                                  x3, y3, x4, y4) {
     const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
@@ -27,36 +21,44 @@ g.collider.length = function (x1, y1, x2, y2) {
     let b = y1 - y2;
     return Math.sqrt(a * a + b * b);
 };
+g.collider.genHitDiff = function (p) {
+    let a = g.collider.length(p.pos.x, p.pos.y, p.a.x, p.a.y);
+    let b = g.collider.length(p.pos.x, p.pos.y, p.b.x, p.b.y);
+    return Math.abs(a - b);
+};
 g.collider.circles = {
-    drawables: [],
+    drawable: [],
     emitter: [],
     pseudo: [],
+    statistic: {
+        unstable: false,
+        inputEnergy: 0,
+        outputEnergy: 0,
+        inputs: [],
+        outputs: []
+    },
     each(callback) {  // iterator
-        for (let i = 0; i < this.drawables.length; i++) {
-            callback(this.drawables[i], i);
+        for (let i = 0; i < this.drawable.length; i++) {
+            callback(this.drawable[i], i);
         }
     },
     draw(ctx) {
         this.each(c => {
             c.draw(ctx);
         });
-        for (let i = 0; i < this.pseudo.length; i++) {
-            this.pseudo[i].draw(ctx);
-        }
+        this.pseudo.forEach((p) => {
+            p.draw(ctx)
+        })
     },
     calcTrajectory() {
-        //1) get all Inersections
-        //2) pick intersection that is the closeset to both    
-        //3) remove them from list and add pseudo emmiter
+        //1) get all Intersections
+        //2) pick intersection that is the closest to both    
+        //3) remove them from list and add pseudo emitter
         //4) repeat
-
-        let idFunc = function (a, b) {
-            return "[" + a.id + "," + b.id + "]";
-        };
-
+        this.statistic.inputs = this.emitter;
+        this.statistic.outputs= [];
 
         let allEmitter = [];
-        let subEmitter = [];
         this.pseudo = [];
 
         for (let i = 0; i < this.emitter.length; i++) {
@@ -67,12 +69,13 @@ g.collider.circles = {
         for (let iterations = 0; iterations < 100; iterations++) {
             let lines = new Map();
             let potentials = [];
-            let arr=[];
+            let visited=[];
+            
             for (let i = 0; i < allEmitter.length; i++) {
-                arr[i]=[];
+                visited[i]=[];
                 lines.set(allEmitter[i], []);
                 for (let j = 0; j < allEmitter.length; j++) {
-                    arr[i][j]=false;
+                    visited[i][j]=false;
                 }
             }
 
@@ -86,9 +89,9 @@ g.collider.circles = {
                             let info = {a: a, b: b, pos: pot};
                            
 
-                            if ((arr[i][j] === false) && (arr[j][i] === false)) {
-                                arr[j][i] = true;
-                                arr[i][j] = true;
+                            if ((visited[i][j] === false) && (visited[j][i] === false)) {
+                                visited[j][i] = true;
+                                visited[i][j] = true;
                                 potentials.push(info);
                                 lines.get(info.a).push(info);
                                 lines.get(info.b).push(info);
@@ -99,45 +102,69 @@ g.collider.circles = {
             }
 
             if (potentials.length === 0) {
+                this.statistic.outputs = allEmitter;
                 break;
             }
-
-        
+            
+            let smallestIndex = 0;
             for (let i = 0; i < potentials.length; i++) {
-                let p = potentials[i];
-                let la=lines.get(p.a).length;
-                let lb=lines.get(p.b).length;
-                if ((la === 1) && (lb === 1)) {
-                    allEmitter = allEmitter.filter((item) => {
-                        return (item !== p.a) && (item !== p.b);
-                    });
+                let potentialHit = potentials[0];
+                let la = lines.get(potentialHit.a).length;
+                let lb = lines.get(potentialHit.b).length;
 
-                    p.a.xEnd = p.pos.x;
-                    p.a.yEnd = p.pos.y;
-                    p.b.xEnd = p.pos.x;
-                    p.b.yEnd = p.pos.y;
-                    let pseudo = new PseudoEmitter(p.pos.x, p.pos.y, 7, p.a, p.b);
-                    
-                    allEmitter.push(pseudo);
-                    this.pseudo.push(pseudo);
+                if ((la === 1) && (lb === 1)) {
+                    //We found a Ray with ONE intersection
+                    smallestIndex = i;
                     break;
+                } else {
+                    //Is this the smallest intersection we found 
+                    if (g.collider.genHitDiff(potentials[i]) < g.collider.genHitDiff(potentials[smallestIndex])) {
+                        smallestIndex = i;
+                    }
                 }
             }
+
+            let potentialHit = potentials[smallestIndex];
+            allEmitter = allEmitter.filter((item) => {
+                return (item !== potentialHit.a) && (item !== potentialHit.b);
+            });
+
+            potentialHit.a.xEnd = potentialHit.pos.x;
+            potentialHit.a.yEnd = potentialHit.pos.y;
+            potentialHit.b.xEnd = potentialHit.pos.x;
+            potentialHit.b.yEnd = potentialHit.pos.y;
+
+            let pseudo = new PseudoEmitter(potentialHit.pos.x, potentialHit.pos.y, potentialHit.a, potentialHit.b);
+            allEmitter.push(pseudo);
+            this.pseudo.push(pseudo);
         }
-
-
     },
-    addEmmitter(x, y, radius, angle) {
-        let holder = g.collider.createHolder(x + 13, y + 13, 8);
-        let emitter = g.collider.createEmitter(x, y, radius, angle, this.emitter.length, holder);
+    addEmitter(x, y, angle) {
+        let holder = new Holder(x + 13, y + 13);
+        let emitter = new Emitter(x, y, this.emitter.length, holder);
 
-        emitter.addDir(holder);
-        holder.addEmmiter(emitter);
+        emitter.addDirIndicator(holder);
+        holder.addEmitter(emitter);
 
-        this.drawables.push(emitter);
+        this.drawable.push(emitter);
         this.emitter.push(emitter);
-        this.drawables.push(holder);
+        this.drawable.push(holder);
         return emitter;
+    },
+    reset(){
+        this.drawable=[];
+        this.emitter=[];
+    },
+    load(x,y,indicatorX,indicatorY,element){
+        let holder = new Holder(indicatorX, indicatorY);
+        let emitter = new Emitter(x, y, this.emitter.length, holder, element);
+
+        emitter.addDirIndicator(holder);
+        holder.addEmitter(emitter);
+
+        this.drawable.push(emitter);
+        this.emitter.push(emitter);
+        this.drawable.push(holder);
     },
     getClosest(pos) {
         let minDist, i, dist, x, y, foundCircle;
@@ -156,6 +183,7 @@ g.collider.circles = {
         return foundCircle;
     }
 };
+game.collider.changed = true;
 game.collider.init = () => {
     let canvas = document.getElementById('canvas');
     canvas.style.border = "1px black solid";
@@ -168,16 +196,17 @@ game.collider.init = () => {
         {x1: ctx.canvas.width, y1: 0, x2: 0, y2: 0}
     ];
 
-    function mainLoop(time) {  // this is called 60 times a second if there is no delay
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        updateDisplay(); // call  the function that is rendering the display
+    function mainLoop(time) {
+        // this is called 60 times a second if there is no delay
+        if (game.collider.changed) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            updateDisplay(); // call  the function that is rendering the display
+            game.collider.changed = false;
+        }
         // get the next frame
         requestAnimationFrame(mainLoop);
     }
-
-    // request the first frame. It will not start untill all the code below has been run
     requestAnimationFrame(mainLoop);
-
 
     let mouse = (function () {
         let bounds;
@@ -192,6 +221,7 @@ game.collider.init = () => {
             } else if (event.type === "mouseup") {
                 m.button = false;
             }
+            game.collider.changed=true;
         }
 
         m.start = function (element) {
@@ -234,7 +264,7 @@ game.collider.init = () => {
                     dragging.start("move", overCircle);
                     overCircle = null;
                 } else {
-                    dragging.start("create", g.collider.circles.addEmmitter(mouse.x, mouse.y, 10, Math.PI / 4));
+                    dragging.start("create", g.collider.circles.addEmitter(mouse.x, mouse.y, Math.PI / 4));
                 }
             }
             c = dragging.currentObj;
@@ -258,8 +288,9 @@ game.collider.init = () => {
         }
         ctx.strokeStyle = "black";
 
-        g.collider.circles.calcTrajectory();
-        g.collider.circles.draw(ctx);
+        g.c.circles.calcTrajectory();
+        g.c.circles.draw(ctx);
+        g.c.compileStatistics();
 
         if (!dragging.started) {
             c = g.collider.circles.getClosest(mouse);
@@ -274,6 +305,51 @@ game.collider.init = () => {
         canvas.style.cursor = cursor;
     }
 };
+game.collider.compileStatistics = () => {
+    let statistic = g.collider.circles.statistic;
+    let inputText = "Input " + statistic.inputs.length + " Hydrogen";
+    let outputText = "Output " + statistic.outputs.length + " Outputs";
+    let accumulate = function (arr, callback) {
+        let acc = {};
+        arr.forEach((obj, i) => {
+            if (acc[obj.element] === undefined) {
+                acc[obj.element] = 0;
+            }
+            acc[obj.element]++;
+        });
+        Object.entries(acc).forEach(callback);
+    };
+    
+    accumulate(statistic.inputs, ([key, value]) => {
+        inputText += "<br>" + key + " :" + value;
+    });
+
+    accumulate(statistic.outputs, ([key, value]) => {
+        outputText += "<br>" + key + " :" + value;
+    });
+
+    document.getElementById('colliderInput').innerHTML = inputText;
+    document.getElementById('colliderOutput').innerHTML = outputText;
+};
+
+game.collider.save = () => {
+    let saveObj=[];
+    g.collider.circles.emitter.forEach((obj)=>{
+        saveObj.push({x:obj.x,y:obj.y, dirIndicator:{x:obj.dirIndicator.x,y:obj.dirIndicator.y}, element:obj.element });
+    });
+    
+    return saveObj;
+};
+
+game.collider.load = (saveObj) => {
+    g.collider.circles.reset();
+
+    saveObj.forEach((obj) => {
+        g.collider.circles.load(obj.x, obj.y, obj.dirIndicator.x, obj.dirIndicator.y, obj.element);
+    });
+    game.collider.changed=true;
+};
+
 game.collider.update = (event) => {
 
 };

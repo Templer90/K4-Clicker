@@ -159,15 +159,15 @@ g.b.list = [
             },
         },
         1.15),
-    new g.b.create("Helium build", "Create some helium", {
+    new g.b.create("Energy build", "Create some Energy", {
             amount: 25,
-            type: 'Helium'
+            type: 'Energy'
         },
-        {perSec:1, type: "Helium"},
+        {perSec:1, type: "Energy"},
         {
-            type: "Helium",
+            type: "Energy",
             func: (value, delta) => {
-                game.ressources.owned.Helium += value * delta;
+                game.ressources.owned.Energy += value * delta;
             },
         },
         1.15),

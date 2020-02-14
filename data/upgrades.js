@@ -28,13 +28,13 @@ g.u.list = [
         game.ressources.perClick.Oxygen.amount *= 1.5;
     }),
 
-    new g.u.create("Helium I", "Helium/click x2", {amount: 10, type: 'Helium'}, () => {
-        game.ressources.perClick.Helium.amount *= 2;
+    new g.u.create("Energy I", "Energy/click x2", {amount: 10, type: 'Energy'}, () => {
+        game.ressources.perClick.Energy.amount *= 2;
     }),
-    new g.u.create("Helium II", "Helium/click x2", {amount: 75, type: 'Helium'}, () => {
-        game.ressources.perClick.Helium.amount *= 2;
+    new g.u.create("Energy II", "Energy/click x2", {amount: 75, type: 'Energy'}, () => {
+        game.ressources.perClick.Energy.amount *= 2;
     }),
-    new g.u.create("Helium III", "Helium/click x1.5", {amount: 1000, type: 'Helium'}, () => {
-        game.ressources.perClick.Helium.amount *= 1.5;
+    new g.u.create("Energy III", "Energy/click x1.5", {amount: 1000, type: 'Energy'}, () => {
+        game.ressources.perClick.Energy.amount *= 1.5;
     })
 ];

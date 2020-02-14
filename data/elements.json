@@ -1,4 +1,5 @@
 {
+  "Licence": "https://github.com/Bowserinator/Periodic-Table-JSON/blob/master/PeriodicTableJSON.json",
   "elements": [
     {
       "name": "Hydrogen",

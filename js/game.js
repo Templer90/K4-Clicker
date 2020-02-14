@@ -12,7 +12,7 @@ g.options.now = new Date().getTime();
 g.options.version = "0.001 Alpha";
 
 g.ressources = {};
-g.ressources.list = ["Hydrogen", "Oxygen", "Helium", "Water", "Cells", "Meat", "Sun", "Atmosphere Generator", ""];
+g.ressources.list = ["Hydrogen", "Oxygen", "Energy", "Water", "Cells", "Meat", "Sun", "Atmosphere Generator", ""];
 g.ressources.perClick = {};
 g.ressources.owned = {};
 g.ressources.total = {};
@@ -67,7 +67,7 @@ game.init = function () {
 
     g.options.init = true;
 };
-game.addHoldingFunction=function(){
+game.addHoldingFunction = function () {
     window.clearInterval(game.holding);
     game.removeHoldingFunction();
     $(".multiClickable").each(function (index, item) {
@@ -80,7 +80,7 @@ game.addHoldingFunction=function(){
         });
     });
 };
-game.removeHoldingFunction=function(){
+game.removeHoldingFunction = function () {
     window.clearInterval(game.holding);
     $(".multiClickable").each(function (index, item) {
         $(item).off('mousedown').off('mouseup mouseleave');
@@ -90,7 +90,7 @@ game.display = function () {
     $("#ressources-display").html(
         "Hydrogen : " + fix(g.ressources.owned.Hydrogen, 0) + "<br>" +
         "Oxygen : " + fix(g.ressources.owned.Oxygen, 0) + "<br>" +
-        "Helium : " + fix(g.ressources.owned.Helium, 0) + "<br>" +
+        "Energy : " + fix(g.ressources.owned.Energy, 0) + "<br>" +
         "Water : " + fix(g.ressources.owned.Water, 0) + " mL<br>" +
         "Meat : " + fix(g.ressources.owned.Meat, 2) + "<br>" +
         "Cells : " + fix(g.ressources.owned.Cells, 0) + "/" + fix(h.maxCells(), 0)
@@ -99,7 +99,7 @@ game.display = function () {
 game.buttons = function () {
     $("#btn-1-1").html("Create hydrogen (+" + fix(g.ressources.perClick.Hydrogen.amount, 0) + ")");
     $("#btn-1-2").html("Create oxygen (+" + fix(g.ressources.perClick.Oxygen.amount, 0) + ")");
-    $("#btn-1-3").html("Create helium (+" + fix(g.ressources.perClick.Helium.amount, 0) + ")");
+    $("#btn-1-3").html("Create Energy (+" + fix(g.ressources.perClick.Energy.amount, 0) + ")");
 
     let waterButton = $("#btn-2-1");
     waterButton.html("Generate water (+" + fix(g.ressources.perClick.Water.amount * g.buyMultiplier, 0) + " mL)");
@@ -107,7 +107,7 @@ game.buttons = function () {
 
     let cellButton = $("#btn-3-1");
     cellButton.html("Generate cell (+" + fix(g.ressources.perClick.Cells.amount * g.buyMultiplier, 0) + ")");
-    cellButton.attr('data-original-title', 'Cost ' + fix((g.cellCost * g.buyMultiplier), 0) + ' helium');
+    cellButton.attr('data-original-title', 'Cost ' + fix((g.cellCost * g.buyMultiplier), 0) + ' energy');
 
     if (g.ressources.owned.Sun === 1) {
         $("#btn-3-2").css('display', 'none');
