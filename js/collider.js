@@ -35,7 +35,8 @@ g.collider.circles = {
         inputEnergy: 0,
         outputEnergy: 0,
         inputs: [],
-        outputs: []
+        outputs: [],
+        pseudo:[]
     },
     each(callback) {  // iterator
         for (let i = 0; i < this.drawable.length; i++) {
@@ -56,7 +57,8 @@ g.collider.circles = {
         //3) remove them from list and add pseudo emitter
         //4) repeat
         this.statistic.inputs = this.emitter;
-        this.statistic.outputs= [];
+        this.statistic.outputs = [];
+        this.statistic.pseudo = [];
 
         let allEmitter = [];
         this.pseudo = [];
@@ -129,14 +131,13 @@ g.collider.circles = {
                 return (item !== potentialHit.a) && (item !== potentialHit.b);
             });
 
-            potentialHit.a.xEnd = potentialHit.pos.x;
-            potentialHit.a.yEnd = potentialHit.pos.y;
-            potentialHit.b.xEnd = potentialHit.pos.x;
-            potentialHit.b.yEnd = potentialHit.pos.y;
+            potentialHit.a.endPos(potentialHit.pos.x, potentialHit.pos.y);
+            potentialHit.b.endPos(potentialHit.pos.x, potentialHit.pos.y);
 
             let pseudo = new PseudoEmitter(potentialHit.pos.x, potentialHit.pos.y, potentialHit.a, potentialHit.b);
             allEmitter.push(pseudo);
             this.pseudo.push(pseudo);
+            this.statistic.pseudo.push(pseudo);
         }
     },
     addEmitter(x, y, angle) {
@@ -269,8 +270,8 @@ game.collider.init = () => {
             }
             c = dragging.currentObj;
             if (dragging.type === "create") {
-                x = c.x - mouse.x;
-                y = c.y - mouse.y;
+                dragging.currentObj.dirIndicator.x = mouse.x;
+                dragging.currentObj.dirIndicator.y = mouse.y;
             } else if (dragging.type === "move") {
                 x = dragging.startX - mouse.x;
                 y = dragging.startY - mouse.y;
@@ -319,10 +320,20 @@ game.collider.compileStatistics = () => {
         });
         Object.entries(acc).forEach(callback);
     };
-    
+
     accumulate(statistic.inputs, ([key, value]) => {
         inputText += "<br>" + key + " :" + value;
     });
+    
+    let energy = 0;
+    statistic.inputs.forEach((obj, i) => {
+        let percent = obj.length / obj.maxLength;
+        energy += percent * 10;
+    });
+    statistic.pseudo.forEach((obj, i) => {
+        energy /= obj.efficiency;
+    });
+    inputText += "<br>Energey " + energy;
 
     accumulate(statistic.outputs, ([key, value]) => {
         outputText += "<br>" + key + " :" + value;

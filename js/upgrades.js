@@ -1,43 +1,46 @@
-g.upgrades = g.u = {};
-g.u.owned = {};
+class Upgrade {
+    constructor(name, desc, price, boughtFunction, dependsOn = undefined, buyCheckFunction=undefined) {
+        this.name = name.replace(/ /g, "_");
+        this.displayName = name;
+        this.desc = desc;
+        this.boughtFunction = boughtFunction;
+        this.depends = dependsOn;
+        this.buyCheckFunction = buyCheckFunction;
 
-game.upgrades.create = function (name, desc, price, boughtFunction, dependsOn = undefined) {
-    this.name = name.replace(/ /g,"_");
-    this.displayName = name;
-    this.desc = desc;
-
-    if (!Array.isArray(price)) {
-        price = [price];
+        this.price = price;
+        if (!Array.isArray(price)) {
+            this.price = [price];
+        }
+        this.costString = helpers.genCostString(price);
     }
-    this.price = {
-        checkResources: () => {
-            for (let i = 0; i < price.length; i++) {
-                if (g.ressources.owned[price[i].type] < price[i].amount) {
-                    return false;
-                }
-            }
-            return true;
-        },
-        pay: () => {
-            price.forEach((p) => {
-                g.ressources.owned[p.type] -= p.amount;
-            });
-        },
-        costString: helpers.genCostString(price)
-    };
     
-    this.boughtFunction = boughtFunction;
-    this.depends = dependsOn;
+    checkResources() {
+        for (let i = 0; i < this.price.length; i++) {
+            if (g.ressources.owned[this.price[i].type] < this.price[i].amount) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-    this.buyable = () => {
+    pay() {
+        this.price.forEach((p) => {
+            g.ressources.owned[p.type] -= p.amount;
+        });
+    }
+    
+    buyable() {
         let dependency = true;
         if (this.depends !== undefined) {
             dependency = this.depends();
         }
-        
-        return dependency && this.price.checkResources() && g.u.owned[this.name] === false;
-    };
-};
+
+        return dependency && this.checkResources() && g.u.owned[this.name] === false;
+    }
+}
+
+g.upgrades = g.u = {};
+g.u.owned = {};
 
 game.upgrades.buy = (thing) => {
     let obj = thing;
@@ -46,7 +49,7 @@ game.upgrades.buy = (thing) => {
     }
 
     if (obj.buyable()) {
-        obj.price.pay();
+        obj.pay();
         obj.boughtFunction();
         g.u.owned[obj.name] = true;
         g.buttons();
@@ -65,7 +68,7 @@ game.upgrades.init = () => {
     g.u.list.forEach((obj, i) => {
         g.u.list[obj.name] = obj;
         g.u.owned[obj.name] = false;
-     
+
 
         let main = document.createElement("div");
         main.setAttribute('id', 'upgrades-row-' + i);
@@ -76,7 +79,7 @@ game.upgrades.init = () => {
 
         let paragraph = document.createElement("p");
         paragraph.setAttribute('class', 'no-margin');
-        paragraph.innerHTML = obj.displayName + " : " + obj.desc + "<br>" + obj.price.costString;
+        paragraph.innerHTML = obj.displayName + " : " + obj.desc + "<br>" + obj.costString;
         infoBox.append(paragraph);
 
         let buyButton = document.createElement("div");
@@ -90,7 +93,7 @@ game.upgrades.init = () => {
         };
         buyLink.innerHTML = 'Buy upgrade';
         obj.buylink = buyLink;
-        obj.mainDiv=main;
+        obj.mainDiv = main;
 
         buyButton.append(buyLink);
         main.append(infoBox);
@@ -103,8 +106,8 @@ game.upgrades.checkBuyStatus = function () {
         if (obj.buyable()) {
             obj.buylink.removeAttribute('disabled');
             obj.buylink.classList.remove('disabled');
-        }else{
-            obj.buylink.setAttribute('disabled','disabled');
+        } else {
+            obj.buylink.setAttribute('disabled', 'disabled');
             obj.buylink.classList.add('disabled');
         }
     });
@@ -124,19 +127,19 @@ game.upgrades.hide = () => {
     g.u.list.filter((obj) => g.u.owned[obj.name] === true).forEach(func);
 };
 game.upgrades.onlyBuyable = () => {
-   //g.u.list.forEach((obj, i) => {
-   //    if (obj.buyable()) {
-   //        obj.mainDiv.style.display = '';
-   //    }else{
-   //        obj.mainDiv.style.display = 'none';
-   //    }
-   //});
+    //g.u.list.forEach((obj, i) => {
+    //    if (obj.buyable()) {
+    //        obj.mainDiv.style.display = '';
+    //    }else{
+    //        obj.mainDiv.style.display = 'none';
+    //    }
+    //});
 };
 game.upgrades.check = () => {
     g.u.onlyBuyable();
     g.u.list.forEach((obj, i) => {
         if (g.u.owned[obj.name] === true) {
-            let upgradeBTN =  obj.mainDiv.getElementById("upgrades-btn-" + i);
+            let upgradeBTN = obj.mainDiv.getElementById("upgrades-btn-" + i);
             upgradeBTN.setAttribute('onclick', '');
             upgradeBTN.classList.replace('btn-primary', 'btn-success');
             upgradeBTN.innerHTML = 'Owned';

@@ -18,7 +18,8 @@ class Emitter extends Drawable {
         this.dirIndicator = dirIndicator;
         this.radius = 10;
         this.id = id;
-        this.length = 100;
+        this.maxLength = 100;
+        this.length = 0;
         this.xEnd = -10;
         this.yEnd = -10;
         this.element = element;
@@ -40,8 +41,8 @@ class Emitter extends Drawable {
     calcTrajectoryBoundary(list) {
         this.angle = Math.atan2(this.dirIndicator.x - this.x, this.dirIndicator.y - this.y);
 
-        this.xEnd = this.x + Math.sin(this.angle) * this.length;
-        this.yEnd = this.y + Math.cos(this.angle) * this.length;
+        this.xEnd = this.x + Math.sin(this.angle) * this.maxLength;
+        this.yEnd = this.y + Math.cos(this.angle) * this.maxLength;
 
         let max = this.length;
         for (let i = 0; i < list.length; i++) {
@@ -52,8 +53,7 @@ class Emitter extends Drawable {
             if (e !== undefined) {
                 let len = g.collider.length(this.xEnd, this.yEnd, e.x, e.y);
                 if (len <= max) {
-                    this.xEnd = e.x;
-                    this.yEnd = e.y;
+                    this.endPos(e.x,e.y);
                     max = len;
                 }
             }
@@ -61,16 +61,14 @@ class Emitter extends Drawable {
     }
 
     draw(ctx) {
+        ctx.beginPath();
         if (this.selected) {
             ctx.fillStyle = "rgba(255,45,75,0.6)";
         } else {
             ctx.fillStyle = "rgba(0,255,255,0.1)";
         }
-        ctx.fill();
-
-        ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-
+        ctx.fill();
 
         ctx.moveTo(this.x, this.y);
         let oldgradient = ctx.strokeStyle;
@@ -101,9 +99,9 @@ class Emitter extends Drawable {
             this.drawShorter(ctx);
         }
     }
-    
-    isShorter(){
-        return (g.collider.length(this.x, this.y, this.xEnd, this.yEnd) < g.collider.length(this.x, this.y, this.dirIndicator.x, this.dirIndicator.y));
+
+    isShorter() {
+        return (this.length < g.collider.length(this.x, this.y, this.dirIndicator.x, this.dirIndicator.y));
     }
 
     drawShorter(ctx) {
@@ -114,31 +112,63 @@ class Emitter extends Drawable {
         ctx.stroke();
     }
 
+    endPos(x, y) {
+        this.xEnd = x;
+        this.yEnd = y;
+        this.length = g.collider.length(this.x, this.y, this.xEnd, this.yEnd);
+    }
+
     whileDrag(ctx) {
     }
 }
 
 class PseudoEmitter extends Emitter {
+    pseudoFusion(a,b){
+        let arr={
+            HH:"D",
+            DH:"T",
+            TH:"He",
+            HeH:"Li",
+            DD:"He",
+        };
+        
+        if(arr[a+b]!==undefined)return arr[a+b];
+        if(arr[b+a]!==undefined)return arr[b+a];
+        return b+a;
+    }
+    
     constructor(x, y, emitterA, emitterB) {
         super(x, y);
         this.id = "Pseudo("+emitterA.id+","+emitterB.id+")";
         this.emitterA = emitterA;
         this.emitterB = emitterB;
         
-        this.element = "(" + this.emitterA.element + this.emitterB.element + ")";
+        this.element = this.pseudoFusion(emitterA.element, emitterB.element);
 
+        //this is not working correctly
         let angle1 = Math.atan2(this.emitterA.x - this.x, this.emitterA.y - this.y);
         let angle2 = Math.atan2(this.emitterB.x - this.x, this.emitterB.y - this.y);
+        let angle3 = Math.atan2(this.emitterA.y - this.emitterB.y, this.emitterA.x - this.emitterB.x);
         
         if(angle1>Math.PI)angle1=-(Math.PI-angle1);
         if(angle2>Math.PI)angle2=-(Math.PI-angle2);
         this.angle = Math.PI+angle1 + (angle2 - angle1) / 2;// diffAngle + ((diffAngle > Math.PI) ? +Math.PI : -Math.PI);
         
         this.radius = 6;
-        this.length = 90;
+        this.maxLength = 90;
+        this.length = this.maxLength;
 
         this.xEnd = this.x + Math.sin(this.angle) * this.length;
         this.yEnd = this.y + Math.cos(this.angle) * this.length;
+
+        let len1=g.collider.length(this.emitterA.x, this.emitterA.y, this.x,this.y);
+        let len2=g.collider.length( this.emitterB.x, this.emitterB.y, this.x,this.y);
+        let eff=Math.abs(len1-len2);
+        this.efficiency = 1;
+        if (eff - 10 > 0) {
+            this.efficiency = 1 / (eff);
+        }
+        
 
         this.whileDrag = null;
     }
@@ -160,6 +190,18 @@ class PseudoEmitter extends Emitter {
 
         ctx.fillStyle = "rgba(0,0,0)";
         ctx.fillText("P", this.x, this.y);
+
+
+        let abs = g.collider.length(this.emitterA.x, this.emitterA.y, this.emitterB.x, this.emitterB.y)-20;
+        if (abs < (this.emitterA.length + this.emitterB.length)/1.5) {
+            ctx.beginPath();
+            ctx.strokeStyle = "rgba(255,242,15,0.9)";
+            ctx.lineWidth = 30 - abs;
+            ctx.moveTo(this.emitterA.x, this.emitterA.y);
+            ctx.lineTo(this.emitterB.x, this.emitterB.y);
+            ctx.stroke();
+            ctx.lineWidth = 1;
+        }
     }
 }
 
