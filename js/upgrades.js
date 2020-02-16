@@ -38,6 +38,28 @@ class Upgrade {
         return dependency && this.checkResources() && g.u.owned[this.name] === false;
     }
 }
+class MultiUpgrade extends Upgrade {
+    constructor(name, desc, price, max, boughtFunction, dependsOn = undefined, buyCheckFunction = undefined) {
+        super(name, desc, price, boughtFunction, dependsOn, buyCheckFunction);
+        this.max = max;
+    }
+    
+    updateDots(){
+        let dots = document.getElementById("upgrades-btn-" + this.name).parentElement.parentElement.getElementsByClassName("dot");
+        for (let i = 0; i < g.u.owned[this.name]; i++) {
+            dots[i].classList.replace("dot-off", "dot-on");
+        }
+    }
+    
+    buyable() {
+        let dependency = true;
+        if (this.depends !== undefined) {
+            dependency = this.depends();
+        }
+        
+        return dependency && this.checkResources() && g.u.owned[this.name] < this.max;
+    }
+}
 
 g.upgrades = g.u = {};
 g.u.owned = {};
@@ -51,15 +73,29 @@ game.upgrades.buy = (thing) => {
     if (obj.buyable()) {
         obj.pay();
         obj.boughtFunction();
-        g.u.owned[obj.name] = true;
+        if (obj instanceof MultiUpgrade) {
+            if (g.u.owned[obj.name] === false) {
+                g.u.owned[obj.name] = 0;
+            }
+            
+            g.u.owned[obj.name]++;
+            obj.updateDots();
+            
+            if (g.u.owned[obj.name] === obj.max) {
+                g.u.owned[obj.name] = true;
+            } 
+        } else {
+            g.u.owned[obj.name] = true;
+        }
+
         g.buttons();
         g.status();
 
-        let upgradeBTN = document.getElementById("upgrades-btn-" + obj.name);
-        upgradeBTN.setAttribute('onclick', '');
-        upgradeBTN.classList.replace('btn-primary', 'btn-success');
-        upgradeBTN.innerHTML = 'Owned';
-        g.u.hide();
+        if (g.u.owned[obj.name] === true) {
+            let upgradeBTN = document.getElementById("upgrades-btn-" + obj.name);
+            upgradeBTN.remove();
+            g.u.hide();
+        }
     }
 };
 
@@ -72,18 +108,26 @@ game.upgrades.init = () => {
 
         let main = document.createElement("div");
         main.setAttribute('id', 'upgrades-row-' + i);
-        main.setAttribute('class', 'row bottom-spacer');
+        main.setAttribute('class', 'row bottom-spacer upgrade-holder');
 
         let infoBox = document.createElement("div");
         infoBox.setAttribute('class', 'col-md-8');
 
         let paragraph = document.createElement("p");
         paragraph.setAttribute('class', 'no-margin');
-        paragraph.innerHTML = obj.displayName + " : " + obj.desc + "<br>" + obj.costString;
+
+        let dots = "";
+        if (obj instanceof MultiUpgrade) {
+            dots = " " + "<span class='dot dot-off'></span>".repeat(obj.max);
+        }
+       
+        paragraph.innerHTML = obj.displayName + " : " + obj.desc + dots+ "<br>" + obj.costString;
         infoBox.append(paragraph);
 
         let buyButton = document.createElement("div");
         buyButton.setAttribute('class', 'col-md-4');
+        buyButton.setAttribute('style', ' margin: auto;');
+       
         let buyLink = document.createElement("a");
         buyLink.id = 'upgrades-btn-' + obj.name;
         buyLink.setAttribute('class', 'btn btn-primary btn-block');

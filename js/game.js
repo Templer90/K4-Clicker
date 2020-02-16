@@ -24,7 +24,7 @@ g.cellCost = 5;
 g.buyMultiplier = 1;
 
 g.username = undefined;
-g.holding = null;
+g.holding = [];
 
 // CORE FUNCTIONS
 game.init = function () {
@@ -67,21 +67,28 @@ game.init = function () {
 
     g.options.init = true;
 };
+game.clearHolding=function(){
+    game.holding.forEach((i)=>
+        window.clearInterval(i)
+    );
+    game.holding=[];
+};
 game.addHoldingFunction = function () {
-    window.clearInterval(game.holding);
+    game.clearHolding();
     game.removeHoldingFunction();
     $(".multiClickable").each(function (index, item) {
         $(item).on('mousedown', () => {
-            game.holding = window.setInterval(() => {
+            game.holding.push( window.setInterval(() => {
                 item.click();
-            }, game.options.hold);
+            }, game.options.hold));
         }).on('mouseup mouseleave', () => {
-            window.clearInterval(game.holding);
+            game.clearHolding();
         });
     });
 };
 game.removeHoldingFunction = function () {
-    window.clearInterval(game.holding);
+    game.clearHolding();
+    
     $(".multiClickable").each(function (index, item) {
         $(item).off('mousedown').off('mouseup mouseleave');
     });

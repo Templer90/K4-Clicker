@@ -67,3 +67,22 @@ header {
 .nav > li {
     margin-right: 3em;
 }
+
+.upgrade-holder {
+    border: 1px solid black;
+}
+
+.dot {
+    height: 0.5em;
+    width: 0.5em;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.dot-off {
+    background-color: #bbb;
+}
+
+.dot-on {
+    background-color: #fffd00;
+}

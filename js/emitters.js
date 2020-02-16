@@ -163,10 +163,12 @@ class PseudoEmitter extends Emitter {
 
         let len1=g.collider.length(this.emitterA.x, this.emitterA.y, this.x,this.y);
         let len2=g.collider.length( this.emitterB.x, this.emitterB.y, this.x,this.y);
-        let eff=Math.abs(len1-len2);
+        let eff = Math.abs(len1 - len2);
         this.efficiency = 1;
         if (eff - 10 > 0) {
-            this.efficiency = 1 / (eff);
+            this.efficiency = 1 / (eff - 10);
+        } else if (eff - 3 > 0) {
+            this.efficiency = eff;
         }
         
 
