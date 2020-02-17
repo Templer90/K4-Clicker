@@ -3,7 +3,7 @@
         <div class="col-md-7">
             <canvas id="canvas" width="450" height="450"/>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-5" id="colliderInfo">
             <div class="row">
                 <div id="colliderStatistic">
                     <div id="colliderInput">Text</div>
@@ -11,11 +11,28 @@
                 </div>
             </div>
             <div class="row">
-                <div class="emmiterOptions">
-                    <a id="btn-emitter" type="button" class="multiClickable genResource btn btn-primary btn-sm btn-block"
-                       onclick="" style="">test</a>
+                <div style="min-height: 3em;"></div>
+            </div>
+            <div class="row">
+                <div id="emitterOptions">
+                    <div id="emitterStatus">
+                        <label for="emitterId" class="d-inline-block">Id:</label><span id="emitterId">-1</span><br>
+                        <label for="emitterLength" class="d-inline-block">Length:</label><span id="emitterLength">-1</span>
+                    </div>
+                    <span class="form-group">
+                        <label for="emitterSelect" class="col-sm-2 control-label">Type</label>
+                        <select id="emitterSelect" class="form-control form-control-sm" onchange="game.c.changeEmitterType(this)">
+                            <option>H</option>
+                            <option>D</option>
+                            <option>T</option>
+                            <option>He</option>
+                            <option>Li</option>
+                        </select>
+                    </span>
                 </div>
             </div>
+            <a id="btn-emitter" type="button" class="multiClickable genResource btn btn-primary btn-sm btn-block"
+               onclick="" style="">test</a>
         </div>
     </div>
 </div>

@@ -176,11 +176,23 @@ class PseudoEmitter extends Emitter {
     }
 
     draw(ctx) {
+        let abs = g.collider.length(this.emitterA.x, this.emitterA.y, this.emitterB.x, this.emitterB.y)-20;
+        if (abs < (this.emitterA.length + this.emitterB.length)/1.5) {
+            ctx.beginPath();
+            ctx.strokeStyle = "rgba(255,242,15,0.5)";
+            ctx.lineWidth = 30 - abs;
+            ctx.moveTo(this.emitterA.x, this.emitterA.y);
+            ctx.lineTo(this.emitterB.x, this.emitterB.y);
+            ctx.stroke();
+            ctx.lineWidth = 1;
+        }
+        
         ctx.beginPath();
+        ctx.fillStyle = "rgba(141,255,40,0.1)";
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-
-
+        ctx.fill();
         ctx.moveTo(this.x, this.y);
+        
         let oldgradient = ctx.strokeStyle;
         let gradient = ctx.createLinearGradient(this.x, this.y, this.xEnd, this.yEnd);
         gradient.addColorStop(0, "green");
@@ -190,20 +202,8 @@ class PseudoEmitter extends Emitter {
         ctx.stroke();
         ctx.strokeStyle = oldgradient;
 
-        ctx.fillStyle = "rgba(0,0,0)";
+        ctx.fillStyle = "rgb(0,0,0)";
         ctx.fillText("P", this.x, this.y);
-
-
-        let abs = g.collider.length(this.emitterA.x, this.emitterA.y, this.emitterB.x, this.emitterB.y)-20;
-        if (abs < (this.emitterA.length + this.emitterB.length)/1.5) {
-            ctx.beginPath();
-            ctx.strokeStyle = "rgba(255,242,15,0.9)";
-            ctx.lineWidth = 30 - abs;
-            ctx.moveTo(this.emitterA.x, this.emitterA.y);
-            ctx.lineTo(this.emitterB.x, this.emitterB.y);
-            ctx.stroke();
-            ctx.lineWidth = 1;
-        }
     }
 }
 

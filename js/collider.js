@@ -1,5 +1,6 @@
 g.collider = g.c = {};
 g.collider.borders = [];
+g.collider.selectedEmitter = undefined;
 g.collider.intersect = function (x1, y1, x2, y2,
                                  x3, y3, x4, y4) {
     const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
@@ -36,7 +37,7 @@ g.collider.circles = {
         outputEnergy: 0,
         inputs: [],
         outputs: [],
-        pseudo:[]
+        pseudo: []
     },
     each(callback) {  // iterator
         for (let i = 0; i < this.drawable.length; i++) {
@@ -71,13 +72,13 @@ g.collider.circles = {
         for (let iterations = 0; iterations < 100; iterations++) {
             let lines = new Map();
             let potentials = [];
-            let visited=[];
-            
+            let visited = [];
+
             for (let i = 0; i < allEmitter.length; i++) {
-                visited[i]=[];
+                visited[i] = [];
                 lines.set(allEmitter[i], []);
                 for (let j = 0; j < allEmitter.length; j++) {
-                    visited[i][j]=false;
+                    visited[i][j] = false;
                 }
             }
 
@@ -89,7 +90,7 @@ g.collider.circles = {
                         let pot = a.calcTrajectory(b);
                         if (pot !== undefined) {
                             let info = {a: a, b: b, pos: pot};
-                           
+
 
                             if ((visited[i][j] === false) && (visited[j][i] === false)) {
                                 visited[j][i] = true;
@@ -107,7 +108,7 @@ g.collider.circles = {
                 this.statistic.outputs = allEmitter;
                 break;
             }
-            
+
             let smallestIndex = 0;
             for (let i = 0; i < potentials.length; i++) {
                 let potentialHit = potentials[0];
@@ -152,11 +153,11 @@ g.collider.circles = {
         this.drawable.push(holder);
         return emitter;
     },
-    reset(){
-        this.drawable=[];
-        this.emitter=[];
+    reset() {
+        this.drawable = [];
+        this.emitter = [];
     },
-    load(x,y,indicatorX,indicatorY,element){
+    load(x, y, indicatorX, indicatorY, element) {
         let holder = new Holder(indicatorX, indicatorY);
         let emitter = new Emitter(x, y, this.emitter.length, holder, element);
 
@@ -207,6 +208,7 @@ game.collider.init = () => {
         // get the next frame
         requestAnimationFrame(mainLoop);
     }
+
     requestAnimationFrame(mainLoop);
 
     let mouse = (function () {
@@ -222,7 +224,7 @@ game.collider.init = () => {
             } else if (event.type === "mouseup") {
                 m.button = false;
             }
-            game.collider.changed=true;
+            game.collider.changed = true;
         }
 
         m.start = function (element) {
@@ -245,9 +247,14 @@ game.collider.init = () => {
             this.started = true;
             this.type = type;
             this.currentObj = obj;
-            this.currentObj.selected = !this.currentObj.selected;
+            if (type !== "create") {
+                let oldSelected = this.currentObj.selected;
+                g.collider.circles.each((obj, i) => {
+                    obj.selected = false;
+                });
+                this.currentObj.selected = !oldSelected;
+            }
         }
-
     };
 
     let cursor = "default";
@@ -306,6 +313,11 @@ game.collider.init = () => {
         canvas.style.cursor = cursor;
     }
 };
+game.collider.changeEmitterType = (selector) => {
+    if (game.collider.selectedEmitter !== undefined) {
+        game.collider.selectedEmitter.element = selector.value;
+    }
+};
 game.collider.compileStatistics = () => {
     let statistic = g.collider.circles.statistic;
     let inputText = "Input " + statistic.inputs.length + " Hydrogen";
@@ -324,7 +336,7 @@ game.collider.compileStatistics = () => {
     accumulate(statistic.inputs, ([key, value]) => {
         inputText += "<br>" + key + " :" + value;
     });
-    
+
     let energy = 0;
     statistic.inputs.forEach((obj, i) => {
         let percent = obj.length / obj.maxLength;
@@ -339,28 +351,38 @@ game.collider.compileStatistics = () => {
         outputText += "<br>" + key + " :" + value;
     });
 
+
+    g.c.selectedEmitter = g.c.circles.emitter.find((obj, i) => (obj.selected));
+    if (g.c.selectedEmitter !== undefined) {
+        document.getElementById('emitterId').innerText = g.c.selectedEmitter.id;
+        document.getElementById('emitterLength').innerText = (g.c.selectedEmitter.length / g.c.selectedEmitter.maxLength);
+        document.getElementById('emitterSelect').value = g.c.selectedEmitter.element;
+    }
+
     document.getElementById('colliderInput').innerHTML = inputText;
     document.getElementById('colliderOutput').innerHTML = outputText;
 };
-
 game.collider.save = () => {
-    let saveObj=[];
-    g.collider.circles.emitter.forEach((obj)=>{
-        saveObj.push({x:obj.x,y:obj.y, dirIndicator:{x:obj.dirIndicator.x,y:obj.dirIndicator.y}, element:obj.element });
+    let saveObj = [];
+    g.collider.circles.emitter.forEach((obj) => {
+        saveObj.push({
+            x: obj.x,
+            y: obj.y,
+            dirIndicator: {x: obj.dirIndicator.x, y: obj.dirIndicator.y},
+            element: obj.element
+        });
     });
-    
+
     return saveObj;
 };
-
 game.collider.load = (saveObj) => {
     g.collider.circles.reset();
 
     saveObj.forEach((obj) => {
         g.collider.circles.load(obj.x, obj.y, obj.dirIndicator.x, obj.dirIndicator.y, obj.element);
     });
-    game.collider.changed=true;
+    game.collider.changed = true;
 };
-
 game.collider.update = (event) => {
 
 };
