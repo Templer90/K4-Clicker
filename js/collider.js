@@ -60,6 +60,7 @@ g.collider.circles = {
         this.statistic.inputs = this.emitter;
         this.statistic.outputs = [];
         this.statistic.pseudo = [];
+        this.statistic.unstable = false;
 
         let allEmitter = [];
         this.pseudo = [];
@@ -136,6 +137,9 @@ g.collider.circles = {
             potentialHit.b.endPos(potentialHit.pos.x, potentialHit.pos.y);
 
             let pseudo = new PseudoEmitter(potentialHit.pos.x, potentialHit.pos.y, potentialHit.a, potentialHit.b);
+            if (pseudo.element === undefined) {
+                this.statistic.unstable = true;
+            }
             allEmitter.push(pseudo);
             this.pseudo.push(pseudo);
             this.statistic.pseudo.push(pseudo);
@@ -322,7 +326,7 @@ game.collider.changeEmitterType = (selector) => {
 };
 game.collider.compileStatistics = () => {
     let statistic = g.collider.circles.statistic;
-    let inputText = "Input " + statistic.inputs.length + " Hydrogen";
+    let inputText = "Input " + statistic.inputs.length + " " + (statistic.unstable ? "!!!UNSTABLE!!!" : "");
     let outputText = "Output " + statistic.outputs.length + " Outputs";
     let accumulate = function (arr, callback) {
         let acc = {};

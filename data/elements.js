@@ -1094,7 +1094,10 @@ elements.list = [
         "xpos": 1,
         "ypos": 8
     }];
+// TODO make this faster
 elements.combine = function (a, b) {
+    if ((a === undefined) || (b === undefined)) return undefined;
+    
     let elementA = a;
     let elementB = b;
     if (a.symbol !== undefined) elementA = a.symbol;
