@@ -13,7 +13,7 @@ class Drawable {
 }
 
 class Emitter extends Drawable {
-    constructor(x, y, id, dirIndicator, element = "H") {
+    constructor(x, y, id, dirIndicator, element) {
         super(x, y);
         this.dirIndicator = dirIndicator;
         this.radius = 10;
@@ -123,27 +123,13 @@ class Emitter extends Drawable {
 }
 
 class PseudoEmitter extends Emitter {
-    pseudoFusion(a,b){
-        let arr={
-            HH:"D",
-            DH:"T",
-            TH:"He",
-            HeH:"Li",
-            DD:"He",
-        };
-        
-        if(arr[a+b]!==undefined)return arr[a+b];
-        if(arr[b+a]!==undefined)return arr[b+a];
-        return b+a;
-    }
-    
     constructor(x, y, emitterA, emitterB) {
         super(x, y);
         this.id = "Pseudo("+emitterA.id+","+emitterB.id+")";
         this.emitterA = emitterA;
         this.emitterB = emitterB;
-        
-        this.element = this.pseudoFusion(emitterA.element, emitterB.element);
+
+        this.element = elements.combine(emitterA.element.symbol, emitterB.element.symbol);
 
         //this is not working correctly
         let angle1 = Math.atan2(this.emitterA.x - this.x, this.emitterA.y - this.y);
@@ -171,7 +157,6 @@ class PseudoEmitter extends Emitter {
             this.efficiency = eff;
         }
         
-
         this.whileDrag = null;
     }
 
@@ -188,7 +173,12 @@ class PseudoEmitter extends Emitter {
         }
         
         ctx.beginPath();
-        ctx.fillStyle = "rgba(141,255,40,0.1)";
+        if ( this.element !== undefined) {
+            ctx.fillStyle = "rgba(141,255,40,0.1)";
+        } else {
+            ctx.fillStyle = "rgba(255,20,57,0.22)";
+        }
+       
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         ctx.fill();
         ctx.moveTo(this.x, this.y);
@@ -203,7 +193,11 @@ class PseudoEmitter extends Emitter {
         ctx.strokeStyle = oldgradient;
 
         ctx.fillStyle = "rgb(0,0,0)";
-        ctx.fillText("P", this.x, this.y);
+        if (this.element !== undefined) {
+            ctx.fillText(this.element.symbol, this.x, this.y);
+        } else {
+            ctx.fillText("-i", this.x, this.y);
+        }
     }
 }
 

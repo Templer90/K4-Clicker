@@ -141,9 +141,9 @@ g.collider.circles = {
             this.statistic.pseudo.push(pseudo);
         }
     },
-    addEmitter(x, y, angle) {
+    addEmitter(x, y, element) {
         let holder = new Holder(x + 13, y + 13);
-        let emitter = new Emitter(x, y, this.emitter.length, holder);
+        let emitter = new Emitter(x, y, this.emitter.length, holder, element);
 
         emitter.addDirIndicator(holder);
         holder.addEmitter(emitter);
@@ -272,7 +272,8 @@ game.collider.init = () => {
                     dragging.start("move", overCircle);
                     overCircle = null;
                 } else {
-                    dragging.start("create", g.collider.circles.addEmitter(mouse.x, mouse.y, Math.PI / 4));
+                    let element = document.getElementById('emitterSelect').value;
+                    dragging.start("create", g.collider.circles.addEmitter(mouse.x, mouse.y, elements.find(element)));
                 }
             }
             c = dragging.currentObj;
@@ -315,7 +316,8 @@ game.collider.init = () => {
 };
 game.collider.changeEmitterType = (selector) => {
     if (game.collider.selectedEmitter !== undefined) {
-        game.collider.selectedEmitter.element = selector.value;
+        game.collider.selectedEmitter.element = elements.find(selector.value);
+        game.collider.changed = true
     }
 };
 game.collider.compileStatistics = () => {
@@ -325,14 +327,15 @@ game.collider.compileStatistics = () => {
     let accumulate = function (arr, callback) {
         let acc = {};
         arr.forEach((obj, i) => {
-            if (acc[obj.element] === undefined) {
-                acc[obj.element] = 0;
+            if(obj.element === undefined)return;
+            if (acc[obj.element.name] === undefined) {
+                acc[obj.element.name] = 0;
             }
-            acc[obj.element]++;
+            acc[obj.element.name]++;
         });
         Object.entries(acc).forEach(callback);
     };
-
+    
     accumulate(statistic.inputs, ([key, value]) => {
         inputText += "<br>" + key + " :" + value;
     });
@@ -356,7 +359,7 @@ game.collider.compileStatistics = () => {
     if (g.c.selectedEmitter !== undefined) {
         document.getElementById('emitterId').innerText = g.c.selectedEmitter.id;
         document.getElementById('emitterLength').innerText = (g.c.selectedEmitter.length / g.c.selectedEmitter.maxLength);
-        document.getElementById('emitterSelect').value = g.c.selectedEmitter.element;
+        document.getElementById('emitterSelect').value = g.c.selectedEmitter.element.symbol;
     }
 
     document.getElementById('colliderInput').innerHTML = inputText;
@@ -369,7 +372,7 @@ game.collider.save = () => {
             x: obj.x,
             y: obj.y,
             dirIndicator: {x: obj.dirIndicator.x, y: obj.dirIndicator.y},
-            element: obj.element
+            element: obj.element.symbol
         });
     });
 
