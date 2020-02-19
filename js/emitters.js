@@ -3,6 +3,7 @@ class Drawable {
     constructor(x, y) {
         this.x = x;
         this.y = y;
+        this.id = this.y + Math.random() * this.x;
     }
 
     draw(ctx) {
@@ -17,7 +18,7 @@ class Emitter extends Drawable {
         super(x, y);
         this.dirIndicator = dirIndicator;
         this.radius = 10;
-        this.id = id;
+        //this.id = id;
         this.maxLength = 100;
         this.length = 0;
         this.xEnd = -10;
@@ -81,7 +82,7 @@ class Emitter extends Drawable {
         ctx.strokeStyle = oldgradient;
 
         ctx.fillStyle = "rgba(0,0,0)";
-        ctx.fillText(this.id + "", this.x, this.y);
+        ctx.fillText(this.element.symbol, this.x, this.y);
     }
 
     selectDraw(ctx) {
@@ -125,11 +126,11 @@ class Emitter extends Drawable {
 class PseudoEmitter extends Emitter {
     constructor(x, y, emitterA, emitterB) {
         super(x, y);
-        this.id = "Pseudo("+emitterA.id+","+emitterB.id+")";
+        //this.id = "Pseudo("+emitterA.id+","+emitterB.id+")";
         this.emitterA = emitterA;
         this.emitterB = emitterB;
 
-        this.element = elements.combine(emitterA.element.symbol, emitterB.element.symbol);
+        this.element = elements.combine(emitterA.element, emitterB.element);
 
         //this is not working correctly
         let angle1 = Math.atan2(this.emitterA.x - this.x, this.emitterA.y - this.y);
@@ -204,8 +205,6 @@ class PseudoEmitter extends Emitter {
 class Holder extends Drawable {
     constructor(x, y) {
         super(x, y);
-        this.x = x;
-        this.y = y;
         this.radius = 8;
     }
     

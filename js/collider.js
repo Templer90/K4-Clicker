@@ -157,6 +157,22 @@ g.collider.circles = {
         this.drawable.push(holder);
         return emitter;
     },
+    removeEmitter(emitter) {
+        let em = this.emitter.find((obj, i) => {
+            return obj.id === emitter.id;
+        });
+        let hol = em.dirIndicator;
+
+        this.drawable = this.drawable.filter((item) => {
+            return item.id !== emitter.id;
+        });
+        this.drawable = this.drawable.filter((item) => {
+            return item.id !== hol.id;
+        });
+        this.emitter = this.emitter.filter((item) => {
+            return item.id !== emitter.id;
+        });
+    },
     reset() {
         this.drawable = [];
         this.emitter = [];
@@ -321,6 +337,13 @@ game.collider.init = () => {
 game.collider.changeEmitterType = (selector) => {
     if (game.collider.selectedEmitter !== undefined) {
         game.collider.selectedEmitter.element = elements.find(selector.value);
+        game.collider.changed = true
+    }
+};
+game.collider.removeSelectedEmitter=() => {
+    if (game.collider.selectedEmitter !== undefined) {
+        game.collider.circles.removeEmitter(game.collider.selectedEmitter);
+        game.collider.selectedEmitter = undefined;
         game.collider.changed = true
     }
 };

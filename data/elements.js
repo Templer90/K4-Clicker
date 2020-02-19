@@ -1118,7 +1118,11 @@ elements.combine = function (a, b) {
     });
 };
 elements.find = function (a) {
+    if (a === undefined) return undefined;
+
+    let elementA = a;
+    if (a.symbol !== undefined) elementA = a.symbol;
     return elements.list.find((value, i) => {
-        return value.name === a || value.symbol === a ;
+        return value.name === elementA || value.symbol === elementA;
     });
 };
