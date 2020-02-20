@@ -50,11 +50,11 @@ g.u.list = [
         game.ressources.perClick.Oxygen.amount *= 1.5;
     }),
 
-    new Upgrade("Energy I", "Energy/click x2", {amount: 10, type: 'Energy'}, () => {
+    new MultiUpgrade("Energy I", "Energy/click x2", {amount: 10, type: 'Energy'}, 5,() => {
         game.ressources.perClick.Energy.amount *= 2;
     }),
-    new Upgrade("Energy II", "Energy/click x2", {amount: 75, type: 'Energy'}, () => {
-        game.ressources.perClick.Energy.amount *= 2;
+    new MultiUpgrade("Energy II", "Energy/click x2", {amount: 75, type: 'Energy'}, 5,() => {
+        game.ressources.perClick.Energy.amount *= 1.5;
     }),
     new Upgrade("Energy III", "Energy/click x1.5", {amount: 1000, type: 'Energy'}, () => {
         game.ressources.perClick.Energy.amount *= 1.5;
