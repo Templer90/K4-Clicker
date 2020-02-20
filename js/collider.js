@@ -32,12 +32,15 @@ g.collider.circles = {
     emitter: [],
     pseudo: [],
     statistic: {
-        unstable: false,
+        unstable: true,
         inputEnergy: 0,
         outputEnergy: 0,
-        inputs: [],
-        outputs: [],
-        pseudo: []
+        inputEmitters: [],
+        outputEmitters: [],
+        pseudo: [],
+        
+        inputElements:[],
+        outputElements:[]
     },
     each(callback) {  // iterator
         for (let i = 0; i < this.drawable.length; i++) {
@@ -57,10 +60,14 @@ g.collider.circles = {
         //2) pick intersection that is the closest to both    
         //3) remove them from list and add pseudo emitter
         //4) repeat
-        this.statistic.inputs = this.emitter;
-        this.statistic.outputs = [];
+        this.statistic.inputEmitters = this.emitter;
+        this.statistic.outputEmitters = [];
         this.statistic.pseudo = [];
+        this.statistic.inputElements = [];
+        this.statistic.outputElements = [];
+        
         this.statistic.unstable = false;
+        this.statistic.inputEnergy = 0;
 
         let allEmitter = [];
         this.pseudo = [];
@@ -106,7 +113,7 @@ g.collider.circles = {
             }
 
             if (potentials.length === 0) {
-                this.statistic.outputs = allEmitter;
+                this.statistic.outputEmitters = allEmitter;
                 break;
             }
 
@@ -349,12 +356,13 @@ game.collider.removeSelectedEmitter=() => {
 };
 game.collider.compileStatistics = () => {
     let statistic = g.collider.circles.statistic;
-    let inputText = "Input " + statistic.inputs.length + " " + (statistic.unstable ? "!!!UNSTABLE!!!" : "");
-    let outputText = "Output " + statistic.outputs.length + " Outputs";
+    let inputText = "Input " + statistic.inputEmitters.length + " " + (statistic.unstable ? "!!!UNSTABLE!!!" : "");
+    let outputText = "Output " + statistic.outputEmitters.length + " Outputs";
+
     let accumulate = function (arr, callback) {
         let acc = {};
         arr.forEach((obj, i) => {
-            if(obj.element === undefined)return;
+            if (obj.element === undefined) return;
             if (acc[obj.element.name] === undefined) {
                 acc[obj.element.name] = 0;
             }
@@ -362,13 +370,14 @@ game.collider.compileStatistics = () => {
         });
         Object.entries(acc).forEach(callback);
     };
-    
-    accumulate(statistic.inputs, ([key, value]) => {
+
+    accumulate(statistic.inputEmitters, ([key, value]) => {
         inputText += "<br>" + key + " :" + value;
+        g.collider.circles.statistic.inputElements.push({element:key,value:value});
     });
 
     let energy = 0;
-    statistic.inputs.forEach((obj, i) => {
+    statistic.inputEmitters.forEach((obj, i) => {
         let percent = obj.length / obj.maxLength;
         energy += percent * 10;
     });
@@ -377,10 +386,11 @@ game.collider.compileStatistics = () => {
     });
     inputText += "<br>Energey " + energy;
 
-    accumulate(statistic.outputs, ([key, value]) => {
+    accumulate(statistic.outputEmitters, ([key, value]) => {
         outputText += "<br>" + key + " :" + value;
+        g.collider.circles.statistic.outputElements.push({element:key,value:value});
     });
-
+    g.collider.circles.statistic.inputEnergy = energy;
 
     g.c.selectedEmitter = g.c.circles.emitter.find((obj, i) => (obj.selected));
     if (g.c.selectedEmitter !== undefined) {

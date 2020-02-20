@@ -1,4 +1,7 @@
 g.u.list = [
+    new Upgrade("Hydrogen Isotopes", "You sometimes get a Hydrogen Isotope when collecting Hydrogen", {amount: 10, type: 'Hydrogen'}, () => {
+        game.ressources.perClick.Hydrogen.amount *= 2;
+    }),
     new Upgrade("Hydrogen I", "Hydrogen/click x2", {amount: 10, type: 'Hydrogen'}, () => {
         game.ressources.perClick.Hydrogen.amount *= 2;
     }),

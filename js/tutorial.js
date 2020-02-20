@@ -1,6 +1,6 @@
 g.tutorial = g.t = {};
 g.t.spacer = "<br>--------------<br>";
-g.t.allElements = "#btn-1-1, #btn-1-2, #btn-1-3, #btn-2-1, #btn-3-1, #btn-buy-multiplier, #ressources-well, #upgrades-nav, #builds-nav, #dropdown-nav";
+g.t.allElements = "#btn-hydrogen, #btn-collider, #btn-energy, #btn-2-1, #btn-3-1, #btn-buy-multiplier, #ressources-well, #upgrades-nav, #builds-nav, #dropdown-nav";
 g.t.fast = {
     check: false,
 };
@@ -58,7 +58,7 @@ game.tutorial.intro = function () {
             strings: [g.t.intro1.string],
             typeSpeed: 1,
             callback: function () {
-                $("#btn-1-1, #btn-1-2, #ressources-well").fadeIn('slow');
+                $("#btn-hydrogen, #btn-collider, #ressources-well").fadeIn('slow');
                 g.display();
                 h.removeCursor();
             }
@@ -81,7 +81,7 @@ game.tutorial.intro = function () {
             strings: [g.t.intro3.string],
             typeSpeed: 1,
             callback: function () {
-                $("#btn-1-3, #btn-3-2").fadeIn('slow');
+                $("#btn-energy, #btn-3-2").fadeIn('slow');
                 h.removeCursor();
             }
         });
@@ -129,15 +129,15 @@ game.tutorial.check = function () {
     }
 };
 game.tutorial.saveCheck = function () {
-    $("#btn-1-1, #btn-1-2, #ressources-well").fadeIn('slow');
+    $("#btn-hydrogen, #btn-collider, #ressources-well").fadeIn('slow');
     if (g.t.intro1.check == true && g.t.intro2.check == false)
         $("#btn-2-1, #upgrades-nav").fadeIn('slow');
     if (g.t.intro2.check == true && g.t.intro3.check == false)
-        $("#btn-1-3, #btn-3-2, #btn-2-1, #upgrades-nav").fadeIn('slow');
+        $("#btn-energy, #btn-3-2, #btn-2-1, #upgrades-nav").fadeIn('slow');
     if (g.t.intro3.check == true && g.t.intro4.check == false)
-        $("#btn-1-3, #btn-3-2, #btn-2-1, #upgrades-nav, #btn-3-3").fadeIn('slow');
+        $("#btn-energy, #btn-3-2, #btn-2-1, #upgrades-nav, #btn-3-3").fadeIn('slow');
     if ((g.t.intro4.check == true && g.t.intro5.check == false) || g.t.intro5.check == true) {
-        $("#btn-1-3, #btn-3-2, #btn-2-1, #upgrades-nav, #btn-3-1, #btn-buy-multiplier, #builds-nav, #dropdown-nav").fadeIn('slow');
+        $("#btn-energy, #btn-3-2, #btn-2-1, #upgrades-nav, #btn-3-1, #btn-buy-multiplier, #builds-nav, #dropdown-nav").fadeIn('slow');
         $("#btn-3-2").css('display', 'none');
         $("#log-well").append('<p class="no-margin"><span id="log-back"></span></p>');
         $("#log-back").typed({

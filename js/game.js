@@ -12,7 +12,7 @@ g.options.now = new Date().getTime();
 g.options.version = "0.001 Alpha";
 
 g.ressources = {};
-g.ressources.list = ["Hydrogen", "Oxygen", "Energy", "Water", "Cells", "Meat", "Sun", "Atmosphere Generator", ""];
+g.ressources.special = ["Energy", "Collider", "Water", "Cells", "Meat", "Sun", "Atmosphere Generator"];
 g.ressources.perClick = {};
 g.ressources.owned = {};
 g.ressources.total = {};
@@ -95,18 +95,20 @@ game.removeHoldingFunction = function () {
 };
 game.display = function () {
     $("#ressources-display").html(
-        "Hydrogen : " + fix(g.ressources.owned.Hydrogen, 0) + "<br>" +
-        "Oxygen : " + fix(g.ressources.owned.Oxygen, 0) + "<br>" +
         "Energy : " + fix(g.ressources.owned.Energy, 0) + "<br>" +
+        "Hydrogen : " + fix(g.ressources.owned.Hydrogen, 0) + "<br>" +
+        "<br>" +
         "Water : " + fix(g.ressources.owned.Water, 0) + " mL<br>" +
         "Meat : " + fix(g.ressources.owned.Meat, 2) + "<br>" +
         "Cells : " + fix(g.ressources.owned.Cells, 0) + "/" + fix(h.maxCells(), 0)
     );
+
+    g.horde();
 };
 game.buttons = function () {
-    $("#btn-1-1").html("Create hydrogen (+" + fix(g.ressources.perClick.Hydrogen.amount, 0) + ")");
-    $("#btn-1-2").html("Create oxygen (+" + fix(g.ressources.perClick.Oxygen.amount, 0) + ")");
-    $("#btn-1-3").html("Create Energy (+" + fix(g.ressources.perClick.Energy.amount, 0) + ")");
+    $("#btn-energy").html("Create Energy (+" + fix(g.ressources.perClick.Energy.amount, 0) + ")");
+    $("#btn-hydrogen").html("Create Hydrogen (+" + fix(g.ressources.perClick.Hydrogen.amount, 0) + ")");
+    $("#btn-collider").html("Run Collider");
 
     let waterButton = $("#btn-2-1");
     waterButton.html("Generate water (+" + fix(g.ressources.perClick.Water.amount * g.buyMultiplier, 0) + " mL)");
@@ -144,11 +146,12 @@ game.status = function () {
 };
 
 game.ressources.init = function () {
-    g.ressources.list.forEach((resource, i) => {
+    //Add the specials
+    game.ressources.special.forEach((resource, i) => {
         g.ressources.owned[resource] = 0;
         g.ressources.total[resource] = 0;
         g.ressources.perClick[resource] = {
-            amount: 100,
+            amount: 1,
             can: function (owned) {
                 return true;
             },
@@ -158,6 +161,56 @@ game.ressources.init = function () {
             }
         };
     });
+
+    //Add the normals
+    elements.list.forEach((resource, i) => {
+        g.ressources.owned[resource.name] = 0;
+        g.ressources.total[resource.name] = 0;
+        g.ressources.perClick[resource.name] = {
+            amount: 100,
+            can: function (owned) {
+                return true;
+            },
+            click: function (owned) {
+                owned[resource.name] += this.amount;
+                return this.amount;
+            }
+        };
+    });
+
+    g.ressources.perClick.Hydrogen.click = function (owned) {
+        owned["Hydrogen"] += this.amount;
+        owned["Deuterium"] += g.u.owned["Hydrogen_Isotopes"] * (0.000115 * g.ressources.perClick.Deuterium.amount * this.amount);
+        return this.amount;
+    };
+
+    g.ressources.perClick.Collider = {
+        amount: 1,
+        can: function (owned) {
+            let statistic = g.collider.circles.statistic;
+        
+            if (statistic.unstable) return false;
+            if (owned.Energy <= statistic.inputEnergy) return false;
+            let found = statistic.inputElements.find((obj, i) => {
+                return owned[obj.element] <= obj.value;
+            });
+           
+            return found === undefined;
+        },
+        click: function (owned) {
+            let statistic = g.collider.circles.statistic;
+            
+            owned.Energy-= statistic.inputEnergy;
+            statistic.inputElements.forEach((obj, i) => {
+                owned[obj.element]-=obj.value;
+            });
+            statistic.outputElements.forEach((obj, i) => {
+                owned[obj.element]+=obj.value;
+            });
+            
+            return this.amount
+        }
+    };
 
     g.ressources.perClick.Water = {
         amount: 1,
@@ -298,7 +351,14 @@ game.changeHoldInterval = function () {
         document.getElementById("holdText").innerHTML = "Click every 1/" + val + "sec";
     }
 };
-
+game.horde = function () {
+    let text = "Energy".padEnd(13, String.fromCharCode(160)) + ": " + fix(g.ressources.owned.Energy, 0) + "<br>";
+    elements.list.sort((a, b) => g.ressources.owned[b.name] - g.ressources.owned[a.name]).forEach((element) => {
+        let value = g.ressources.owned[element.name];
+        text += element.name.padEnd(13, String.fromCharCode(160)) + ": " + fix(value, 0) + "<br>";
+    });
+    document.getElementById("log-well").innerHTML = text;
+};
 
 // INTERVALS + ONLOAD
 window.onload = function () {

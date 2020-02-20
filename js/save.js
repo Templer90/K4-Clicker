@@ -1,6 +1,6 @@
 var save = {};
 save.key = "K4Clicker_Save";
-save.tosave = {game: game, builds: builds, upgrades: upgrades};
+save.tosave = {game: game, builds: builds, upgrades: upgrades, collider: collider};
 
 save.saveData = function () {
     console.info("Game saved. (Auto-save every " + (g.options.saveIntervalTime / 1000) + " seconds)");
@@ -32,6 +32,7 @@ save.loadData = function () {
         g.b.owned = sg.builds.owned;
         g.b.multiplier = sg.builds.multiplier;
         g.u.owned = sg.upgrades.owned;
+        g.c = sg.collider;
         g.t.intro1.check = sg.t.intro1.check;
         g.t.intro2.check = sg.t.intro2.check;
         g.t.intro3.check = sg.t.intro3.check;
@@ -43,7 +44,7 @@ save.loadData = function () {
 save.checkSave = function () {
     if (typeof g.b.multiplier !== "object") {
         g.b.multiplier = [];
-        for (var i = 0; i < g.b.list.length; i++) {
+        for (let i = 0; i < g.b.list.length; i++) {
             g.b.multiplier.push(1);
         }
     }
