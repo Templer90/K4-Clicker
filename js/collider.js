@@ -27,21 +27,21 @@ g.collider.genHitDiff = function (p) {
     let b = g.collider.length(p.pos.x, p.pos.y, p.b.x, p.b.y);
     return Math.abs(a - b);
 };
-g.collider.circles = {
+g.collider.statistic = {
+    unstable: true,
+    inputEnergy: 0,
+    outputEnergy: 0,
+    inputEmitters: [],
+    outputEmitters: [],
+    pseudo: [],
+    inputElements: [],
+    outputElements: []
+};
+g.collider.emitters = {
     drawable: [],
     emitter: [],
     pseudo: [],
-    statistic: {
-        unstable: true,
-        inputEnergy: 0,
-        outputEnergy: 0,
-        inputEmitters: [],
-        outputEmitters: [],
-        pseudo: [],
-        
-        inputElements:[],
-        outputElements:[]
-    },
+
     each(callback) {  // iterator
         for (let i = 0; i < this.drawable.length; i++) {
             callback(this.drawable[i], i);
@@ -60,14 +60,14 @@ g.collider.circles = {
         //2) pick intersection that is the closest to both    
         //3) remove them from list and add pseudo emitter
         //4) repeat
-        this.statistic.inputEmitters = this.emitter;
-        this.statistic.outputEmitters = [];
-        this.statistic.pseudo = [];
-        this.statistic.inputElements = [];
-        this.statistic.outputElements = [];
+        g.collider.statistic.inputEmitters = this.emitter;
+        g.collider.statistic.outputEmitters = [];
+        g.collider.statistic.pseudo = [];
+        g.collider.statistic.inputElements = [];
+        g.collider.statistic.outputElements = [];
         
-        this.statistic.unstable = false;
-        this.statistic.inputEnergy = 0;
+        g.collider.statistic.unstable = false;
+        g.collider.statistic.inputEnergy = 0;
 
         let allEmitter = [];
         this.pseudo = [];
@@ -113,7 +113,7 @@ g.collider.circles = {
             }
 
             if (potentials.length === 0) {
-                this.statistic.outputEmitters = allEmitter;
+                g.collider.statistic.outputEmitters = allEmitter;
                 break;
             }
 
@@ -145,11 +145,11 @@ g.collider.circles = {
 
             let pseudo = new PseudoEmitter(potentialHit.pos.x, potentialHit.pos.y, potentialHit.a, potentialHit.b);
             if (pseudo.element === undefined) {
-                this.statistic.unstable = true;
+                g.collider.statistic.unstable = true;
             }
             allEmitter.push(pseudo);
             this.pseudo.push(pseudo);
-            this.statistic.pseudo.push(pseudo);
+            g.collider.statistic.pseudo.push(pseudo);
         }
     },
     addEmitter(x, y, element) {
@@ -276,7 +276,7 @@ game.collider.init = () => {
             this.currentObj = obj;
             if (type !== "create") {
                 let oldSelected = this.currentObj.selected;
-                g.collider.circles.each((obj, i) => {
+                g.collider.emitters.each((obj, i) => {
                     obj.selected = false;
                 });
                 this.currentObj.selected = !oldSelected;
@@ -300,7 +300,7 @@ game.collider.init = () => {
                     overCircle = null;
                 } else {
                     let element = document.getElementById('emitterSelect').value;
-                    dragging.start("create", g.collider.circles.addEmitter(mouse.x, mouse.y, elements.find(element)));
+                    dragging.start("create", g.collider.emitters.addEmitter(mouse.x, mouse.y, elements.find(element)));
                 }
             }
             c = dragging.currentObj;
@@ -324,12 +324,12 @@ game.collider.init = () => {
         }
         ctx.strokeStyle = "black";
 
-        g.c.circles.calcTrajectory();
-        g.c.circles.draw(ctx);
+        g.c.emitters.calcTrajectory();
+        g.c.emitters.draw(ctx);
         g.c.compileStatistics();
 
         if (!dragging.started) {
-            c = g.collider.circles.getClosest(mouse);
+            c = g.collider.emitters.getClosest(mouse);
             if (c !== undefined) {
                 cursor = "move";
                 c.selectDraw(ctx);
@@ -349,13 +349,13 @@ game.collider.changeEmitterType = (selector) => {
 };
 game.collider.removeSelectedEmitter=() => {
     if (game.collider.selectedEmitter !== undefined) {
-        game.collider.circles.removeEmitter(game.collider.selectedEmitter);
+        game.collider.emitters.removeEmitter(game.collider.selectedEmitter);
         game.collider.selectedEmitter = undefined;
         game.collider.changed = true
     }
 };
 game.collider.compileStatistics = () => {
-    let statistic = g.collider.circles.statistic;
+    let statistic = g.collider.statistic;
     let inputText = "Input " + statistic.inputEmitters.length + " " + (statistic.unstable ? "!!!UNSTABLE!!!" : "");
     let outputText = "Output " + statistic.outputEmitters.length + " Outputs";
 
@@ -373,7 +373,7 @@ game.collider.compileStatistics = () => {
 
     accumulate(statistic.inputEmitters, ([key, value]) => {
         inputText += "<br>" + key + " :" + value;
-        g.collider.circles.statistic.inputElements.push({element:key,value:value});
+        g.collider.statistic.inputElements.push({element:key,value:value});
     });
 
     let energy = 0;
@@ -388,11 +388,11 @@ game.collider.compileStatistics = () => {
 
     accumulate(statistic.outputEmitters, ([key, value]) => {
         outputText += "<br>" + key + " :" + value;
-        g.collider.circles.statistic.outputElements.push({element:key,value:value});
+        g.collider.statistic.outputElements.push({element:key,value:value});
     });
-    g.collider.circles.statistic.inputEnergy = energy;
+    g.collider.statistic.inputEnergy = energy;
 
-    g.c.selectedEmitter = g.c.circles.emitter.find((obj, i) => (obj.selected));
+    g.c.selectedEmitter = g.c.emitters.emitter.find((obj, i) => (obj.selected));
     if (g.c.selectedEmitter !== undefined) {
         document.getElementById('emitterId').innerText = g.c.selectedEmitter.id;
         document.getElementById('emitterLength').innerText = (g.c.selectedEmitter.length / g.c.selectedEmitter.maxLength);
@@ -404,7 +404,7 @@ game.collider.compileStatistics = () => {
 };
 game.collider.save = () => {
     let saveObj = [];
-    g.collider.circles.emitter.forEach((obj) => {
+    g.collider.emitters.emitter.forEach((obj) => {
         saveObj.push({
             x: obj.x,
             y: obj.y,
@@ -416,10 +416,10 @@ game.collider.save = () => {
     return saveObj;
 };
 game.collider.load = (saveObj) => {
-    g.collider.circles.reset();
+    g.collider.emitters.reset();
 
     saveObj.forEach((obj) => {
-        g.collider.circles.load(obj.x, obj.y, obj.dirIndicator.x, obj.dirIndicator.y, obj.element);
+        g.collider.emitters.load(obj.x, obj.y, obj.dirIndicator.x, obj.dirIndicator.y, obj.element);
     });
     game.collider.changed = true;
 };

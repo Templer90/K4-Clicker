@@ -187,7 +187,7 @@ game.ressources.init = function () {
     g.ressources.perClick.Collider = {
         amount: 1,
         can: function (owned) {
-            let statistic = g.collider.circles.statistic;
+            let statistic = g.collider.statistic;
         
             if (statistic.unstable) return false;
             if (owned.Energy <= statistic.inputEnergy) return false;
@@ -198,7 +198,7 @@ game.ressources.init = function () {
             return found === undefined;
         },
         click: function (owned) {
-            let statistic = g.collider.circles.statistic;
+            let statistic = g.collider.statistic;
             
             owned.Energy-= statistic.inputEnergy;
             statistic.inputElements.forEach((obj, i) => {
