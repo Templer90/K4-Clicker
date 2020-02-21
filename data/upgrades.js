@@ -40,14 +40,14 @@ g.u.list = [
     }),
 
 
-    new Upgrade("Oxygen I", "Oxygen/click x2", {amount: 10, type: 'Oxygen'}, () => {
-        game.ressources.perClick.Oxygen.amount *= 2;
+    new Upgrade("Better Collider I", "Collider Output/click x2", {amount: 10, type: 'Hydrogen'}, () => {
+        game.ressources.perClick.Collider.amount *= 2;
     }),
-    new Upgrade("Oxygen II", "Oxygen/click x2", {amount: 75, type: 'Oxygen'}, () => {
-        game.ressources.perClick.Oxygen.amount *= 2;
+    new Upgrade("Better Collider II", "Collider Output/click x2", {amount: 75, type: 'Hydrogen'}, () => {
+        game.ressources.perClick.Collider.amount *= 2;
     }),
-    new Upgrade("Oxygen III", "Oxygen/click x1.5", {amount: 1000, type: 'Oxygen'}, () => {
-        game.ressources.perClick.Oxygen.amount *= 1.5;
+    new Upgrade("Better Collider III", "Collider Output/click x1.5", {amount: 1000, type: 'Hydrogen'}, () => {
+        game.ressources.perClick.Collider.amount *= 1.5;
     }),
 
     new MultiUpgrade("Energy I", "Energy/click x2", {amount: 10, type: 'Energy'}, 5,() => {

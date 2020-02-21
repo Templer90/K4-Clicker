@@ -188,13 +188,13 @@ game.ressources.init = function () {
         amount: 1,
         can: function (owned) {
             let statistic = g.collider.statistic;
-        
+
             if (statistic.unstable) return false;
             if (owned.Energy <= statistic.inputEnergy) return false;
             let found = statistic.inputElements.find((obj, i) => {
-                return owned[obj.element] <= obj.value;
+                return owned[obj.element] <= obj.value * this.amount;
             });
-           
+
             return found === undefined;
         },
         click: function (owned) {
@@ -202,13 +202,13 @@ game.ressources.init = function () {
 
             owned.Energy -= statistic.inputEnergy;
             statistic.inputElements.forEach((obj, i) => {
-                owned[obj.element] -= obj.value;
+                owned[obj.element] -= obj.value * this.amount;
             });
             statistic.outputElements.forEach((obj, i) => {
-                owned[obj.element] += obj.value;
+                owned[obj.element] += obj.value * this.amount;
             });
 
-            return this.amount
+            return this.amount;
         }
     };
 
