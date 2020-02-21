@@ -12,9 +12,9 @@ save.removeData = function () {
     location.reload();
 };
 save.loadData = function () {
-    if (localStorage.getItem(save.key) === null)
+    if (localStorage.getItem(save.key) === null) {
         console.warn("No save found!");
-    else {
+    }else {
         var savegame = JSON.parse(localStorage.getItem(save.key));
         var sg = savegame.game;
 

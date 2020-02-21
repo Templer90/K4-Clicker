@@ -103,7 +103,7 @@ game.display = function () {
         "Cells : " + fix(g.ressources.owned.Cells, 0) + "/" + fix(h.maxCells(), 0)
     );
 
-    g.horde();
+    g.displayHorde();
 };
 game.buttons = function () {
     $("#btn-energy").html("Create Energy (+" + fix(g.ressources.perClick.Energy.amount, 0) + ")");
@@ -151,7 +151,7 @@ game.ressources.init = function () {
         g.ressources.owned[resource] = 0;
         g.ressources.total[resource] = 0;
         g.ressources.perClick[resource] = {
-            amount: 1,
+            amount: 100,
             can: function (owned) {
                 return true;
             },
@@ -199,15 +199,15 @@ game.ressources.init = function () {
         },
         click: function (owned) {
             let statistic = g.collider.statistic;
-            
-            owned.Energy-= statistic.inputEnergy;
+
+            owned.Energy -= statistic.inputEnergy;
             statistic.inputElements.forEach((obj, i) => {
-                owned[obj.element]-=obj.value;
+                owned[obj.element] -= obj.value;
             });
             statistic.outputElements.forEach((obj, i) => {
-                owned[obj.element]+=obj.value;
+                owned[obj.element] += obj.value;
             });
-            
+
             return this.amount
         }
     };
@@ -341,7 +341,8 @@ game.changeSaveInterval = function () {
 
 game.changeHoldInterval = function () {
     let val = document.getElementById('holdIntervalSlider').value;
-    if (val < 10) {
+    if (val > 90) {
+        document.getElementById('holdIntervalSlider').value = 100;
         g.options.hold = 0;
         g.removeHoldingFunction();
         document.getElementById("holdText").innerHTML = "No Holdig";
@@ -351,7 +352,7 @@ game.changeHoldInterval = function () {
         document.getElementById("holdText").innerHTML = "Click every 1/" + val + "sec";
     }
 };
-game.horde = function () {
+g.displayHorde = function () {
     let text = "Energy".padEnd(13, String.fromCharCode(160)) + ": " + fix(g.ressources.owned.Energy, 0) + "<br>";
     elements.list.sort((a, b) => g.ressources.owned[b.name] - g.ressources.owned[a.name]).forEach((element) => {
         let value = g.ressources.owned[element.name];

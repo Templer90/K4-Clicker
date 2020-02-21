@@ -1,6 +1,7 @@
 g.collider = g.c = {};
 g.collider.borders = [];
 g.collider.selectedEmitter = undefined;
+g.collider.changed = true;
 g.collider.intersect = function (x1, y1, x2, y2,
                                  x3, y3, x4, y4) {
     const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
@@ -36,6 +37,10 @@ g.collider.statistic = {
     pseudo: [],
     inputElements: [],
     outputElements: []
+};
+g.collider.options = {
+    maxEmitter: 5,
+    usableElements:['H']
 };
 g.collider.emitters = {
     drawable: [],
@@ -153,6 +158,7 @@ g.collider.emitters = {
         }
     },
     addEmitter(x, y, element) {
+        if (this.emitter.length >= g.collider.options.maxEmitter ) return;
         let holder = new Holder(x + 13, y + 13);
         let emitter = new Emitter(x, y, this.emitter.length, holder, element);
 
@@ -212,7 +218,6 @@ g.collider.emitters = {
         return foundCircle;
     }
 };
-game.collider.changed = true;
 game.collider.init = () => {
     let canvas = document.getElementById('canvas');
     canvas.style.border = "1px black solid";
@@ -300,7 +305,13 @@ game.collider.init = () => {
                     overCircle = null;
                 } else {
                     let element = document.getElementById('emitterSelect').value;
-                    dragging.start("create", g.collider.emitters.addEmitter(mouse.x, mouse.y, elements.find(element)));
+                    let newEmitter = g.collider.emitters.addEmitter(mouse.x, mouse.y, elements.find(element));
+                    if (newEmitter !== undefined) {
+                        dragging.start("create", newEmitter);
+                    } else {
+                        dragging.type = "move";
+                        dragging.started = false;
+                    }
                 }
             }
             c = dragging.currentObj;
@@ -356,8 +367,9 @@ game.collider.removeSelectedEmitter=() => {
 };
 game.collider.compileStatistics = () => {
     let statistic = g.collider.statistic;
-    let inputText = "Input " + statistic.inputEmitters.length + " " + (statistic.unstable ? "!!!UNSTABLE!!!" : "");
-    let outputText = "Output " + statistic.outputEmitters.length + " Outputs";
+    let restText = (g.collider.options.maxEmitter - statistic.inputEmitters.length) + " remaining";
+    let inputText = "Input " + statistic.inputEmitters.length + " " + (statistic.unstable ? "!!!UNSTABLE!!!" : "") + " " + restText;
+    let outputText = "Output " + statistic.outputEmitters.length;
 
     let accumulate = function (arr, callback) {
         let acc = {};
@@ -402,25 +414,43 @@ game.collider.compileStatistics = () => {
     document.getElementById('colliderInput').innerHTML = inputText;
     document.getElementById('colliderOutput').innerHTML = outputText;
 };
+game.collider.updateAllowedElements = () => {
+    let select = document.getElementById('emitterSelect');
+    let length = select.options.length;
+    for (let i = length - 1; i >= 0; i--) {
+        select.options[i] = null;
+    }
+    g.collider.options.usableElements.forEach((element, i) => {
+        let option = document.createElement('option');
+        option.text = element;
+        select.add(option, select[i]);
+    });
+};
 game.collider.save = () => {
-    let saveObj = [];
+    let saveObj = {
+        emitters: [],
+        options: {}
+    };
     g.collider.emitters.emitter.forEach((obj) => {
-        saveObj.push({
+        saveObj.emitters.push({
             x: obj.x,
             y: obj.y,
             dirIndicator: {x: obj.dirIndicator.x, y: obj.dirIndicator.y},
             element: obj.element.symbol
         });
     });
-
+    saveObj.options = g.collider.options;
     return saveObj;
 };
 game.collider.load = (saveObj) => {
     g.collider.emitters.reset();
 
-    saveObj.forEach((obj) => {
+    saveObj.emitters.forEach((obj) => {
         g.collider.emitters.load(obj.x, obj.y, obj.dirIndicator.x, obj.dirIndicator.y, obj.element);
     });
+    g.collider.options= saveObj.options;
+    
+    game.collider.updateAllowedElements();
     game.collider.changed = true;
 };
 game.collider.update = (event) => {
