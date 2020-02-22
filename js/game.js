@@ -354,10 +354,17 @@ game.changeHoldInterval = function () {
 };
 g.displayHorde = function () {
     let text = "Energy".padEnd(13, String.fromCharCode(160)) + ": " + fix(g.ressources.owned.Energy, 0) + "<br>";
-    elements.list.sort((a, b) => g.ressources.owned[b.name] - g.ressources.owned[a.name]).forEach((element) => {
-        let value = g.ressources.owned[element.name];
-        text += element.name.padEnd(13, String.fromCharCode(160)) + ": " + fix(value, 0) + "<br>";
-    });
+    
+    elements.list
+        .sort((a, b) => g.ressources.owned[b.name] - g.ressources.owned[a.name])
+        .forEach((element) => {
+            let value = g.ressources.owned[element.name];
+            let line=element.name.padEnd(13, String.fromCharCode(160)) + ": " + fix(value, 0);
+            if (value > elements.avogadro) {
+                line += " " + fix(value / elements.avogadro, 0) + " mol";
+            }
+            text += line + "<br>";
+        });
     document.getElementById("log-well").innerHTML = text;
 };
 

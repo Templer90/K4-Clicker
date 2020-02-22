@@ -198,3 +198,12 @@ game.upgrades.checkSave = () => {
             g.u.owned.push(0);
     }
 };
+game.upgrades.save = () => {
+    return {
+        owned: g.u.owned
+    };
+};
+game.upgrades.load = (saveObj) => {
+    g.u.owned = saveObj.owned;
+    g.u.list.filter((obj) => (obj instanceof Emitter) && (typeof g.u.owned[obj.name] === 'number')).forEach((obj) => {obj.updateDots()});
+};

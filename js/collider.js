@@ -40,7 +40,7 @@ g.collider.statistic = {
 };
 g.collider.options = {
     maxEmitter: 5,
-    usableElements:['H']
+    usableElements: ['H', 'He']
 };
 g.collider.emitters = {
     drawable: [],
@@ -399,7 +399,7 @@ game.collider.compileStatistics = () => {
     inputText += "<br>Energey " + energy;
 
     accumulate(statistic.outputEmitters, ([key, value]) => {
-        outputText += "<br>" + key + " :" + value;
+        outputText += "<br>\t" + key + " :" + value;
         g.collider.statistic.outputElements.push({element:key,value:value});
     });
     g.collider.statistic.inputEnergy = energy;

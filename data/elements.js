@@ -1126,3 +1126,4 @@ elements.find = function (a) {
         return value.name === elementA || value.symbol === elementA;
     });
 };
+elements.avogadro = 6.02214076e+23;

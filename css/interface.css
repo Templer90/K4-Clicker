@@ -72,6 +72,11 @@ header {
     border: 1px solid black;
 }
 
+.ident{
+    padding-left: 1.5em;
+    text-indent: -1.5em;
+}
+
 .dot {
     height: 0.5em;
     width: 0.5em;

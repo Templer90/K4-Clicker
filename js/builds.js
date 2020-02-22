@@ -1,53 +1,44 @@
-g.builds = g.b = {};
-g.b.owned = [];
-g.b.multiplier = [];
-
-game.builds.create = function (name, desc, price, valuePerSec, reward, inflation) {
-    this.name = name.replace(/ /g, "_");
-    this.displayName = name;
-    this.desc = desc;
-    this._orginalPrices=price;
+class Building{
+    constructor(name, desc, price, valuePerSec, reward) {
+        this.name = name.replace(/ /g, "_");
+        this.displayName = name;
+        this.desc = desc;
+        this._orginalPrices = price;
+        this.price = price;
+        //if (!Array.isArray(price)) {
+        //    this.price = [price];
+        //}
+        this.reward = reward;
+        this.valuePerSec = valuePerSec;
+    }
     
-    this.price=price;
-    //if (!Array.isArray(price)) {
-    //    price = [price];
-    //}
-    //this.price = {
-    //    checkResources: () => {
-    //        for (let i = 0; i < price.length; i++) {
-    //            if (g.ressources.owned[price[i].type] < price[i].amount) {
-    //                return false;
-    //            }
-    //        }
-    //        return true;
-
-    //    },
-    //    pay: () => {
-    //        for (let i = 0; i < price.length; i++) {
-    //            g.ressources.owned[price[i].type] -= price[i].amount;
-    //        }
-    //    },
-    //    costString: helpers.genCostString(price)
-    //};
-
-    this.reward = reward;
-    this.valuePerSec = valuePerSec;
-    this.inflation = inflation;
-
-    this.buildPrice = (index) => {
-        return this.price.amount * Math.pow(this.inflation, g.b.owned[index]);
+    buildPrice = (index) => {
+        return this.price.amount * Math.pow(this.price.inflation, g.b.owned[index]);
     };
 
-    this.buyable = (index) => {
+    buyable = (index) => {
         return g.ressources.owned[g.b.list[index].price.type] >= g.b.list[index].buildPrice(index);
     };
 
-    this.buy = (index) => {
+    buy = (index) => {
         let type = this.price.type;
         g.ressources.owned[type] -= this.buildPrice(index);
         this.costString = fix(this.buildPrice(), 0) + " " + this.price.type.toLowerCase();
     };
-};
+
+    checkResources() {
+        for (let i = 0; i < this.price.length; i++) {
+            if (g.ressources.owned[this.price[i].type] < this.price[i].amount) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+g.builds = g.b = {};
+g.b.owned = [];
+g.b.multiplier = [];
+
 game.builds.init = () => {
     let panel = document.getElementById('builds-panelbody');
     g.b.list.forEach((obj, i) => {
@@ -113,7 +104,7 @@ game.builds.earn = (times) => {
     let delta = times / g.options.fps;
     for (let i = 0; i < g.b.list.length; i++) {
         if (g.b.owned[i] > 0) {
-            g.b.list[i].reward.func(g.b.list[i].valuePerSec.perSec * g.b.owned[i] * g.b.multiplier[i], delta);
+            g.b.list[i].reward.func(g.b.list[i].valuePerSec.perSec * g.b.owned[i] * g.b.multiplier[i], delta, g.b.list[i].reward);
         }
     }
 };
@@ -134,53 +125,13 @@ game.builds.update = () => {
     }
 };
 
-g.b.list = [
-    new g.b.create("Hydrogen build", "Create some hydrogen", {
-            amount: 25,
-            type: 'Hydrogen'
-        },
-        {perSec:1, type: "Hydrogen"},
-        {
-            type: "Hydrogen",
-            func: (value, delta) => {
-                game.ressources.owned.Hydrogen += value * delta;
-            },
-        },
-        1.15),
-    new g.b.create("Oxygen build", "Create some oxygen", {
-            amount: 25,
-            type: 'Oxygen'
-        },
-        {perSec:1, type: "Oxygen"},
-        {
-            type: "Oxygen",
-            func: (value, delta) => {
-                game.ressources.owned.Oxygen += value * delta;
-            },
-        },
-        1.15),
-    new g.b.create("Energy build", "Create some Energy", {
-            amount: 25,
-            type: 'Energy'
-        },
-        {perSec:1, type: "Energy"},
-        {
-            type: "Energy",
-            func: (value, delta) => {
-                game.ressources.owned.Energy += value * delta;
-            },
-        },
-        1.15),
-    new g.b.create("Water generator", "Generate some water", {
-            amount: 1500,
-            type: 'Hydrogen'
-        },
-        {perSec:1, type: "Water"},
-        {
-            type: "Water",
-            func: (value, delta) => {
-                game.ressources.owned.Water += value * delta;
-            },
-        },
-        1.15)
-];
+game.builds.save = () => {
+    return {
+        owned: g.b.owned,
+        multiplier: g.b.multiplier
+    };
+};
+game.builds.load = (saveObj) => {
+    g.b.owned = saveObj.owned;
+    g.b.multiplier = saveObj.multiplier;
+};
