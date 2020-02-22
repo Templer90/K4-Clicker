@@ -192,7 +192,7 @@ g.collider.emitters = {
     },
     load(x, y, indicatorX, indicatorY, element) {
         let holder = new Holder(indicatorX, indicatorY);
-        let emitter = new Emitter(x, y, this.emitter.length, holder, element);
+        let emitter = new Emitter(x, y, this.emitter.length, holder, elements.find(element));
 
         emitter.addDirIndicator(holder);
         holder.addEmitter(emitter);
@@ -396,7 +396,7 @@ game.collider.compileStatistics = () => {
     statistic.pseudo.forEach((obj, i) => {
         energy /= obj.efficiency;
     });
-    inputText += "<br>Energey " + energy;
+    inputText += "<br>Energy " + energy;
 
     accumulate(statistic.outputEmitters, ([key, value]) => {
         outputText += "<br>\t" + key + " :" + value;

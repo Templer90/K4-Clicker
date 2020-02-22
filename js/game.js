@@ -47,9 +47,11 @@ game.init = function () {
 
     if (g.t.intro5.check !== true) g.tutorial.intro();
 
-    if (g.options.hold !== 0) {
+    if (g.options.hold !== 100) {
         game.addHoldingFunction();
     }
+    document.getElementById('holdIntervalSlider').value = game.options.hold;
+    game.changeHoldInterval();
 
     $('[data-toggle="tooltip"]').tooltip();
     $('.header-small').html(g.options.version);
@@ -60,25 +62,25 @@ game.init = function () {
 
 
     //Workaround because bootstrap has a bug
-    $('#menu a').click(function (e) {
+    $('#menu a').on('click', (function (e) {
         e.preventDefault();
         $(this).tab('show');
-    });
+    }));
 
     g.options.init = true;
 };
-game.clearHolding=function(){
-    game.holding.forEach((i)=>
+game.clearHolding = function () {
+    game.holding.forEach((i) =>
         window.clearInterval(i)
     );
-    game.holding=[];
+    game.holding = [];
 };
 game.addHoldingFunction = function () {
     game.clearHolding();
     game.removeHoldingFunction();
     $(".multiClickable").each(function (index, item) {
         $(item).on('mousedown', () => {
-            game.holding.push( window.setInterval(() => {
+            game.holding.push(window.setInterval(() => {
                 item.click();
             }, game.options.hold));
         }).on('mouseup mouseleave', () => {
@@ -88,7 +90,7 @@ game.addHoldingFunction = function () {
 };
 game.removeHoldingFunction = function () {
     game.clearHolding();
-    
+
     $(".multiClickable").each(function (index, item) {
         $(item).off('mousedown').off('mouseup mouseleave');
     });
@@ -338,12 +340,34 @@ game.changeSaveInterval = function () {
         save.saveData();
     }, game.options.saveIntervalTime);
 };
+game.save = function () {
+    let res = {
+        owned: g.ressources.owned,
+        click: g.ressources.perClick,
+        total: g.ressources.total,
+    };
+    g.options.hold = document.getElementById('holdIntervalSlider').value;
+    return {options: game.options, resources: res};
+};
+game.load = (saveObj) => {
+    game.options = saveObj.options;
+    document.getElementById('holdIntervalSlider').value = game.options.hold;
+    game.changeHoldInterval();
+    g.ressources.owned = saveObj.resources.owned;
 
+    Object.keys(saveObj.resources.click).forEach((obj) => {
+        let params = saveObj.resources.click[obj];
+        Object.keys(params).forEach((param) => {
+            g.ressources.perClick[obj][param] = params[param];
+        });
+    });
+    
+    g.ressources.total = saveObj.resources.total;
+};
 game.changeHoldInterval = function () {
     let val = document.getElementById('holdIntervalSlider').value;
-    if (val > 90) {
+    if (val >= 90) {
         document.getElementById('holdIntervalSlider').value = 100;
-        g.options.hold = 0;
         g.removeHoldingFunction();
         document.getElementById("holdText").innerHTML = "No Holdig";
     } else {
@@ -354,12 +378,12 @@ game.changeHoldInterval = function () {
 };
 g.displayHorde = function () {
     let text = "Energy".padEnd(13, String.fromCharCode(160)) + ": " + fix(g.ressources.owned.Energy, 0) + "<br>";
-    
+
     elements.list
         .sort((a, b) => g.ressources.owned[b.name] - g.ressources.owned[a.name])
         .forEach((element) => {
             let value = g.ressources.owned[element.name];
-            let line=element.name.padEnd(13, String.fromCharCode(160)) + ": " + fix(value, 0);
+            let line = element.name.padEnd(13, String.fromCharCode(160)) + ": " + fix(value, 0);
             if (value > elements.avogadro) {
                 line += " " + fix(value / elements.avogadro, 0) + " mol";
             }
@@ -392,5 +416,5 @@ g.statusLoop = window.setInterval(() => {
     g.status();
 }, 500);
 g.saveInterval = window.setInterval(() => {
-    //save.saveData();
+    save.saveData();
 }, g.options.saveIntervalTime);

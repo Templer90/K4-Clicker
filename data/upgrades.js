@@ -1,5 +1,5 @@
 g.u.list = [
-    new Upgrade("Hydrogen Isotopes", "You sometimes get a Hydrogen Isotope when collecting Hydrogen", {amount: 10, type: 'Hydrogen'}, () => {
+    new Upgrade("Hydrogen Isotopes", "You sometimes get an additional Hydrogen Isotope when collecting Hydrogen", {amount: 10, type: 'Hydrogen'}, () => {
         game.ressources.perClick.Hydrogen.amount *= 2;
         game.collider.options.usableElements.push('D')
     }),
@@ -59,5 +59,7 @@ g.u.list = [
     }),
     new Upgrade("Energy III", "Energy/click x1.5", {amount: 1000, type: 'Energy'}, () => {
         game.ressources.perClick.Energy.amount *= 1.5;
-    })
+    }),
+
+    new Upgrade("Building Test", "Building test", {amount: 1000, type: 'Hydrogen'}, () => {}),
 ];

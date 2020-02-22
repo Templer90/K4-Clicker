@@ -6,6 +6,8 @@ class Upgrade {
         this.boughtFunction = boughtFunction;
         this.depends = dependsOn;
         this.buyCheckFunction = buyCheckFunction;
+        this.mainDiv=undefined;
+        this.buylink = undefined;
 
         this.price = price;
         if (!Array.isArray(price)) {
@@ -122,7 +124,7 @@ game.upgrades.init = () => {
             dots = " " + "<span class='dot dot-off'></span>".repeat(obj.max);
         }
 
-        paragraph.innerHTML = obj.displayName + " : " + obj.desc + dots + "<br>" + obj.costString;
+        paragraph.innerHTML = obj.displayName + ": " + obj.desc + dots + "<br>" + obj.costString;
         infoBox.append(paragraph);
 
         let buyButton = document.createElement("div");
@@ -184,7 +186,7 @@ game.upgrades.check = () => {
     g.u.onlyBuyable();
     g.u.list.forEach((obj, i) => {
         if (g.u.owned[obj.name] === true) {
-            let upgradeBTN = obj.mainDiv.getElementById("upgrades-btn-" + i);
+            let upgradeBTN = document.getElementById("upgrades-btn-" + obj.name);
             upgradeBTN.setAttribute('onclick', '');
             upgradeBTN.classList.replace('btn-primary', 'btn-success');
             upgradeBTN.innerHTML = 'Owned';
@@ -205,5 +207,9 @@ game.upgrades.save = () => {
 };
 game.upgrades.load = (saveObj) => {
     g.u.owned = saveObj.owned;
-    g.u.list.filter((obj) => (obj instanceof Emitter) && (typeof g.u.owned[obj.name] === 'number')).forEach((obj) => {obj.updateDots()});
+    g.u.list
+        .filter((obj) => (obj instanceof MultiUpgrade) && (typeof g.u.owned[obj.name] === 'number'))
+        .forEach((obj) => {
+            obj.updateDots()
+        });
 };

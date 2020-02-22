@@ -8,7 +8,7 @@ g.b.list = [
         {
             type: "Hydrogen",
             func: (value, delta) => {
-                game.ressources.owned.Hydrogen += value * delta;
+                game.ressources.owned.Hydrogen += value * delta * (g.u.owned["Building_Test"] ? g.ressources.perClick.Hydrogen.amount : 1);
             },
         }),
     new Building("Oxygen build", "Create some oxygen", {

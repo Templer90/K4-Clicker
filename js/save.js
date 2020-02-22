@@ -4,7 +4,12 @@ save.tosave = {game: game, builds: builds, upgrades: upgrades, collider: collide
 
 save.saveData = function () {
     console.info("Game saved. (Auto-save every " + (g.options.saveIntervalTime / 1000) + " seconds)");
-    localStorage.setItem(save.key, JSON.stringify(save.tosave));
+    localStorage.setItem(save.key, JSON.stringify({
+        game: game.save(),
+        upgrades: game.upgrades.save(),
+        builds: game.builds.save(),
+        collider: game.collider.save()
+    }));
 };
 save.removeData = function () {
     g.saveInterval = undefined;
@@ -14,33 +19,21 @@ save.removeData = function () {
 save.loadData = function () {
     if (localStorage.getItem(save.key) === null) {
         console.warn("No save found!");
-    }else {
-        var savegame = JSON.parse(localStorage.getItem(save.key));
-        var sg = savegame.game;
+    } else {
+        let saveGame = JSON.parse(localStorage.getItem(save.key));
+        let sg = saveGame.game;
 
-        if (sg.options.version !== g.options.version)
+        if (sg.options.version !== g.options.version) {
             console.warn('Warning : loading save from an older version.');
+        }
 
-        g.options.before = sg.options.before;
-        g.options.saveIntervalTime = sg.options.saveIntervalTime;
-        g.ressources.owned = sg.ressources.owned;
-        g.ressources.total = sg.ressources.total;
-        g.ressources.perClick = sg.ressources.perClick;
-        g.cellsPerWater = sg.cellsPerWater;
-        g.cellMeat = sg.cellMeat;
-        g.cellCost = sg.cellCost;
-        g.b.owned = sg.builds.owned;
-        g.b.multiplier = sg.builds.multiplier;
-        g.u.owned = sg.upgrades.owned;
-        g.c = sg.collider;
-        g.t.intro1.check = sg.t.intro1.check;
-        g.t.intro2.check = sg.t.intro2.check;
-        g.t.intro3.check = sg.t.intro3.check;
-        g.t.intro4.check = sg.t.intro2.check;
-        g.t.intro5.check = sg.t.intro5.check;
-        g.username = sg.username;
+        game.load(saveGame.game);
+        game.upgrades.load(saveGame.upgrades);
+        game.builds.load(saveGame.builds);
+        game.collider.load(saveGame.collider);
     }
 };
+
 save.checkSave = function () {
     if (typeof g.b.multiplier !== "object") {
         g.b.multiplier = [];
