@@ -10,24 +10,16 @@ class Upgrade {
         this.buylink = undefined;
 
         this.price = price;
-        if (!Array.isArray(price)) {
-            this.price = [price];
-        }
-        this.costString = helpers.genCostString(price);
+        this.costString = 'Cost: ' + Object.entries(this.price).map(([a, b]) => a + ": " + b).join(" & ");
     }
 
     checkResources() {
-        for (let i = 0; i < this.price.length; i++) {
-            if (g.ressources.owned[this.price[i].type] < this.price[i].amount) {
-                return false;
-            }
-        }
-        return true;
+        return Object.keys(this.price).find((key) => g.ressources.owned[key] < this.price[key]) === undefined;
     }
 
     pay() {
-        this.price.forEach((p) => {
-            g.ressources.owned[p.type] -= p.amount;
+        Object.keys(this.price).forEach((key) => {
+            g.ressources.owned[key] -= this.price[key];
         });
     }
 

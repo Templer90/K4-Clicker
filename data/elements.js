@@ -1095,7 +1095,13 @@ elements.list = [
         "xpos": 1,
         "ypos": 8
     }];
-// TODO make this faster
+elements.init = function () {
+    elements.map = new Map();
+    elements.list.forEach((value) => {
+        elements.map.set(value.name, value);
+        elements.map.set(value.symbol, value);
+    });
+};
 elements.combine = function (a, b) {
     if ((a === undefined) || (b === undefined)) return undefined;
     
@@ -1103,17 +1109,19 @@ elements.combine = function (a, b) {
     let elementB = b;
     if (a.symbol !== undefined) elementA = a.symbol;
     if (b.symbol !== undefined) elementB = b.symbol;
-    
-    let found = elements.list.filter((value, i) => {
-        return value.name === elementA || value.symbol === elementA || value.name === elementB || value.symbol === elementB;
-    });
 
-    if (found.length === 0) return undefined;
-    if (found.length === 1) {
-        found[1] = found[0];
+    let foundA = elements.map.get(elementA);
+    let foundB = elements.map.get(elementB);
+
+    if (foundA === undefined && foundB === undefined) return undefined;
+    if (foundA === undefined && foundB !== undefined) {
+        foundA = foundB;
+    }
+    if (foundB === undefined && foundA !== undefined) {
+        foundB = foundA;
     }
 
-    let mass = Math.floor(found[0].atomic_mass + found[1].atomic_mass);
+    let mass = Math.floor(foundA.atomic_mass + foundB.atomic_mass);
     return elements.list.find((value, i) => {
         return Math.floor(value.atomic_mass) === mass;
     });

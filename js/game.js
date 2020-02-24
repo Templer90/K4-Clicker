@@ -28,6 +28,7 @@ g.holding = [];
 
 // CORE FUNCTIONS
 game.init = function () {
+    elements.init();
     g.ressources.init();
     g.upgrades.init();
     g.builds.init();
@@ -74,9 +75,6 @@ game.init = function () {
     g.options.init = true;
 };
 game.currentTab='log';
-game.LogPaneToggle = function(pane){
-    console.log(pane);
-};
 game.clearHolding = function () {
     game.holding.forEach((i) =>
         window.clearInterval(i)
@@ -197,25 +195,27 @@ game.ressources.init = function () {
     g.ressources.perClick.Collider = {
         amount: 1,
         can: function (owned, multi) {
-            let statistic = g.collider.statistic;
+            const statistic = g.collider.statistic;
+            const perClick = this.amount * multi;
 
             if (statistic.unstable) return false;
-            if (owned.Energy * multi <= statistic.inputEnergy) return false;
+            if (owned.Energy <= statistic.inputEnergy * multi) return false;
             let found = statistic.inputElements.find((obj, i) => {
-                return owned[obj.element] <= obj.value * this.amount * multi;
+                return owned[obj.element] <= obj.value * perClick;
             });
 
             return found === undefined;
         },
         click: function (owned, multi) {
-            let statistic = g.collider.statistic;
+            const statistic = g.collider.statistic;
+            const perClick = this.amount * multi;
 
             owned.Energy -= statistic.inputEnergy * multi;
             statistic.inputElements.forEach((obj, i) => {
-                owned[obj.element] -= obj.value *  this.amount * multi;
+                owned[obj.element] -= obj.value * perClick;
             });
             statistic.outputElements.forEach((obj, i) => {
-                owned[obj.element] += obj.value *  this.amount * multi;
+                owned[obj.element] += obj.value * perClick;
             });
 
             return this.amount;

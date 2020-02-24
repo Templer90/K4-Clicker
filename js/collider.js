@@ -398,13 +398,14 @@ game.collider.compileStatistics = () => {
     statistic.pseudo.forEach((obj, i) => {
         energy /= obj.efficiency;
     });
-    inputText += "<br>Energy " + energy;
+    g.collider.statistic.inputEnergy = energy;
+    inputText += "<br>Energy " + fix(energy, 0);
 
     accumulate(statistic.outputEmitters, ([key, value]) => {
         outputText += "<br>\t" + key + " :" + value;
         g.collider.statistic.outputElements.push({element: key, value: value});
     });
-    g.collider.statistic.inputEnergy = energy;
+
 
     g.c.selectedEmitter = g.c.emitters.emitter.find((obj, i) => (obj.selected));
     if (g.c.selectedEmitter !== undefined) {
