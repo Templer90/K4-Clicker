@@ -46,10 +46,18 @@ g.b.list = [
             accumulator: 0,
             func: (value, delta, obj) => {
                 obj.accumulator += value * delta;
-                while (obj.accumulator > 1) {
-                    obj.accumulator -= 1;
-                    game.earn('collider');
+                
+                if (obj.accumulator < 1) return;
+                
+                if (g.ressources.perClick.Collider.can(g.ressources.owned, Math.floor(obj.accumulator))) {
+                    g.ressources.perClick.Collider.click(g.ressources.owned, obj.accumulator);
+                    obj.accumulator -= Math.floor(obj.accumulator);
+                } else {
+                    while (obj.accumulator > 1) {
+                        obj.accumulator -= 1;
+                        game.earn('collider');
+                    }
                 }
-            },
+            }
         })
 ];

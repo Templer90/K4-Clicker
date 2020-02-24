@@ -62,12 +62,20 @@ game.init = function () {
 
 
     //Workaround because bootstrap has a bug
-    $('#menu a').on('click', (function (e) {
+    $('#menu a').click( (function (e) {
         e.preventDefault();
         $(this).tab('show');
     }));
+    
+    $('a[data-toggle="tab"]').on('shown.bs.tab', ((e) => {
+        game.currentTab = e.target.hash.substring(1);
+    }));
 
     g.options.init = true;
+};
+game.currentTab='log';
+game.LogPaneToggle = function(pane){
+    console.log(pane);
 };
 game.clearHolding = function () {
     game.holding.forEach((i) =>
@@ -154,12 +162,12 @@ game.ressources.init = function () {
         g.ressources.total[resource] = 0;
         g.ressources.perClick[resource] = {
             amount: 100,
-            can: function (owned) {
+            can: function (owned, multi) {
                 return true;
             },
-            click: function (owned) {
-                owned[resource] += this.amount;
-                return this.amount;
+            click: function (owned, multi) {
+                owned[resource] += this.amount * multi;
+                return owned[resource];
             }
         };
     });
@@ -173,41 +181,41 @@ game.ressources.init = function () {
             can: function (owned) {
                 return true;
             },
-            click: function (owned) {
-                owned[resource.name] += this.amount;
-                return this.amount;
+            click: function (owned, multi) {
+                owned[resource.name] += this.amount * multi;
+                return owned[resource];
             }
         };
     });
 
-    g.ressources.perClick.Hydrogen.click = function (owned) {
+    g.ressources.perClick.Hydrogen.click = function (owned, multi) {
         owned["Hydrogen"] += this.amount;
-        owned["Deuterium"] += g.u.owned["Hydrogen_Isotopes"] * (0.000115 * g.ressources.perClick.Deuterium.amount * this.amount);
-        return this.amount;
+        owned["Deuterium"] += g.u.owned["Hydrogen_Isotopes"] * (0.000115 * g.ressources.perClick.Deuterium.amount * this.amount * multi);
+        return owned["Hydrogen"] ;
     };
 
     g.ressources.perClick.Collider = {
         amount: 1,
-        can: function (owned) {
+        can: function (owned, multi) {
             let statistic = g.collider.statistic;
 
             if (statistic.unstable) return false;
-            if (owned.Energy <= statistic.inputEnergy) return false;
+            if (owned.Energy * multi <= statistic.inputEnergy) return false;
             let found = statistic.inputElements.find((obj, i) => {
-                return owned[obj.element] <= obj.value * this.amount;
+                return owned[obj.element] <= obj.value * this.amount * multi;
             });
 
             return found === undefined;
         },
-        click: function (owned) {
+        click: function (owned, multi) {
             let statistic = g.collider.statistic;
 
-            owned.Energy -= statistic.inputEnergy;
+            owned.Energy -= statistic.inputEnergy * multi;
             statistic.inputElements.forEach((obj, i) => {
-                owned[obj.element] -= obj.value * this.amount;
+                owned[obj.element] -= obj.value *  this.amount * multi;
             });
             statistic.outputElements.forEach((obj, i) => {
-                owned[obj.element] += obj.value * this.amount;
+                owned[obj.element] += obj.value *  this.amount * multi;
             });
 
             return this.amount;
@@ -294,10 +302,10 @@ game.ressources.init = function () {
 };
 
 // GAME FUNCTIONS
-game.earn = function (type) {
+game.earn = function (type, multi= 1) {
     const str = h.capitalizeFirstLetter(type);
-    if (g.ressources.perClick[str].can(g.ressources.owned)) {
-        g.ressources.perClick[str].click(g.ressources.owned)
+    if (g.ressources.perClick[str].can(g.ressources.owned, multi)) {
+        g.ressources.perClick[str].click(g.ressources.owned, multi)
     }
 
     if (g.t.fast.check === true) {
@@ -377,6 +385,7 @@ game.changeHoldInterval = function () {
     }
 };
 g.displayHorde = function () {
+    if (game.currentTab !== 'log') return;
     let text = "Energy".padEnd(13, String.fromCharCode(160)) + ": " + fix(g.ressources.owned.Energy, 0) + "<br>";
 
     elements.list
@@ -396,10 +405,9 @@ g.displayHorde = function () {
 window.onload = function () {
     let fragments = $("div[data-frag]");
     window.loadCounter = fragments.length;
-    fragments.each(function (index, item) {
+    fragments.each( (index, item) => {
         let jItem = $(item);
         jItem.load(jItem.data("frag"), null, () => {
-
             window.loadCounter--;
             if (window.loadCounter === 0) {
                 window.loadCounter = null;

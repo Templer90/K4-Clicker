@@ -1,5 +1,6 @@
 //https://github.com/Bowserinator/Periodic-Table-JSON/blob/master/PeriodicTableJSON.json
 var elements = e = {};
+elements.avogadro = 6.02214076e+23;
 elements.list = [
     {
         "name": "Hydrogen",
@@ -1122,8 +1123,5 @@ elements.find = function (a) {
 
     let elementA = a;
     if (a.symbol !== undefined) elementA = a.symbol;
-    return elements.list.find((value, i) => {
-        return value.name === elementA || value.symbol === elementA;
-    });
+    return elements.list.find((value, i) => value.name === elementA || value.symbol === elementA);
 };
-elements.avogadro = 6.02214076e+23;

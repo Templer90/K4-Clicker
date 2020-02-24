@@ -70,7 +70,7 @@ g.collider.emitters = {
         g.collider.statistic.pseudo = [];
         g.collider.statistic.inputElements = [];
         g.collider.statistic.outputElements = [];
-        
+
         g.collider.statistic.unstable = false;
         g.collider.statistic.inputEnergy = 0;
 
@@ -158,7 +158,7 @@ g.collider.emitters = {
         }
     },
     addEmitter(x, y, element) {
-        if (this.emitter.length >= g.collider.options.maxEmitter ) return;
+        if (this.emitter.length >= g.collider.options.maxEmitter) return;
         let holder = new Holder(x + 13, y + 13);
         let emitter = new Emitter(x, y, this.emitter.length, holder, element);
 
@@ -351,6 +351,8 @@ game.collider.init = () => {
         }
         canvas.style.cursor = cursor;
     }
+
+    game.collider.updateAllowedElements();
 };
 game.collider.changeEmitterType = (selector) => {
     if (game.collider.selectedEmitter !== undefined) {
@@ -358,7 +360,7 @@ game.collider.changeEmitterType = (selector) => {
         game.collider.changed = true
     }
 };
-game.collider.removeSelectedEmitter=() => {
+game.collider.removeSelectedEmitter = () => {
     if (game.collider.selectedEmitter !== undefined) {
         game.collider.emitters.removeEmitter(game.collider.selectedEmitter);
         game.collider.selectedEmitter = undefined;
@@ -385,7 +387,7 @@ game.collider.compileStatistics = () => {
 
     accumulate(statistic.inputEmitters, ([key, value]) => {
         inputText += "<br>" + key + " :" + value;
-        g.collider.statistic.inputElements.push({element:key,value:value});
+        g.collider.statistic.inputElements.push({element: key, value: value});
     });
 
     let energy = 0;
@@ -400,7 +402,7 @@ game.collider.compileStatistics = () => {
 
     accumulate(statistic.outputEmitters, ([key, value]) => {
         outputText += "<br>\t" + key + " :" + value;
-        g.collider.statistic.outputElements.push({element:key,value:value});
+        g.collider.statistic.outputElements.push({element: key, value: value});
     });
     g.collider.statistic.inputEnergy = energy;
 
@@ -420,7 +422,13 @@ game.collider.updateAllowedElements = () => {
     for (let i = length - 1; i >= 0; i--) {
         select.options[i] = null;
     }
-    g.collider.options.usableElements.forEach((element, i) => {
+
+    let map = new Map();
+    g.collider.options.usableElements.sort((a, b) => {
+        if (!map.has(a)) map.set(a, elements.find(a).atomic_mass);
+        if (!map.has(b)) map.set(b, elements.find(b).atomic_mass);
+        return map.get(a) - map.get(b);
+    }).forEach((element, i) => {
         let option = document.createElement('option');
         option.text = element;
         select.add(option, select[i]);
@@ -448,8 +456,8 @@ game.collider.load = (saveObj) => {
     saveObj.emitters.forEach((obj) => {
         g.collider.emitters.load(obj.x, obj.y, obj.dirIndicator.x, obj.dirIndicator.y, obj.element);
     });
-    g.collider.options= saveObj.options;
-    
+    g.collider.options = saveObj.options;
+
     game.collider.updateAllowedElements();
     game.collider.changed = true;
 };

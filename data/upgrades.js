@@ -61,5 +61,14 @@ g.u.list = [
         game.ressources.perClick.Energy.amount *= 1.5;
     }),
 
-    new Upgrade("Building Test", "Building test", {amount: 1000, type: 'Hydrogen'}, () => {}),
+    new Upgrade("Collider", "Add Tritium", [{amount: 1000, type: 'Hydrogen'},{amount: 1000, type: 'Deuterium'}], () => {
+        g.collider.options.usableElements.push('T');
+        game.collider.updateAllowedElements();
+    }),
+    new MultiUpgrade("More emmiter", "emitter++", {
+        amount: 1, type: 'Hydrogen'
+    }, 8, (self) => {
+        self.price[0].amount *= 2;
+        g.collider.options.maxEmitter += 1;
+    }),
 ];

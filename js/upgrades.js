@@ -75,7 +75,7 @@ game.upgrades.buy = (thing) => {
 
     if (obj.buyable()) {
         obj.pay();
-        obj.boughtFunction();
+        obj.boughtFunction(obj);
         if (obj instanceof MultiUpgrade) {
             if (g.u.owned[obj.name] === false) {
                 g.u.owned[obj.name] = 0;
@@ -187,9 +187,7 @@ game.upgrades.check = () => {
     g.u.list.forEach((obj, i) => {
         if (g.u.owned[obj.name] === true) {
             let upgradeBTN = document.getElementById("upgrades-btn-" + obj.name);
-            upgradeBTN.setAttribute('onclick', '');
-            upgradeBTN.classList.replace('btn-primary', 'btn-success');
-            upgradeBTN.innerHTML = 'Owned';
+            upgradeBTN.remove();
         }
     });
 };
