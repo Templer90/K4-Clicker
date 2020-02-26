@@ -74,7 +74,7 @@ game.init = function () {
 
     g.options.init = true;
 };
-game.currentTab='log';
+game.currentTab='stash';
 game.clearHolding = function () {
     game.holding.forEach((i) =>
         window.clearInterval(i)
@@ -385,7 +385,7 @@ game.changeHoldInterval = function () {
     }
 };
 g.displayHorde = function () {
-    if (game.currentTab !== 'log') return;
+    if (game.currentTab !== 'stash') return;
     let text = "Energy".padEnd(13, String.fromCharCode(160)) + ": " + fix(g.ressources.owned.Energy, 0) + "<br>";
 
     elements.list
@@ -398,7 +398,7 @@ g.displayHorde = function () {
             }
             text += line + "<br>";
         });
-    document.getElementById("log-well").innerHTML = text;
+    document.getElementById("stash-well").innerHTML = text;
 };
 
 // INTERVALS + ONLOAD
