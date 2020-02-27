@@ -91,3 +91,12 @@ header {
 .dot-on {
     background-color: #fffd00;
 }
+
+#ressources-well{
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+}
+#ressources-display{
+    font-size: 93%;
+}

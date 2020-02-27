@@ -23,7 +23,7 @@ class Building{
     buy = (index) => {
         let type = this.price.type;
         g.ressources.owned[type] -= this.buildPrice(index);
-        this.costString = fix(this.buildPrice(), 0) + " " + this.price.type.toLowerCase();
+        this.costString = numbers.fix(this.buildPrice(), 0) + " " + this.price.type.toLowerCase();
     };
 
     checkResources() {
@@ -118,9 +118,9 @@ game.builds.checkSave = () => {
 game.builds.update = () => {
     for (let i = 0; i < g.b.list.length; i++) {
         let obj = g.b.list[i];
-        let line1 = obj.name + " : " + fix(obj.valuePerSec.perSec, 2) + " " + obj.valuePerSec.type.toLowerCase() + "/sec";
-        let line2 = fix(g.b.owned[i], 0) + " owned : " + fix(obj.valuePerSec.perSec * g.b.owned[i] * g.b.multiplier[i], 2) + " " + obj.price.type.toLowerCase() + "/sec";
-        let line3 = "Cost " + fix(obj.buildPrice(i), 0) + " " + obj.price.type.toLowerCase();
+        let line1 = obj.name + " : " + numbers.fix(obj.valuePerSec.perSec, 2) + " " + obj.valuePerSec.type.toLowerCase() + "/sec";
+        let line2 = numbers.fix(g.b.owned[i], 0) + " owned : " + numbers.fix(obj.valuePerSec.perSec * g.b.owned[i] * g.b.multiplier[i], 2) + " " + obj.price.type.toLowerCase() + "/sec";
+        let line3 = "Cost " + numbers.fix(obj.buildPrice(i), 0) + " " + obj.price.type.toLowerCase();
         document.getElementById("builds-infos-" + i).innerHTML = line1 + "<br>" + line2 + "<br>" + line3 + "<br>";
     }
 };

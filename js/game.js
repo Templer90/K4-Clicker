@@ -103,28 +103,28 @@ game.removeHoldingFunction = function () {
 };
 game.display = function () {
     $("#ressources-display").html(
-        "Energy : " + fix(g.ressources.owned.Energy, 0) + "<br>" +
-        "Hydrogen : " + fix(g.ressources.owned.Hydrogen, 0) + "<br>" +
+        "Energy : " + numbers.fix(g.ressources.owned.Energy, 0) + "<br>" +
+        "Hydrogen : " + numbers.fix(g.ressources.owned.Hydrogen, 0) + "<br>" +
         "<br>" +
-        "Water : " + fix(g.ressources.owned.Water, 0) + " mL<br>" +
-        "Meat : " + fix(g.ressources.owned.Meat, 2) + "<br>" +
-        "Cells : " + fix(g.ressources.owned.Cells, 0) + "/" + fix(h.maxCells(), 0)
+        "Water : " + numbers.fix(g.ressources.owned.Water, 0) + " mL<br>" +
+        "Meat : " + numbers.fix(g.ressources.owned.Meat, 2) + "<br>" +
+        "Cells : " + numbers.fix(g.ressources.owned.Cells, 0) + "/" + numbers.fix(h.maxCells(), 0)
     );
 
     g.displayHorde();
 };
 game.buttons = function () {
-    $("#btn-energy").html("Create Energy (+" + fix(g.ressources.perClick.Energy.amount, 0) + ")");
-    $("#btn-hydrogen").html("Create Hydrogen (+" + fix(g.ressources.perClick.Hydrogen.amount, 0) + ")");
+    $("#btn-energy").html("Create Energy (+" + numbers.fix(g.ressources.perClick.Energy.amount, 0) + ")");
+    $("#btn-hydrogen").html("Create Hydrogen (+" + numbers.fix(g.ressources.perClick.Hydrogen.amount, 0) + ")");
     $("#btn-collider").html("Run Collider");
 
     let waterButton = $("#btn-2-1");
-    waterButton.html("Generate water (+" + fix(g.ressources.perClick.Water.amount * g.buyMultiplier, 0) + " mL)");
-    waterButton.attr('data-original-title', 'Cost ' + fix((20 * g.buyMultiplier), 0) + ' hydrogen, ' + fix((10 * g.buyMultiplier), 0) + ' oxygen');
+    waterButton.html("Generate water (+" + numbers.fix(g.ressources.perClick.Water.amount * g.buyMultiplier, 0) + " mL)");
+    waterButton.attr('data-original-title', 'Cost ' + numbers.fix((20 * g.buyMultiplier), 0) + ' hydrogen, ' + numbers.fix((10 * g.buyMultiplier), 0) + ' oxygen');
 
     let cellButton = $("#btn-3-1");
-    cellButton.html("Generate cell (+" + fix(g.ressources.perClick.Cells.amount * g.buyMultiplier, 0) + ")");
-    cellButton.attr('data-original-title', 'Cost ' + fix((g.cellCost * g.buyMultiplier), 0) + ' energy');
+    cellButton.html("Generate cell (+" + numbers.fix(g.ressources.perClick.Cells.amount * g.buyMultiplier, 0) + ")");
+    cellButton.attr('data-original-title', 'Cost ' + numbers.fix((g.cellCost * g.buyMultiplier), 0) + ' energy');
 
     if (g.ressources.owned.Sun === 1) {
         $("#btn-3-2").css('display', 'none');
@@ -328,7 +328,7 @@ game.changeBuy = function () {
         g.buyMultiplier = 1;
     }
 
-    $("#btn-buy-multiplier").html("Buy x" + fix(g.buyMultiplier, 0));
+    $("#btn-buy-multiplier").html("Buy x" + numbers.fix(g.buyMultiplier, 0));
     game.buttons();
 };
 game.devMode = function () {
@@ -386,16 +386,12 @@ game.changeHoldInterval = function () {
 };
 g.displayHorde = function () {
     if (game.currentTab !== 'stash') return;
-    let text = "Energy".padEnd(13, String.fromCharCode(160)) + ": " + fix(g.ressources.owned.Energy, 0) + "<br>";
+    let text = "Energy".padEnd(13, String.fromCharCode(160)) + ": " + numbers.fix(g.ressources.owned.Energy, 0) + "<br>";
 
     elements.list
         .sort((a, b) => g.ressources.owned[b.name] - g.ressources.owned[a.name])
         .forEach((element) => {
-            let value = g.ressources.owned[element.name];
-            let line = element.name.padEnd(13, String.fromCharCode(160)) + ": " + fix(value, 0);
-            if (value > elements.avogadro) {
-                line += " " + fix(value / elements.avogadro, 0) + " mol";
-            }
+            const line = element.name.padEnd(13, String.fromCharCode(160)) + ": " + numbers.element(g.ressources.owned[element.name]);
             text += line + "<br>";
         });
     document.getElementById("stash-well").innerHTML = text;

@@ -399,7 +399,7 @@ game.collider.compileStatistics = () => {
         energy /= obj.efficiency;
     });
     g.collider.statistic.inputEnergy = energy;
-    inputText += "<br>Energy " + fix(energy, 0);
+    inputText += "<br>Energy " + numbers.fix(energy, 0);
 
     accumulate(statistic.outputEmitters, ([key, value]) => {
         outputText += "<br>\t" + key + " :" + value;
