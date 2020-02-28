@@ -5,9 +5,13 @@ class Upgrade {
         this.desc = desc;
         this.tags = tags;
         this.boughtFunction = boughtFunction;
+        if (boughtFunction === undefined) {
+            this.boughtFunction = () => {
+            };
+        }
         this.depends = dependsOn;
         this.buyCheckFunction = buyCheckFunction;
-        this.mainDiv=undefined;
+        this.mainDiv = undefined;
         this.buylink = undefined;
 
         this.price = price;
@@ -142,7 +146,7 @@ game.upgrades.init = () => {
         panel.append(main);
     });
 };
-game.upgrades.checkBuyStatus = function () {
+game.upgrades.checkBuyStatus = () => {
     g.u.list.forEach((obj, i) => {
         if (obj.buyable()) {
             obj.buylink.removeAttribute('disabled');
@@ -153,12 +157,33 @@ game.upgrades.checkBuyStatus = function () {
         }
     });
 };
+game.upgrades.search = (searchBox) => {
+    const input = searchBox.value.trim().toUpperCase();
+
+    if (input === '') {
+        g.u.list.forEach((obj) => {
+            obj.mainDiv.style.display = '';
+        });
+        game.upgrades.hide();
+    } else {
+        const regex = new RegExp(`.*${input}.*`, "g");
+
+        g.u.list.forEach((obj) => {
+            const infoString = obj.name + "," + obj.tags + "," + Object.keys(obj.price).toString();
+            if (regex.exec(infoString.toUpperCase())) {
+                obj.mainDiv.style.display = '';
+            } else {
+                obj.mainDiv.style.display = 'none';
+            }
+        });
+    }
+};
 game.upgrades.hide = () => {
     let funcHide = (obj, i) => {
         obj.mainDiv.style.display = 'none';
     };
     let funcShow = (obj, i) => {
-        obj.mainDiv.style.display = 'block';
+        obj.mainDiv.style.display = '';
     };
     let func = funcHide;
     if (document.getElementById('upgrades-checkbox').checked === true) {

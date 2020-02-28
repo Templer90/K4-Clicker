@@ -38,17 +38,18 @@
             </div>
             <div class="spacer"></div>
             <p>
-                <a id="btn-energy" type="button" class="multiClickable genResource btn btn-warning btn-sm btn-block" onclick="game.earn('energy')"
-                   style="display: none;">Create Energy (+1)</a>
-                <a id="btn-hydrogen" type="button" class="multiClickable genResource btn btn-primary btn-sm btn-block" onclick="game.earn('hydrogen')"
-                   style="display: none;">Create hydrogen (+1)</a>
-                <a id="btn-collider" type="button" class="multiClickable genResource btn btn-primary btn-sm btn-block" onclick="game.earn('collider')"
-                   style="display: none;">"Run Collider"</a>
+                <a id="btn-energy" type="button" class="multiClickable genResource btn btn-warning btn-sm btn-block" 
+                   onclick="game.earn('energy')" style="display: none;" data-template="Create Energy (+[number])" data-element="Energy" >Create Energy (+1)</a>
+                <a id="btn-hydrogen" type="button" class="multiClickable genResource btn btn-primary btn-sm btn-block"
+                   onclick="game.earn('hydrogen')" 
+                   style="display: none;"  data-template="Create Hydrogen (+[number])" data-element="Hydrogen">Create hydrogen (+1)</a>
+                <a id="btn-collider" type="button" class="multiClickable genResource btn btn-primary btn-sm btn-block"
+                   onclick="game.earn('collider')"
+                   style="display: none;"  data-template="Run Collider" data-element="Energy">Run Collider</a>
             </p>
             <p>
-                <a id="btn-2-1" type="button" class="btn btn-info btn-block" onclick="game.earn('water')"
-                   data-toggle="tooltip" data-placement="top" title="Cost 20 hydrogen, 10 oxygen"
-                   style="display: none;">Generate water (+1 mL)</a>
+                <a id="btn-deuterium" type="button" class="multiClickable genResource btn btn-primary btn-sm btn-block"
+                   onclick="game.earn('deuterium')" style="" data-template="Create Deuterium (+[number])" data-element="Deuterium">Create Deuterium (+1)</a>
             </p>
             <p>
                 <a id="btn-3-1" type="button" class="btn btn-info btn-block" onclick="game.earn('cells')"

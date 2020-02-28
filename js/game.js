@@ -102,21 +102,26 @@ game.removeHoldingFunction = function () {
     });
 };
 game.display = function () {
-    $("#ressources-display").html(
+    document.getElementById("ressources-display").innerHTML =
         "Energy : " + numbers.fix(g.ressources.owned.Energy, 0) + "<br>" +
         "Hydrogen : " + numbers.fix(g.ressources.owned.Hydrogen, 0) + "<br>" +
         "<br>" +
         "Water : " + numbers.fix(g.ressources.owned.Water, 0) + " mL<br>" +
         "Meat : " + numbers.fix(g.ressources.owned.Meat, 2) + "<br>" +
-        "Cells : " + numbers.fix(g.ressources.owned.Cells, 0) + "/" + numbers.fix(h.maxCells(), 0)
-    );
+        "Cells : " + numbers.fix(g.ressources.owned.Cells, 0) + "/" + numbers.fix(h.maxCells(), 0);
 
     g.displayHorde();
 };
 game.buttons = function () {
-    $("#btn-energy").html("Create Energy (+" + numbers.fix(g.ressources.perClick.Energy.amount, 0) + ")");
-    $("#btn-hydrogen").html("Create Hydrogen (+" + numbers.fix(g.ressources.perClick.Hydrogen.amount, 0) + ")");
-    $("#btn-collider").html("Run Collider");
+    Array.from(document.getElementsByClassName("genResource")).forEach(
+         (element, index, array) => {
+            element.innerHTML = element.dataset.template.replace('[number]', numbers.fix(g.ressources.perClick[element.dataset.element].amount, 0));
+        }
+    );
+
+    //$("#btn-energy").html("Create Energy (+" + numbers.fix(g.ressources.perClick.Energy.amount, 0) + ")");
+    //$("#btn-hydrogen").html("Create Hydrogen (+" + numbers.fix(g.ressources.perClick.Hydrogen.amount, 0) + ")");
+    document.getElementById("btn-collider").html = "Run Collider";
 
     let waterButton = $("#btn-2-1");
     waterButton.html("Generate water (+" + numbers.fix(g.ressources.perClick.Water.amount * g.buyMultiplier, 0) + " mL)");
@@ -127,10 +132,10 @@ game.buttons = function () {
     cellButton.attr('data-original-title', 'Cost ' + numbers.fix((g.cellCost * g.buyMultiplier), 0) + ' energy');
 
     if (g.ressources.owned.Sun === 1) {
-        $("#btn-3-2").css('display', 'none');
+        document.getElementById("btn-3-2").style.setProperty('display', 'none');
     }
     if (g.ressources.owned["Atmosphere Generator"] === 1) {
-        $("#btn-3-3").css('display', 'none');
+        document.getElementById("btn-3-3").style.setProperty('display', 'none');
     }
 };
 game.loop = function () {
@@ -340,6 +345,7 @@ game.devMode = function () {
 
 game.changeSaveInterval = function () {
     let val = document.getElementById('saveIntervalSlider').value;
+
     $("#intervalText").html("The game autosaves every " + val + " seconds.");
     game.options.saveIntervalTime = val * 1000;
     window.clearInterval(game.saveInterval);

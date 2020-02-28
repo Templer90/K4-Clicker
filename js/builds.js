@@ -1,11 +1,13 @@
 class Building{
-    constructor(name, desc, price, valuePerSec, reward, visible= true) {
+    constructor(name, desc, price, valuePerSec, reward, visible = true) {
         this.name = name.replace(/ /g, "_");
         this.displayName = name;
         this.desc = desc;
         this.visible = visible;
         this._orginalPrices = price;
         this.price = price;
+        this.index = -1;
+        
         //if (!Array.isArray(price)) {
         //    this.price = [price];
         //}
@@ -24,17 +26,18 @@ class Building{
         this.valuePerSec = valuePerSec;
     }
 
-    buildPrice = (index) => {
-        return this.price.amount * Math.pow(this.price.inflation, g.b.owned[index]);
+    buildPrice = () => {
+        return this.price.amount * Math.pow(this.price.inflation, g.b.owned[this.index]);
     };
 
-    buyable = (index) => {
-        return g.ressources.owned[g.b.list[index].price.type] >= g.b.list[index].buildPrice(index);
+    buyable = () => {
+        const cost = g.b.list[this.index].buildPrice(this.index);
+        return g.ressources.owned[g.b.list[this.index].price.type] >= cost;
     };
 
-    buy = (index) => {
+    buy = () => {
         let type = this.price.type;
-        g.ressources.owned[type] -= this.buildPrice(index);
+        g.ressources.owned[type] -= this.buildPrice(this.index);
         this.costString = numbers.fix(this.buildPrice(), 0) + " " + this.price.type.toLowerCase();
     };
 
@@ -57,6 +60,7 @@ game.builds.init = () => {
     g.b.list.forEach((obj, i) => {
         g.b.owned.push(0);
         g.b.multiplier.push(1);
+        obj.index=i;
 
         let main = document.createElement("div");
         main.setAttribute('id', 'builds-row-' + i);
@@ -107,8 +111,8 @@ game.builds.checkBuyStatus = function () {
     }
 };
 game.builds.buy = (index, object) => {
-    if (g.b.list[index].buyable(index)) {
-        g.b.list[index].buy(index);
+    if (g.b.list[index].buyable()) {
+        g.b.list[index].buy();
         g.b.owned[index]++;
         g.b.update();
     }
@@ -144,7 +148,7 @@ game.builds.update = () => {
 
         const line1 = obj.name + " : " + numbers.fix(obj.valuePerSec.perSec, 2) + " " + obj.valuePerSec.type.toLowerCase() + "/sec";
         const line2 = numbers.fix(g.b.owned[i], 0) + " owned : " + obj.reward.rewardPerSecondString(g.b.owned[i]);
-        const line3 = "Cost " + numbers.fix(obj.buildPrice(i), 0) + " " + obj.price.type.toLowerCase();
+        const line3 = "Cost " + numbers.fix(obj.buildPrice(), 0) + " " + obj.price.type.toLowerCase();
 
         document.getElementById("builds-infos-" + i).innerHTML = line1 + "<br>" + line2 + "<br>" + line3 + "<br>";
     });
