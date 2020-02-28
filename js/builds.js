@@ -1,17 +1,29 @@
 class Building{
-    constructor(name, desc, price, valuePerSec, reward) {
+    constructor(name, desc, price, valuePerSec, reward, visible= true) {
         this.name = name.replace(/ /g, "_");
         this.displayName = name;
         this.desc = desc;
+        this.visible = visible;
         this._orginalPrices = price;
         this.price = price;
         //if (!Array.isArray(price)) {
         //    this.price = [price];
         //}
         this.reward = reward;
+        if (reward.rewardPerSecondString === undefined) {
+            //TODO add description
+            reward.rewardPerSecondString = (owned) => {
+                const tmpRef = {};
+                tmpRef[this.reward.type] = 0;
+
+                this.reward.func(owned, 1, this.reward, tmpRef);
+
+                return numbers.fix(tmpRef[this.reward.type], 2) + " " + this.price.type.toLowerCase() + "/sec";
+            }
+        }
         this.valuePerSec = valuePerSec;
     }
-    
+
     buildPrice = (index) => {
         return this.price.amount * Math.pow(this.price.inflation, g.b.owned[index]);
     };
@@ -35,6 +47,7 @@ class Building{
         return true;
     }
 }
+
 g.builds = g.b = {};
 g.b.owned = [];
 g.b.multiplier = [];
@@ -104,7 +117,12 @@ game.builds.earn = (times) => {
     let delta = times / g.options.fps;
     for (let i = 0; i < g.b.list.length; i++) {
         if (g.b.owned[i] > 0) {
-            g.b.list[i].reward.func(g.b.list[i].valuePerSec.perSec * g.b.owned[i] * g.b.multiplier[i], delta, g.b.list[i].reward);
+            let reward= g.b.list[i].reward;
+            g.b.list[i].reward.func(g.b.list[i].valuePerSec.perSec * g.b.owned[i] * g.b.multiplier[i],
+                delta,
+                reward,
+                game.ressources.owned
+            );
         }
     }
 };
@@ -116,22 +134,33 @@ game.builds.checkSave = () => {
     }
 };
 game.builds.update = () => {
-    for (let i = 0; i < g.b.list.length; i++) {
-        let obj = g.b.list[i];
-        let line1 = obj.name + " : " + numbers.fix(obj.valuePerSec.perSec, 2) + " " + obj.valuePerSec.type.toLowerCase() + "/sec";
-        let line2 = numbers.fix(g.b.owned[i], 0) + " owned : " + numbers.fix(obj.valuePerSec.perSec * g.b.owned[i] * g.b.multiplier[i], 2) + " " + obj.price.type.toLowerCase() + "/sec";
-        let line3 = "Cost " + numbers.fix(obj.buildPrice(i), 0) + " " + obj.price.type.toLowerCase();
+    g.b.list.forEach((obj, i) => {
+        const row = document.getElementById("builds-row-" + i);
+        if (obj.visible) {
+            row.style.display = 'flex';
+        } else {
+            row.style.display = 'none';
+        }
+
+        const line1 = obj.name + " : " + numbers.fix(obj.valuePerSec.perSec, 2) + " " + obj.valuePerSec.type.toLowerCase() + "/sec";
+        const line2 = numbers.fix(g.b.owned[i], 0) + " owned : " + obj.reward.rewardPerSecondString(g.b.owned[i]);
+        const line3 = "Cost " + numbers.fix(obj.buildPrice(i), 0) + " " + obj.price.type.toLowerCase();
+
         document.getElementById("builds-infos-" + i).innerHTML = line1 + "<br>" + line2 + "<br>" + line3 + "<br>";
-    }
+    });
 };
 
 game.builds.save = () => {
     return {
         owned: g.b.owned,
-        multiplier: g.b.multiplier
+        multiplier: g.b.multiplier,
+        visible: g.b.list.map((obj) => obj.visible)
     };
 };
 game.builds.load = (saveObj) => {
     g.b.owned = saveObj.owned;
     g.b.multiplier = saveObj.multiplier;
+    g.b.list.forEach((obj, i) => {
+        obj.visible = saveObj.visible[i];
+    });
 };

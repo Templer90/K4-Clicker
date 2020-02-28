@@ -40,7 +40,8 @@ g.collider.statistic = {
 };
 g.collider.options = {
     maxEmitter: 5,
-    usableElements: ['H', 'He']
+    usableElements: ['H', 'He'],
+    collider: 1
 };
 g.collider.emitters = {
     drawable: [],

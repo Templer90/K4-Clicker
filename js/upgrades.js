@@ -1,8 +1,9 @@
 class Upgrade {
-    constructor(name, desc, price, boughtFunction, dependsOn = undefined, buyCheckFunction = undefined) {
+    constructor(name, desc, tags, price, boughtFunction, dependsOn = undefined, buyCheckFunction = undefined) {
         this.name = name.replace(/ /g, "_");
         this.displayName = name;
         this.desc = desc;
+        this.tags = tags;
         this.boughtFunction = boughtFunction;
         this.depends = dependsOn;
         this.buyCheckFunction = buyCheckFunction;
@@ -34,8 +35,8 @@ class Upgrade {
 }
 
 class MultiUpgrade extends Upgrade {
-    constructor(name, desc, price, max, boughtFunction, dependsOn = undefined, buyCheckFunction = undefined) {
-        super(name, desc, price, boughtFunction, dependsOn, buyCheckFunction);
+    constructor(name, desc, tags, price, max, boughtFunction, dependsOn = undefined, buyCheckFunction = undefined) {
+        super(name, desc, tags, price, boughtFunction, dependsOn, buyCheckFunction);
         this.max = max;
     }
 
@@ -90,6 +91,7 @@ game.upgrades.buy = (thing) => {
             let upgradeBTN = document.getElementById("upgrades-btn-" + obj.name);
             upgradeBTN.remove();
             g.u.hide();
+            game.builds.update();
         }
     }
 };

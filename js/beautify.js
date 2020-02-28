@@ -6,6 +6,7 @@ numbers.prefixes = ["million ", "billion ", "trillion ", "quadrillion ", "quinti
     "quadragintillion ", "unquadragintillion ", "duoquadragintillion ", "trequadragintillion ", "quattuorquadragintillion ", "quinquadragintillion ", "sexquadragintillion ", "septenquadragintillion ", "octoquadragintillion ", "novemquadragintillion ",
     "quinquagintillion "];
 numbers.beautify = function beautify(x, n) {
+    if (typeof x === 'string') return x;
     if (x >= 1e6) {
         const z = Math.floor(numbers.logFloor(x) / 3);
 
