@@ -54,26 +54,31 @@ game.init = function () {
     document.getElementById('holdIntervalSlider').value = game.options.hold;
     game.changeHoldInterval();
 
-    $('[data-toggle="tooltip"]').tooltip();
-    $('.header-small').html(g.options.version);
+    Array.from(document.querySelectorAll('[data-toggle="tooltip"]')).forEach((obj) => {
+        $(obj).tooltip();
+    });
 
-    let saveInterval = game.options.saveIntervalTime / 1000;
+    Array.from(document.getElementsByClassName('header-small')).forEach((obj) => {
+        obj.innerHTML = g.options.version;
+    });
+
+    const saveInterval = game.options.saveIntervalTime / 1000;
     document.getElementById("saveIntervalSlider").value = saveInterval;
     document.getElementById("intervalText").innerHTML = "The game autosaves every " + saveInterval + " seconds.";
-    
+
     //Workaround because bootstrap has a bug
-    $('#menu a').click( (function (e) {
+    $('#menu a').click((function (e) {
         e.preventDefault();
         $(this).tab('show');
     }));
-    
+
     $('a[data-toggle="tab"]').on('shown.bs.tab', ((e) => {
         game.currentTab = e.target.hash.substring(1);
     }));
 
     g.options.init = true;
 };
-game.currentTab='stash';
+game.currentTab = 'stash';
 game.clearHolding = function () {
     game.holding.forEach((i) =>
         window.clearInterval(i)
@@ -113,11 +118,11 @@ game.display = function () {
 };
 game.buttons = function () {
     Array.from(document.getElementsByClassName("genResource")).forEach(
-         (element, index, array) => {
+        (element) => {
             element.innerHTML = element.dataset.template.replace('[number]', numbers.fix(g.ressources.perClick[element.dataset.element].amount, 0));
         }
     );
-    
+
     document.getElementById("btn-collider").html = "Run Collider";
 
     const waterButton = $("#btn-2-1");
@@ -191,7 +196,7 @@ game.ressources.init = function () {
     g.ressources.perClick.Hydrogen.click = function (owned, multi) {
         owned["Hydrogen"] += this.amount;
         owned["Deuterium"] += g.u.owned["Hydrogen_Isotopes"] * (0.000115 * g.ressources.perClick.Deuterium.amount * this.amount * multi);
-        return owned["Hydrogen"] ;
+        return owned["Hydrogen"];
     };
 
     g.ressources.perClick.Collider = {
@@ -304,7 +309,7 @@ game.ressources.init = function () {
 };
 
 // GAME FUNCTIONS
-game.earn = function (type, multi= 1) {
+game.earn = function (type, multi = 1) {
     const str = h.capitalizeFirstLetter(type);
     if (g.ressources.perClick[str].can(g.ressources.owned, multi)) {
         g.ressources.perClick[str].click(g.ressources.owned, multi)
@@ -372,7 +377,7 @@ game.load = (saveObj) => {
             g.ressources.perClick[obj][param] = params[param];
         });
     });
-    
+
     g.ressources.total = saveObj.resources.total;
 };
 game.changeHoldInterval = function () {
@@ -404,7 +409,7 @@ g.displayHorde = function () {
 window.onload = function () {
     let fragments = $("div[data-frag]");
     window.loadCounter = fragments.length;
-    fragments.each( (index, item) => {
+    fragments.each((index, item) => {
         let jItem = $(item);
         jItem.load(jItem.data("frag"), null, () => {
             window.loadCounter--;

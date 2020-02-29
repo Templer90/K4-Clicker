@@ -4,7 +4,6 @@ class Building {
         this.displayName = name;
         this.desc = desc;
         this.visible = visible;
-        this._orginalPrices = price;
         this.price = price;
         this.index = -1;
 
@@ -39,15 +38,6 @@ class Building {
         g.ressources.owned[this.price.type] -= this.buildPrice(this.index);
         this.costString = numbers.fix(this.buildPrice(), 0) + " " + this.price.type.toLowerCase();
     };
-
-    checkResources() {
-        for (let i = 0; i < this.price.length; i++) {
-            if (g.ressources.owned[this.price[i].type] < this.price[i].amount) {
-                return false;
-            }
-        }
-        return true;
-    }
 }
 
 g.builds = g.b = {};
@@ -108,7 +98,7 @@ game.builds.checkBuyStatus = () => {
         }
     });
 };
-game.builds.buy = (index, object) => {
+game.builds.buy = (index) => {
     if (g.b.list[index].buyable()) {
         g.b.list[index].buy();
         g.b.owned[index]++;
@@ -156,13 +146,16 @@ game.builds.save = () => {
     return {
         owned: g.b.owned,
         multiplier: g.b.multiplier,
-        visible: g.b.list.map((obj) => obj.visible)
+        data: g.b.list.map((obj) => {
+            return {visible: obj.visible, perSec: obj.valuePerSec.perSec}
+        })
     };
 };
 game.builds.load = (saveObj) => {
     g.b.owned = saveObj.owned;
     g.b.multiplier = saveObj.multiplier;
     g.b.list.forEach((obj, i) => {
-        obj.visible = saveObj.visible[i];
+        obj.visible = saveObj.data[i].visible;
+        obj.valuePerSec.perSec = saveObj.data[i].perSec;
     });
 };

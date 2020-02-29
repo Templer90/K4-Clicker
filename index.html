@@ -69,6 +69,8 @@
         </div>
         <div id="menu" class="col-md-9">
             <ul class="nav nav-tabs nav-justified" role="tablist">
+                <li id="log-nav" role="presentation" class="active"><a href="#log" data-toggle="tab">
+                    <i class="fas fa-comment-alt"></i>Log</a></li>
                 <li id="stash-nav" role="presentation" class="active"><a href="#stash" data-toggle="tab"><i
                         class="fa fa-pen-square"></i>Stash</a></li>
                 <li id="upgrades-nav" role="presentation" style="display: none;"><a href="#upgrades"
@@ -92,6 +94,9 @@
                 </li>
             </ul>
             <div class="tab-content">
+                <div id="log" class="tab-pane fade">
+                    <div id="log-well" class="well"></div>
+                </div>
                 <div id="stash" class="tab-pane fade in active show">
                     <div id="stash-well" class="well"></div>
                 </div>

@@ -1116,8 +1116,7 @@ elements.combine = function (a, b) {
     if (foundA === undefined && foundB === undefined) return undefined;
     if (foundA === undefined && foundB !== undefined) {
         foundA = foundB;
-    }
-    if (foundB === undefined && foundA !== undefined) {
+    }else if (foundB === undefined && foundA !== undefined) {
         foundB = foundA;
     }
 
