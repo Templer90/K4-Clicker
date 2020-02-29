@@ -8,7 +8,7 @@ g.b.list = [
         {
             type: "Hydrogen",
             func: (value, delta, obj, destination) => {
-                destination[obj.type] += value * delta * (g.u.owned["Building_Test"] ? g.ressources.perClick.Hydrogen.amount : 1);
+                destination[obj.type] += value * delta * (g.u.owned["Building_Test"] ? g.resources.perClick.Hydrogen.amount : 1);
             }
         }),
     new Building("Oxygen build", "Create some oxygen", {
@@ -20,7 +20,7 @@ g.b.list = [
         {
             type: "Oxygen",
             func: (value, delta, obj, destination) => {
-                destination[obj.type] += value * delta * (g.u.owned["Building_Test"] ? g.ressources.perClick.Oxygen.amount : 1);
+                destination[obj.type] += value * delta * (g.u.owned["Building_Test"] ? g.resources.perClick.Oxygen.amount : 1);
             },
         }),
     new Building("Energy build", "Create some Energy", {
@@ -32,7 +32,7 @@ g.b.list = [
         {
             type: "Energy",
             func: (value, delta, obj, destination) => {
-                destination[obj.type] += value * delta * (g.u.owned["Building_Test"] ? g.ressources.perClick.Energy.amount : 1)
+                destination[obj.type] += value * delta * (g.u.owned["Building_Test"] ? g.resources.perClick.Energy.amount : 1)
             }
         }),
     new Building("Autonomous Collider", "Run the Collider", {
@@ -56,8 +56,8 @@ g.b.list = [
 
                 if (obj.accumulator < 1) return;
 
-                if (g.ressources.perClick.Collider.can(g.ressources.owned, Math.floor(obj.accumulator))) {
-                    g.ressources.perClick.Collider.click(g.ressources.owned, Math.floor(obj.accumulator));
+                if (g.resources.perClick.Collider.can(g.resources.owned, Math.floor(obj.accumulator))) {
+                    g.resources.perClick.Collider.click(g.resources.owned, Math.floor(obj.accumulator));
                     obj.accumulator -= Math.floor(obj.accumulator);
                 } else {
                     while (obj.accumulator > 1) {

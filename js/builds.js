@@ -31,11 +31,11 @@ class Building {
 
     buyable = () => {
         const cost = g.b.list[this.index].buildPrice(this.index);
-        return g.ressources.owned[g.b.list[this.index].price.type] >= cost;
+        return g.resources.owned[g.b.list[this.index].price.type] >= cost;
     };
 
     buy = () => {
-        g.ressources.owned[this.price.type] -= this.buildPrice(this.index);
+        g.resources.owned[this.price.type] -= this.buildPrice(this.index);
         this.costString = numbers.fix(this.buildPrice(), 0) + " " + this.price.type.toLowerCase();
     };
 }
@@ -113,7 +113,7 @@ game.builds.earn = (times) => {
             g.b.list[i].reward.func(g.b.list[i].valuePerSec.perSec * g.b.owned[i] * g.b.multiplier[i],
                 delta,
                 reward,
-                game.ressources.owned
+                game.resources.owned
             );
         }
     }

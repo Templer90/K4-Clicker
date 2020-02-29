@@ -1,10 +1,12 @@
 //https://github.com/Bowserinator/Periodic-Table-JSON/blob/master/PeriodicTableJSON.json
-var elements = e = {};
+const elements = e = {};
 elements.avogadro = 6.02214076e+23;
 elements.list = [
     {
         "name": "Hydrogen",
         "atomic_mass": 1.008,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 28.836,
         "number": 1,
         "period": 1,
@@ -15,6 +17,8 @@ elements.list = [
     {
         "name": "Deuterium",
         "atomic_mass": 2.014,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 1,
         "period": 1,
@@ -25,6 +29,8 @@ elements.list = [
     {
         "name": "Tritium",
         "atomic_mass": 3.016,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 1,
         "period": 1,
@@ -35,6 +41,8 @@ elements.list = [
     {
         "name": "Helium",
         "atomic_mass": 4.0026022,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 2,
         "period": 1,
@@ -44,6 +52,8 @@ elements.list = [
     }, {
         "name": "Lithium",
         "atomic_mass": 6.94,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 24.86,
         "number": 3,
         "period": 2,
@@ -53,6 +63,8 @@ elements.list = [
     }, {
         "name": "Beryllium",
         "atomic_mass": 9.01218315,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 16.443,
         "number": 4,
         "period": 2,
@@ -62,6 +74,8 @@ elements.list = [
     }, {
         "name": "Boron",
         "atomic_mass": 10.81,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 11.087,
         "number": 5,
         "period": 2,
@@ -71,6 +85,8 @@ elements.list = [
     }, {
         "name": "Carbon",
         "atomic_mass": 12.011,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 8.517,
         "number": 6,
         "period": 2,
@@ -80,6 +96,8 @@ elements.list = [
     }, {
         "name": "Nitrogen",
         "atomic_mass": 14.007,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 7,
         "period": 2,
@@ -89,6 +107,8 @@ elements.list = [
     }, {
         "name": "Oxygen",
         "atomic_mass": 15.999,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 8,
         "period": 2,
@@ -98,6 +118,8 @@ elements.list = [
     }, {
         "name": "Fluorine",
         "atomic_mass": 18.9984031636,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 9,
         "period": 2,
@@ -107,6 +129,8 @@ elements.list = [
     }, {
         "name": "Neon",
         "atomic_mass": 20.17976,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 10,
         "period": 2,
@@ -116,6 +140,8 @@ elements.list = [
     }, {
         "name": "Sodium",
         "atomic_mass": 22.989769282,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 28.23,
         "number": 11,
         "period": 3,
@@ -125,6 +151,8 @@ elements.list = [
     }, {
         "name": "Magnesium",
         "atomic_mass": 24.305,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 24.869,
         "number": 12,
         "period": 3,
@@ -134,6 +162,8 @@ elements.list = [
     }, {
         "name": "Aluminium",
         "atomic_mass": 26.98153857,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 24.2,
         "number": 13,
         "period": 3,
@@ -143,6 +173,8 @@ elements.list = [
     }, {
         "name": "Silicon",
         "atomic_mass": 28.085,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 19.789,
         "number": 14,
         "period": 3,
@@ -152,6 +184,8 @@ elements.list = [
     }, {
         "name": "Phosphorus",
         "atomic_mass": 30.9737619985,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 23.824,
         "number": 15,
         "period": 3,
@@ -161,6 +195,8 @@ elements.list = [
     }, {
         "name": "Sulfur",
         "atomic_mass": 32.06,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 22.75,
         "number": 16,
         "period": 3,
@@ -170,6 +206,8 @@ elements.list = [
     }, {
         "name": "Chlorine",
         "atomic_mass": 35.45,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 17,
         "period": 3,
@@ -179,6 +217,8 @@ elements.list = [
     }, {
         "name": "Argon",
         "atomic_mass": 39.9481,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 18,
         "period": 3,
@@ -188,6 +228,8 @@ elements.list = [
     }, {
         "name": "Potassium",
         "atomic_mass": 39.09831,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 29.6,
         "number": 19,
         "period": 4,
@@ -197,6 +239,8 @@ elements.list = [
     }, {
         "name": "Calcium",
         "atomic_mass": 40.0784,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.929,
         "number": 20,
         "period": 4,
@@ -206,6 +250,8 @@ elements.list = [
     }, {
         "name": "Scandium",
         "atomic_mass": 44.9559085,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.52,
         "number": 21,
         "period": 4,
@@ -215,6 +261,8 @@ elements.list = [
     }, {
         "name": "Titanium",
         "atomic_mass": 47.8671,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.06,
         "number": 22,
         "period": 4,
@@ -224,6 +272,8 @@ elements.list = [
     }, {
         "name": "Vanadium",
         "atomic_mass": 50.94151,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 24.89,
         "number": 23,
         "period": 4,
@@ -233,6 +283,8 @@ elements.list = [
     }, {
         "name": "Chromium",
         "atomic_mass": 51.99616,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 23.35,
         "number": 24,
         "period": 4,
@@ -242,6 +294,8 @@ elements.list = [
     }, {
         "name": "Manganese",
         "atomic_mass": 54.9380443,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 26.32,
         "number": 25,
         "period": 4,
@@ -251,6 +305,8 @@ elements.list = [
     }, {
         "name": "Iron",
         "atomic_mass": 55.8452,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.1,
         "number": 26,
         "period": 4,
@@ -260,6 +316,8 @@ elements.list = [
     }, {
         "name": "Cobalt",
         "atomic_mass": 58.9331944,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 24.81,
         "number": 27,
         "period": 4,
@@ -269,6 +327,8 @@ elements.list = [
     }, {
         "name": "Nickel",
         "atomic_mass": 58.69344,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 26.07,
         "number": 28,
         "period": 4,
@@ -278,6 +338,8 @@ elements.list = [
     }, {
         "name": "Copper",
         "atomic_mass": 63.5463,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 24.44,
         "number": 29,
         "period": 4,
@@ -287,6 +349,8 @@ elements.list = [
     }, {
         "name": "Zinc",
         "atomic_mass": 65.382,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.47,
         "number": 30,
         "period": 4,
@@ -296,6 +360,8 @@ elements.list = [
     }, {
         "name": "Gallium",
         "atomic_mass": 69.7231,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.86,
         "number": 31,
         "period": 4,
@@ -305,6 +371,8 @@ elements.list = [
     }, {
         "name": "Germanium",
         "atomic_mass": 72.6308,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 23.222,
         "number": 32,
         "period": 4,
@@ -314,6 +382,8 @@ elements.list = [
     }, {
         "name": "Arsenic",
         "atomic_mass": 74.9215956,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 24.64,
         "number": 33,
         "period": 4,
@@ -323,6 +393,8 @@ elements.list = [
     }, {
         "name": "Selenium",
         "atomic_mass": 78.9718,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.363,
         "number": 34,
         "period": 4,
@@ -332,6 +404,8 @@ elements.list = [
     }, {
         "name": "Bromine",
         "atomic_mass": 79.904,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 35,
         "period": 4,
@@ -341,6 +415,8 @@ elements.list = [
     }, {
         "name": "Krypton",
         "atomic_mass": 83.7982,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 36,
         "period": 4,
@@ -350,6 +426,8 @@ elements.list = [
     }, {
         "name": "Rubidium",
         "atomic_mass": 85.46783,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 31.06,
         "number": 37,
         "period": 5,
@@ -359,6 +437,8 @@ elements.list = [
     }, {
         "name": "Strontium",
         "atomic_mass": 87.621,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 26.4,
         "number": 38,
         "period": 5,
@@ -368,6 +448,8 @@ elements.list = [
     }, {
         "name": "Yttrium",
         "atomic_mass": 88.905842,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 26.53,
         "number": 39,
         "period": 5,
@@ -377,6 +459,8 @@ elements.list = [
     }, {
         "name": "Zirconium",
         "atomic_mass": 91.2242,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.36,
         "number": 40,
         "period": 5,
@@ -386,6 +470,8 @@ elements.list = [
     }, {
         "name": "Niobium",
         "atomic_mass": 92.906372,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 24.6,
         "number": 41,
         "period": 5,
@@ -395,6 +481,8 @@ elements.list = [
     }, {
         "name": "Molybdenum",
         "atomic_mass": 95.951,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 24.06,
         "number": 42,
         "period": 5,
@@ -404,6 +492,8 @@ elements.list = [
     }, {
         "name": "Technetium",
         "atomic_mass": 98,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 24.27,
         "number": 43,
         "period": 5,
@@ -413,6 +503,8 @@ elements.list = [
     }, {
         "name": "Ruthenium",
         "atomic_mass": 101.072,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 24.06,
         "number": 44,
         "period": 5,
@@ -422,6 +514,8 @@ elements.list = [
     }, {
         "name": "Rhodium",
         "atomic_mass": 102.905502,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 24.98,
         "number": 45,
         "period": 5,
@@ -431,6 +525,8 @@ elements.list = [
     }, {
         "name": "Palladium",
         "atomic_mass": 106.421,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.98,
         "number": 46,
         "period": 5,
@@ -440,6 +536,8 @@ elements.list = [
     }, {
         "name": "Silver",
         "atomic_mass": 107.86822,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.35,
         "number": 47,
         "period": 5,
@@ -449,6 +547,8 @@ elements.list = [
     }, {
         "name": "Cadmium",
         "atomic_mass": 112.4144,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 26.02,
         "number": 48,
         "period": 5,
@@ -458,6 +558,8 @@ elements.list = [
     }, {
         "name": "Indium",
         "atomic_mass": 114.8181,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 26.74,
         "number": 49,
         "period": 5,
@@ -467,6 +569,8 @@ elements.list = [
     }, {
         "name": "Tin",
         "atomic_mass": 118.7107,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 27.112,
         "number": 50,
         "period": 5,
@@ -476,6 +580,8 @@ elements.list = [
     }, {
         "name": "Antimony",
         "atomic_mass": 121.7601,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.23,
         "number": 51,
         "period": 5,
@@ -485,6 +591,8 @@ elements.list = [
     }, {
         "name": "Tellurium",
         "atomic_mass": 127.603,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.73,
         "number": 52,
         "period": 5,
@@ -494,6 +602,8 @@ elements.list = [
     }, {
         "name": "Iodine",
         "atomic_mass": 126.904473,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 53,
         "period": 5,
@@ -503,6 +613,8 @@ elements.list = [
     }, {
         "name": "Xenon",
         "atomic_mass": 131.2936,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 54,
         "period": 5,
@@ -512,6 +624,8 @@ elements.list = [
     }, {
         "name": "Cesium",
         "atomic_mass": 132.905451966,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 32.21,
         "number": 55,
         "period": 6,
@@ -521,6 +635,8 @@ elements.list = [
     }, {
         "name": "Barium",
         "atomic_mass": 137.3277,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 28.07,
         "number": 56,
         "period": 6,
@@ -530,6 +646,8 @@ elements.list = [
     }, {
         "name": "Lanthanum",
         "atomic_mass": 138.905477,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 27.11,
         "number": 57,
         "period": 6,
@@ -539,6 +657,8 @@ elements.list = [
     }, {
         "name": "Cerium",
         "atomic_mass": 140.1161,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 26.94,
         "number": 58,
         "period": 6,
@@ -548,6 +668,8 @@ elements.list = [
     }, {
         "name": "Praseodymium",
         "atomic_mass": 140.907662,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 27.2,
         "number": 59,
         "period": 6,
@@ -557,6 +679,8 @@ elements.list = [
     }, {
         "name": "Neodymium",
         "atomic_mass": 144.2423,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 27.45,
         "number": 60,
         "period": 6,
@@ -566,6 +690,8 @@ elements.list = [
     }, {
         "name": "Promethium",
         "atomic_mass": 145,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 61,
         "period": 6,
@@ -575,6 +701,8 @@ elements.list = [
     }, {
         "name": "Samarium",
         "atomic_mass": 150.362,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 29.54,
         "number": 62,
         "period": 6,
@@ -584,6 +712,8 @@ elements.list = [
     }, {
         "name": "Europium",
         "atomic_mass": 151.9641,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 27.66,
         "number": 63,
         "period": 6,
@@ -593,6 +723,8 @@ elements.list = [
     }, {
         "name": "Gadolinium",
         "atomic_mass": 157.253,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 37.03,
         "number": 64,
         "period": 6,
@@ -602,6 +734,8 @@ elements.list = [
     }, {
         "name": "Terbium",
         "atomic_mass": 158.925352,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 28.91,
         "number": 65,
         "period": 6,
@@ -611,6 +745,8 @@ elements.list = [
     }, {
         "name": "Dysprosium",
         "atomic_mass": 162.5001,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 27.7,
         "number": 66,
         "period": 6,
@@ -620,6 +756,8 @@ elements.list = [
     }, {
         "name": "Holmium",
         "atomic_mass": 164.930332,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 27.15,
         "number": 67,
         "period": 6,
@@ -629,6 +767,8 @@ elements.list = [
     }, {
         "name": "Erbium",
         "atomic_mass": 167.2593,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 28.12,
         "number": 68,
         "period": 6,
@@ -638,6 +778,8 @@ elements.list = [
     }, {
         "name": "Thulium",
         "atomic_mass": 168.934222,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 27.03,
         "number": 69,
         "period": 6,
@@ -647,6 +789,8 @@ elements.list = [
     }, {
         "name": "Ytterbium",
         "atomic_mass": 173.0451,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 26.74,
         "number": 70,
         "period": 6,
@@ -656,6 +800,8 @@ elements.list = [
     }, {
         "name": "Lutetium",
         "atomic_mass": 174.96681,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 26.86,
         "number": 71,
         "period": 6,
@@ -665,6 +811,8 @@ elements.list = [
     }, {
         "name": "Hafnium",
         "atomic_mass": 178.492,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.73,
         "number": 72,
         "period": 6,
@@ -674,6 +822,8 @@ elements.list = [
     }, {
         "name": "Tantalum",
         "atomic_mass": 180.947882,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.36,
         "number": 73,
         "period": 6,
@@ -683,6 +833,8 @@ elements.list = [
     }, {
         "name": "Tungsten",
         "atomic_mass": 183.841,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 24.27,
         "number": 74,
         "period": 6,
@@ -692,6 +844,8 @@ elements.list = [
     }, {
         "name": "Rhenium",
         "atomic_mass": 186.2071,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.48,
         "number": 75,
         "period": 6,
@@ -701,6 +855,8 @@ elements.list = [
     }, {
         "name": "Osmium",
         "atomic_mass": 190.233,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 24.7,
         "number": 76,
         "period": 6,
@@ -710,6 +866,8 @@ elements.list = [
     }, {
         "name": "Iridium",
         "atomic_mass": 192.2173,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.1,
         "number": 77,
         "period": 6,
@@ -719,6 +877,8 @@ elements.list = [
     }, {
         "name": "Platinum",
         "atomic_mass": 195.0849,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.86,
         "number": 78,
         "period": 6,
@@ -728,6 +888,8 @@ elements.list = [
     }, {
         "name": "Gold",
         "atomic_mass": 196.9665695,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.418,
         "number": 79,
         "period": 6,
@@ -737,6 +899,8 @@ elements.list = [
     }, {
         "name": "Mercury",
         "atomic_mass": 200.5923,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 27.983,
         "number": 80,
         "period": 6,
@@ -746,6 +910,8 @@ elements.list = [
     }, {
         "name": "Thallium",
         "atomic_mass": 204.38,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 26.32,
         "number": 81,
         "period": 6,
@@ -755,6 +921,8 @@ elements.list = [
     }, {
         "name": "Lead",
         "atomic_mass": 207.21,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 26.65,
         "number": 82,
         "period": 6,
@@ -764,6 +932,8 @@ elements.list = [
     }, {
         "name": "Bismuth",
         "atomic_mass": 208.980401,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 25.52,
         "number": 83,
         "period": 6,
@@ -773,6 +943,8 @@ elements.list = [
     }, {
         "name": "Polonium",
         "atomic_mass": 209,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 26.4,
         "number": 84,
         "period": 6,
@@ -782,6 +954,8 @@ elements.list = [
     }, {
         "name": "Astatine",
         "atomic_mass": 210,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 85,
         "period": 6,
@@ -791,6 +965,8 @@ elements.list = [
     }, {
         "name": "Radon",
         "atomic_mass": 222,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 86,
         "period": 6,
@@ -800,6 +976,8 @@ elements.list = [
     }, {
         "name": "Francium",
         "atomic_mass": 223,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 87,
         "period": 7,
@@ -809,6 +987,8 @@ elements.list = [
     }, {
         "name": "Radium",
         "atomic_mass": 226,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 88,
         "period": 7,
@@ -818,6 +998,8 @@ elements.list = [
     }, {
         "name": "Actinium",
         "atomic_mass": 227,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 27.2,
         "number": 89,
         "period": 7,
@@ -827,6 +1009,8 @@ elements.list = [
     }, {
         "name": "Thorium",
         "atomic_mass": 232.03774,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 26.23,
         "number": 90,
         "period": 7,
@@ -836,6 +1020,8 @@ elements.list = [
     }, {
         "name": "Protactinium",
         "atomic_mass": 231.035882,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 91,
         "period": 7,
@@ -845,6 +1031,8 @@ elements.list = [
     }, {
         "name": "Uranium",
         "atomic_mass": 238.028913,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 27.665,
         "number": 92,
         "period": 7,
@@ -854,6 +1042,8 @@ elements.list = [
     }, {
         "name": "Neptunium",
         "atomic_mass": 237,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 29.46,
         "number": 93,
         "period": 7,
@@ -863,6 +1053,8 @@ elements.list = [
     }, {
         "name": "Plutonium",
         "atomic_mass": 244,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 35.5,
         "number": 94,
         "period": 7,
@@ -872,6 +1064,8 @@ elements.list = [
     }, {
         "name": "Americium",
         "atomic_mass": 243,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": 62.7,
         "number": 95,
         "period": 7,
@@ -881,6 +1075,8 @@ elements.list = [
     }, {
         "name": "Curium",
         "atomic_mass": 247,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 96,
         "period": 7,
@@ -890,6 +1086,8 @@ elements.list = [
     }, {
         "name": "Berkelium",
         "atomic_mass": 247,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 97,
         "period": 7,
@@ -899,6 +1097,8 @@ elements.list = [
     }, {
         "name": "Californium",
         "atomic_mass": 251,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 98,
         "period": 7,
@@ -908,6 +1108,8 @@ elements.list = [
     }, {
         "name": "Einsteinium",
         "atomic_mass": 252,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 99,
         "period": 7,
@@ -917,6 +1119,8 @@ elements.list = [
     }, {
         "name": "Fermium",
         "atomic_mass": 257,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 100,
         "period": 7,
@@ -926,6 +1130,8 @@ elements.list = [
     }, {
         "name": "Mendelevium",
         "atomic_mass": 258,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 101,
         "period": 7,
@@ -935,6 +1141,8 @@ elements.list = [
     }, {
         "name": "Nobelium",
         "atomic_mass": 259,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 102,
         "period": 7,
@@ -944,6 +1152,8 @@ elements.list = [
     }, {
         "name": "Lawrencium",
         "atomic_mass": 266,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 103,
         "period": 7,
@@ -953,6 +1163,8 @@ elements.list = [
     }, {
         "name": "Rutherfordium",
         "atomic_mass": 267,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 104,
         "period": 7,
@@ -962,6 +1174,8 @@ elements.list = [
     }, {
         "name": "Dubnium",
         "atomic_mass": 268,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 105,
         "period": 7,
@@ -971,6 +1185,8 @@ elements.list = [
     }, {
         "name": "Seaborgium",
         "atomic_mass": 269,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 106,
         "period": 7,
@@ -980,6 +1196,8 @@ elements.list = [
     }, {
         "name": "Bohrium",
         "atomic_mass": 270,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 107,
         "period": 7,
@@ -989,6 +1207,8 @@ elements.list = [
     }, {
         "name": "Hassium",
         "atomic_mass": 269,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 108,
         "period": 7,
@@ -998,6 +1218,8 @@ elements.list = [
     }, {
         "name": "Meitnerium",
         "atomic_mass": 278,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 109,
         "period": 7,
@@ -1007,6 +1229,8 @@ elements.list = [
     }, {
         "name": "Darmstadtium",
         "atomic_mass": 281,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 110,
         "period": 7,
@@ -1016,6 +1240,8 @@ elements.list = [
     }, {
         "name": "Roentgenium",
         "atomic_mass": 282,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 111,
         "period": 7,
@@ -1025,6 +1251,8 @@ elements.list = [
     }, {
         "name": "Copernicium",
         "atomic_mass": 285,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 112,
         "period": 7,
@@ -1034,6 +1262,8 @@ elements.list = [
     }, {
         "name": "Nihonium",
         "atomic_mass": 286,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 113,
         "period": 7,
@@ -1043,6 +1273,8 @@ elements.list = [
     }, {
         "name": "Flerovium",
         "atomic_mass": 289,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 114,
         "period": 7,
@@ -1052,6 +1284,8 @@ elements.list = [
     }, {
         "name": "Moscovium",
         "atomic_mass": 289,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 115,
         "period": 7,
@@ -1061,6 +1295,8 @@ elements.list = [
     }, {
         "name": "Livermorium",
         "atomic_mass": 293,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 116,
         "period": 7,
@@ -1070,6 +1306,8 @@ elements.list = [
     }, {
         "name": "Tennessine",
         "atomic_mass": 294,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 117,
         "period": 7,
@@ -1079,6 +1317,8 @@ elements.list = [
     }, {
         "name": "Oganesson",
         "atomic_mass": 294,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 118,
         "period": 7,
@@ -1088,6 +1328,8 @@ elements.list = [
     }, {
         "name": "Ununennium",
         "atomic_mass": 315,
+        "stashLink": undefined,
+        "stashPanel": undefined,
         "molar_heat": null,
         "number": 119,
         "period": 8,
@@ -1104,7 +1346,7 @@ elements.init = function () {
 };
 elements.combine = function (a, b) {
     if ((a === undefined) || (b === undefined)) return undefined;
-    
+
     let elementA = a;
     let elementB = b;
     if (a.symbol !== undefined) elementA = a.symbol;
@@ -1113,22 +1355,24 @@ elements.combine = function (a, b) {
     let foundA = elements.map.get(elementA);
     let foundB = elements.map.get(elementB);
 
+    if (foundA === null || foundB === null) return undefined;
     if (foundA === undefined && foundB === undefined) return undefined;
     if (foundA === undefined && foundB !== undefined) {
         foundA = foundB;
-    }else if (foundB === undefined && foundA !== undefined) {
+    } else if (foundB === undefined && foundA !== undefined) {
         foundB = foundA;
     }
 
     let mass = Math.floor(foundA.atomic_mass + foundB.atomic_mass);
-    return elements.list.find((value, i) => {
+    return elements.list.find((value) => {
         return Math.floor(value.atomic_mass) === mass;
     });
 };
 elements.find = function (a) {
     if (a === undefined) return undefined;
+    if (typeof a === 'string') return elements.map.get(a);
+    if (a.name !== undefined) return elements.map.get(a.name);
+    if (a.symbol !== undefined) return elements.map.get(a.symbol);
 
-    let elementA = a;
-    if (a.symbol !== undefined) elementA = a.symbol;
-    return elements.list.find((value, i) => value.name === elementA || value.symbol === elementA);
+    return undefined;
 };

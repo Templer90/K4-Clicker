@@ -19,12 +19,12 @@ class Upgrade {
     }
 
     checkResources() {
-        return Object.keys(this.price).find((key) => g.ressources.owned[key] < this.price[key]) === undefined;
+        return Object.keys(this.price).find((key) => g.resources.owned[key] < this.price[key]) === undefined;
     }
 
     pay() {
         Object.keys(this.price).forEach((key) => {
-            g.ressources.owned[key] -= this.price[key];
+            g.resources.owned[key] -= this.price[key];
         });
     }
 

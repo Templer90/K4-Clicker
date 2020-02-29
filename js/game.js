@@ -11,11 +11,11 @@ g.options.before = new Date().getTime();
 g.options.now = new Date().getTime();
 g.options.version = "0.001 Alpha";
 
-g.ressources = {};
-g.ressources.special = ["Energy", "Collider", "Water", "Cells", "Meat", "Sun", "Atmosphere Generator"];
-g.ressources.perClick = {};
-g.ressources.owned = {};
-g.ressources.total = {};
+g.resources = {};
+g.resources.special = ["Energy", "Collider", "Water", "Cells", "Meat", "Sun", "Atmosphere Generator"];
+g.resources.perClick = {};
+g.resources.owned = {};
+g.resources.total = {};
 
 g.cellsPerWater = 10;
 g.cellMeat = 0.1;
@@ -27,12 +27,40 @@ g.username = undefined;
 g.holding = [];
 
 // CORE FUNCTIONS
-game.init = function () {
+game.init = () => {
     elements.init();
-    g.ressources.init();
+    g.resources.init();
     g.upgrades.init();
     g.builds.init();
     g.collider.init();
+
+    const stashWell = document.getElementById("stash-well");
+    elements.list.forEach((element) => {
+        const div = document.createElement("div");
+        
+        const h = document.createElement("h6");
+        h.className='panel-heading';
+        div.append(h);
+
+        const a = document.createElement("a");
+        a.id = "link-" + element.name;
+        a.className = 'collapsed';
+        a.dataset.toggle = "collapse";
+        a.dataset.target = "#element-" + element.name;
+        $(a).collapse();
+        element.stashLink = a;
+        h.append(a);
+
+        const divPanel = document.createElement("div");
+        divPanel.id = "element-" + element.name;
+        divPanel.className = 'panel-collapse collapse stash-panel';
+        divPanel.dataset.oldValue = -1;
+        element.stashPanel = divPanel;
+        div.append(divPanel);
+
+        stashWell.append(div);
+    });
+
 
     save.loadData();
     save.checkSave();
@@ -79,13 +107,17 @@ game.init = function () {
     g.options.init = true;
 };
 game.currentTab = 'stash';
-game.clearHolding = function () {
+game.sortResources = false;
+game.toggleStash = () => {
+    game.sortResources = !game.sortResources;
+};
+game.clearHolding = () => {
     game.holding.forEach((i) =>
         window.clearInterval(i)
     );
     game.holding = [];
 };
-game.addHoldingFunction = function () {
+game.addHoldingFunction = () => {
     game.clearHolding();
     game.removeHoldingFunction();
     $(".multiClickable").each(function (index, item) {
@@ -98,49 +130,49 @@ game.addHoldingFunction = function () {
         });
     });
 };
-game.removeHoldingFunction = function () {
+game.removeHoldingFunction = () => {
     game.clearHolding();
 
     $(".multiClickable").each(function (index, item) {
         $(item).off('mousedown').off('mouseup mouseleave');
     });
 };
-game.display = function () {
-    document.getElementById("ressources-display").innerHTML =
-        "Energy : " + numbers.fix(g.ressources.owned.Energy, 0) + "<br>" +
-        "Hydrogen : " + numbers.fix(g.ressources.owned.Hydrogen, 0) + "<br>" +
+game.display = () => {
+    document.getElementById("resources-display").innerHTML =
+        "Energy : " + numbers.fix(g.resources.owned.Energy, 0) + "<br>" +
+        "Hydrogen : " + numbers.fix(g.resources.owned.Hydrogen, 0) + "<br>" +
         "<br>" +
-        "Water : " + numbers.fix(g.ressources.owned.Water, 0) + " mL<br>" +
-        "Meat : " + numbers.fix(g.ressources.owned.Meat, 2) + "<br>" +
-        "Cells : " + numbers.fix(g.ressources.owned.Cells, 0) + "/" + numbers.fix(h.maxCells(), 0);
+        "Water : " + numbers.fix(g.resources.owned.Water, 0) + " mL<br>" +
+        "Meat : " + numbers.fix(g.resources.owned.Meat, 2) + "<br>" +
+        "Cells : " + numbers.fix(g.resources.owned.Cells, 0) + "/" + numbers.fix(h.maxCells(), 0);
 
-    g.displayHorde();
+    g.displayHorde(game.sortResources);
 };
-game.buttons = function () {
+game.buttons = () => {
     Array.from(document.getElementsByClassName("genResource")).forEach(
         (element) => {
-            element.innerHTML = element.dataset.template.replace('[number]', numbers.fix(g.ressources.perClick[element.dataset.element].amount, 0));
+            element.innerHTML = element.dataset.template.replace('[number]', numbers.fix(g.resources.perClick[element.dataset.element].amount, 0));
         }
     );
 
     document.getElementById("btn-collider").html = "Run Collider";
 
     const waterButton = $("#btn-2-1");
-    waterButton.html("Generate water (+" + numbers.fix(g.ressources.perClick.Water.amount * g.buyMultiplier, 0) + " mL)");
+    waterButton.html("Generate water (+" + numbers.fix(g.resources.perClick.Water.amount * g.buyMultiplier, 0) + " mL)");
     waterButton.attr('data-original-title', 'Cost ' + numbers.fix((20 * g.buyMultiplier), 0) + ' hydrogen, ' + numbers.fix((10 * g.buyMultiplier), 0) + ' oxygen');
 
     const cellButton = $("#btn-3-1");
-    cellButton.html("Generate cell (+" + numbers.fix(g.ressources.perClick.Cells.amount * g.buyMultiplier, 0) + ")");
+    cellButton.html("Generate cell (+" + numbers.fix(g.resources.perClick.Cells.amount * g.buyMultiplier, 0) + ")");
     cellButton.attr('data-original-title', 'Cost ' + numbers.fix((g.cellCost * g.buyMultiplier), 0) + ' energy');
 
-    if (g.ressources.owned.Sun === 1) {
+    if (g.resources.owned.Sun === 1) {
         document.getElementById("btn-3-2").style.setProperty('display', 'none');
     }
-    if (g.ressources.owned["Atmosphere Generator"] === 1) {
+    if (g.resources.owned["Atmosphere Generator"] === 1) {
         document.getElementById("btn-3-3").style.setProperty('display', 'none');
     }
 };
-game.loop = function () {
+game.loop = () => {
     if (g.options.init === true) {
         g.options.now = new Date().getTime();
         const elapsedTime = (g.options.now - g.options.before);
@@ -155,19 +187,19 @@ game.loop = function () {
         g.display();
     }
 };
-game.status = function () {
+game.status = () => {
     g.upgrades.checkBuyStatus();
     g.builds.checkBuyStatus();
 };
 
-game.ressources.init = function () {
+game.resources.init = () => {
     //Add the specials
-    game.ressources.special.forEach((resource, i) => {
-        g.ressources.owned[resource] = 0;
-        g.ressources.total[resource] = 0;
-        g.ressources.perClick[resource] = {
+    game.resources.special.forEach((resource) => {
+        g.resources.owned[resource] = 0;
+        g.resources.total[resource] = 0;
+        g.resources.perClick[resource] = {
             amount: 100,
-            can: function (owned, multi) {
+            can: () => {
                 return true;
             },
             click: function (owned, multi) {
@@ -178,12 +210,12 @@ game.ressources.init = function () {
     });
 
     //Add the normals
-    elements.list.forEach((resource, i) => {
-        g.ressources.owned[resource.name] = 0;
-        g.ressources.total[resource.name] = 0;
-        g.ressources.perClick[resource.name] = {
+    elements.list.forEach((resource) => {
+        g.resources.owned[resource.name] = 0;
+        g.resources.total[resource.name] = 0;
+        g.resources.perClick[resource.name] = {
             amount: 100,
-            can: function (owned) {
+            can: () => {
                 return true;
             },
             click: function (owned, multi) {
@@ -193,13 +225,13 @@ game.ressources.init = function () {
         };
     });
 
-    g.ressources.perClick.Hydrogen.click = function (owned, multi) {
+    g.resources.perClick.Hydrogen.click = function (owned, multi) {
         owned["Hydrogen"] += this.amount;
-        owned["Deuterium"] += g.u.owned["Hydrogen_Isotopes"] * (0.000115 * g.ressources.perClick.Deuterium.amount * this.amount * multi);
+        owned["Deuterium"] += g.u.owned["Hydrogen_Isotopes"] * (0.000115 * g.resources.perClick.Deuterium.amount * this.amount * multi);
         return owned["Hydrogen"];
     };
 
-    g.ressources.perClick.Collider = {
+    g.resources.perClick.Collider = {
         amount: 1,
         can: function (owned, multi) {
             const statistic = g.collider.statistic;
@@ -207,7 +239,7 @@ game.ressources.init = function () {
 
             if (statistic.unstable) return false;
             if (owned.Energy <= statistic.inputEnergy * multi) return false;
-            let found = statistic.inputElements.find((obj, i) => {
+            let found = statistic.inputElements.find((obj) => {
                 return owned[obj.element] <= obj.value * perClick;
             });
 
@@ -218,10 +250,10 @@ game.ressources.init = function () {
             const perClick = this.amount * multi;
 
             owned.Energy -= statistic.inputEnergy * multi;
-            statistic.inputElements.forEach((obj, i) => {
+            statistic.inputElements.forEach((obj) => {
                 owned[obj.element] -= obj.value * perClick;
             });
-            statistic.outputElements.forEach((obj, i) => {
+            statistic.outputElements.forEach((obj) => {
                 owned[obj.element] += obj.value * perClick;
             });
 
@@ -229,7 +261,7 @@ game.ressources.init = function () {
         }
     };
 
-    g.ressources.perClick.Water = {
+    g.resources.perClick.Water = {
         amount: 1,
         can: function (owned) {
             return owned.Hydrogen >= 20 * g.buyMultiplier && owned.Oxygen >= 10 * g.buyMultiplier;
@@ -254,7 +286,7 @@ game.ressources.init = function () {
         }
     };
 
-    g.ressources.perClick.Sun = {
+    g.resources.perClick.Sun = {
         amount: 1,
         can: function (owned) {
             return owned.Hydrogen >= 75 && owned.Water >= 15 && owned.Oxygen >= 10 && owned.Sun === 0;
@@ -264,13 +296,13 @@ game.ressources.init = function () {
             owned.Hydrogen -= 75;
             owned.Water -= 15;
             owned.Oxygen -= 10;
-            $("#btn-3-2").fadeOut('slow', function () {
+            $("#btn-3-2").fadeOut('slow', () => {
                 $("#btn-3-2, .tooltip").remove();
             });
         }
     };
 
-    g.ressources.perClick["Atmosphere Generator"] = {
+    g.resources.perClick["Atmosphere Generator"] = {
         amount: 1,
         can: function (owned) {
             return owned.Hydrogen >= 150 && owned.Oxygen >= 100 && owned.Water >= 50 && owned["Atmosphere Generator"] === 0;
@@ -280,13 +312,13 @@ game.ressources.init = function () {
             owned.Hydrogen -= 150;
             owned.Oxygen -= 100;
             owned.Water -= 50;
-            $("#btn-3-3, .tooltip").fadeOut('slow', function () {
+            $("#btn-3-3, .tooltip").fadeOut('slow', () => {
                 $("#btn-3-3, .tooltip").remove();
             });
         }
     };
 
-    g.ressources.perClick.Cells = {
+    g.resources.perClick.Cells = {
         amount: 1,
         can: function (owned) {
             return owned.Cells + g.buyMultiplier <= h.maxCells() && owned.Water >= g.cellCost * g.buyMultiplier;
@@ -311,8 +343,8 @@ game.ressources.init = function () {
 // GAME FUNCTIONS
 game.earn = function (type, multi = 1) {
     const str = h.capitalizeFirstLetter(type);
-    if (g.ressources.perClick[str].can(g.ressources.owned, multi)) {
-        g.ressources.perClick[str].click(g.ressources.owned, multi)
+    if (g.resources.perClick[str].can(g.resources.owned, multi)) {
+        g.resources.perClick[str].click(g.resources.owned, multi)
     }
 
     if (g.t.fast.check === true) {
@@ -322,9 +354,9 @@ game.earn = function (type, multi = 1) {
     }
 };
 game.cellsEarn = function (times) {
-    g.ressources.owned.Meat += (h.cellsMeat() * times) / g.options.fps;
+    g.resources.owned.Meat += (h.cellsMeat() * times) / g.options.fps;
 };
-game.changeBuy = function () {
+game.changeBuy = () => {
     if (g.buyMultiplier === 1) {
         g.buyMultiplier = 10;
     } else if (g.buyMultiplier === 10) {
@@ -338,14 +370,13 @@ game.changeBuy = function () {
     $("#btn-buy-multiplier").html("Buy x" + numbers.fix(g.buyMultiplier, 0));
     game.buttons();
 };
-game.devMode = function () {
+game.devMode = () => {
     if (g.options.devMode === true) {
         console.warn("Dev mode enabled!");
         g.t.fast.check = true;
     }
 };
-
-game.changeSaveInterval = function () {
+game.changeSaveInterval = () => {
     let val = document.getElementById('saveIntervalSlider').value;
 
     document.getElementById('intervalText').innerHTML = "The game autosaves every " + val + " seconds.";
@@ -356,11 +387,11 @@ game.changeSaveInterval = function () {
         save.saveData();
     }, game.options.saveIntervalTime);
 };
-game.save = function () {
+game.save = () => {
     let res = {
-        owned: g.ressources.owned,
-        click: g.ressources.perClick,
-        total: g.ressources.total,
+        owned: g.resources.owned,
+        click: g.resources.perClick,
+        total: g.resources.total,
     };
     g.options.hold = document.getElementById('holdIntervalSlider').value;
     return {options: game.options, resources: res};
@@ -369,18 +400,18 @@ game.load = (saveObj) => {
     game.options = saveObj.options;
     document.getElementById('holdIntervalSlider').value = game.options.hold;
     game.changeHoldInterval();
-    g.ressources.owned = saveObj.resources.owned;
+    g.resources.owned = saveObj.resources.owned;
 
     Object.keys(saveObj.resources.click).forEach((obj) => {
         let params = saveObj.resources.click[obj];
         Object.keys(params).forEach((param) => {
-            g.ressources.perClick[obj][param] = params[param];
+            g.resources.perClick[obj][param] = params[param];
         });
     });
 
-    g.ressources.total = saveObj.resources.total;
+    g.resources.total = saveObj.resources.total;
 };
-game.changeHoldInterval = function () {
+game.changeHoldInterval = () => {
     let val = document.getElementById('holdIntervalSlider').value;
     if (val >= 90) {
         document.getElementById('holdIntervalSlider').value = 100;
@@ -392,21 +423,31 @@ game.changeHoldInterval = function () {
         document.getElementById("holdText").innerHTML = "Click every 1/" + val + "sec";
     }
 };
-g.displayHorde = function () {
+game.displayHorde = (sorting = false) => {
     if (game.currentTab !== 'stash') return;
-    let text = "Energy".padEnd(13, String.fromCharCode(160)) + ": " + numbers.fix(g.ressources.owned.Energy, 0) + "<br>";
+    let text = "Energy".padEnd(13, String.fromCharCode(160)) + ": " + numbers.fix(g.resources.owned.Energy, 0) + "<br>";
 
-    elements.list
-        .sort((a, b) => g.ressources.owned[b.name] - g.ressources.owned[a.name])
-        .forEach((element) => {
-            const line = element.name.padEnd(13, String.fromCharCode(160)) + ": " + numbers.element(g.ressources.owned[element.name]);
-            text += line + "<br>";
-        });
-    document.getElementById("stash-well").innerHTML = text;
+    let list = elements.list;
+    if (sorting) {
+        list = list.sort((a, b) => g.resources.owned[b.name] - g.resources.owned[a.name]);
+    }
+    const parent=list[0].stashLink.parentNode.parentNode.parentNode;
+
+    list.forEach((element,i) => {
+        //This is correct, because I want to type coerce
+        if (element.stashPanel.dataset.oldValue.toString() === g.resources.owned[element.name].toString()) return;
+        const rawNumber = g.resources.owned[element.name];
+        const line = element.name.padEnd(13, String.fromCharCode(160)) + ": " + numbers.element(rawNumber);
+        const avogadro = rawNumber / elements.avogadro;
+
+        element.stashLink.innerHTML = line;
+        element.stashPanel.innerHTML = rawNumber + "<br>" + numbers.beautify(avogadro, 22) + " mol";
+        element.stashPanel.dataset.oldValue = g.resources.owned[element.name];
+    });
 };
 
 // INTERVALS + ONLOAD
-window.onload = function () {
+window.onload = () => {
     let fragments = $("div[data-frag]");
     window.loadCounter = fragments.length;
     fragments.each((index, item) => {

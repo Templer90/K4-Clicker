@@ -92,11 +92,15 @@ header {
     background-color: #fffd00;
 }
 
-#ressources-well{
+#resources-well{
     padding-right: 0;
     padding-bottom: 0;
     padding-left: 0;
 }
-#ressources-display{
+#resources-display{
     font-size: 93%;
+}
+
+.stash-panel {
+    margin-left: 3em;
 }

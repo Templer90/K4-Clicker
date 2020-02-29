@@ -1,6 +1,6 @@
 g.tutorial = g.t = {};
 g.t.spacer = "<br>--------------<br>";
-g.t.allElements = "#btn-hydrogen, #btn-collider, #btn-energy, #btn-2-1, #btn-3-1, #btn-buy-multiplier, #ressources-well, #upgrades-nav, #builds-nav, #dropdown-nav";
+g.t.allElements = "#btn-hydrogen, #btn-collider, #btn-energy, #btn-2-1, #btn-3-1, #btn-buy-multiplier, #resources-well, #upgrades-nav, #builds-nav, #dropdown-nav";
 g.t.fast = {
     check: false,
 };
@@ -19,7 +19,7 @@ g.t.intro2 = {
     check: false,
     string: 'Good job! You can now generate some <b>water</b>.<br> ' +
         "Water cost 20 hydrogen and 10 oxygen : this cost doesn't increase!<br> " +
-        "You can also buy some <b>upgrades</b> to help you earn more <b>ressources/click</b>.<br> " +
+        "You can also buy some <b>upgrades</b> to help you earn more <b>resources/click</b>.<br> " +
         "Reach <b>3 mL</b> of water. " + g.t.spacer
 };
 g.t.intro3 = {
@@ -58,7 +58,7 @@ game.tutorial.intro = function () {
             strings: [g.t.intro1.string],
             typeSpeed: 1,
             callback: function () {
-                $("#btn-hydrogen, #btn-collider, #ressources-well").fadeIn('slow');
+                $("#btn-hydrogen, #btn-collider, #resources-well").fadeIn('slow');
                 g.display();
                 h.removeCursor();
             }
@@ -110,26 +110,26 @@ game.tutorial.intro = function () {
     }
 };
 game.tutorial.check = function () {
-    if (g.t.intro1.check === false && g.ressources.owned["Hydrogen"] >= 20 && g.ressources.owned["Oxygen"] >= 10) {
+    if (g.t.intro1.check === false && g.resources.owned["Hydrogen"] >= 20 && g.resources.owned["Oxygen"] >= 10) {
         g.t.intro1.check = true;
         g.t.intro();
     }
-    if (g.t.intro2.check === false && g.ressources.owned["Water"] >= 3) {
+    if (g.t.intro2.check === false && g.resources.owned["Water"] >= 3) {
         g.t.intro2.check = true;
         g.t.intro();
     }
-    if (g.t.intro3.check === false && g.ressources.owned["Sun"] === 1) {
+    if (g.t.intro3.check === false && g.resources.owned["Sun"] === 1) {
         g.t.intro3.check = true;
         g.t.intro();
     }
-    if (g.t.intro4.check === false && g.ressources.owned["Atmosphere Generator"] === 1) {
+    if (g.t.intro4.check === false && g.resources.owned["Atmosphere Generator"] === 1) {
         g.t.intro4.check = true;
         g.t.intro();
         g.t.intro5.check = true;
     }
 };
 game.tutorial.saveCheck = function () {
-    $("#btn-hydrogen, #btn-collider, #ressources-well").fadeIn('slow');
+    $("#btn-hydrogen, #btn-collider, #resources-well").fadeIn('slow');
     if (g.t.intro1.check == true && g.t.intro2.check == false)
         $("#btn-2-1, #upgrades-nav").fadeIn('slow');
     if (g.t.intro2.check == true && g.t.intro3.check == false)
