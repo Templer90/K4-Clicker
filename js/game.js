@@ -58,10 +58,9 @@ game.init = function () {
     $('.header-small').html(g.options.version);
 
     let saveInterval = game.options.saveIntervalTime / 1000;
-    $("#saveIntervalSlider").val(saveInterval);
-    $("#intervalText").html("The game autosaves every " + saveInterval + " seconds.");
-
-
+    document.getElementById("saveIntervalSlider").value = saveInterval;
+    document.getElementById("intervalText").innerHTML = "The game autosaves every " + saveInterval + " seconds.";
+    
     //Workaround because bootstrap has a bug
     $('#menu a').click( (function (e) {
         e.preventDefault();
@@ -118,16 +117,14 @@ game.buttons = function () {
             element.innerHTML = element.dataset.template.replace('[number]', numbers.fix(g.ressources.perClick[element.dataset.element].amount, 0));
         }
     );
-
-    //$("#btn-energy").html("Create Energy (+" + numbers.fix(g.ressources.perClick.Energy.amount, 0) + ")");
-    //$("#btn-hydrogen").html("Create Hydrogen (+" + numbers.fix(g.ressources.perClick.Hydrogen.amount, 0) + ")");
+    
     document.getElementById("btn-collider").html = "Run Collider";
 
-    let waterButton = $("#btn-2-1");
+    const waterButton = $("#btn-2-1");
     waterButton.html("Generate water (+" + numbers.fix(g.ressources.perClick.Water.amount * g.buyMultiplier, 0) + " mL)");
     waterButton.attr('data-original-title', 'Cost ' + numbers.fix((20 * g.buyMultiplier), 0) + ' hydrogen, ' + numbers.fix((10 * g.buyMultiplier), 0) + ' oxygen');
 
-    let cellButton = $("#btn-3-1");
+    const cellButton = $("#btn-3-1");
     cellButton.html("Generate cell (+" + numbers.fix(g.ressources.perClick.Cells.amount * g.buyMultiplier, 0) + ")");
     cellButton.attr('data-original-title', 'Cost ' + numbers.fix((g.cellCost * g.buyMultiplier), 0) + ' energy');
 
@@ -141,7 +138,7 @@ game.buttons = function () {
 game.loop = function () {
     if (g.options.init === true) {
         g.options.now = new Date().getTime();
-        let elapsedTime = (g.options.now - g.options.before);
+        const elapsedTime = (g.options.now - g.options.before);
         if (elapsedTime > g.options.interval) {
             g.b.earn(Math.floor(elapsedTime / g.options.interval));
             g.cellsEarn(Math.floor(elapsedTime / g.options.interval))
@@ -346,7 +343,7 @@ game.devMode = function () {
 game.changeSaveInterval = function () {
     let val = document.getElementById('saveIntervalSlider').value;
 
-    $("#intervalText").html("The game autosaves every " + val + " seconds.");
+    document.getElementById('intervalText').innerHTML = "The game autosaves every " + val + " seconds.";
     game.options.saveIntervalTime = val * 1000;
     window.clearInterval(game.saveInterval);
 

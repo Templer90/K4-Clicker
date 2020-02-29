@@ -4,7 +4,7 @@ g.b.list = [
             type: 'Hydrogen',
             inflation: 1.5
         },
-        {perSec: 1, type: "Hydrogen"},
+        {perSec: 2000, type: "Hydrogen"},
         {
             type: "Hydrogen",
             func: (value, delta, obj, destination) => {

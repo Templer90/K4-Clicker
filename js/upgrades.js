@@ -45,7 +45,7 @@ class MultiUpgrade extends Upgrade {
     }
 
     updateDots() {
-        let dots = document.getElementById("upgrades-btn-" + this.name).parentElement.parentElement.getElementsByClassName("dot");
+        const dots = document.getElementById("upgrades-btn-" + this.name).parentElement.parentElement.getElementsByClassName("dot");
         for (let i = 0; i < g.u.owned[this.name]; i++) {
             dots[i].classList.replace("dot-off", "dot-on");
         }
@@ -122,7 +122,12 @@ game.upgrades.init = () => {
             dots = " " + "<span class='dot dot-off'></span>".repeat(obj.max);
         }
 
-        paragraph.innerHTML = obj.displayName + ": " + obj.desc + dots + "<br>" + obj.costString;
+        let nameParagraph = document.createElement("p");
+        nameParagraph.setAttribute('class', 'no-margin text-center');
+        nameParagraph.innerHTML = obj.displayName + dots;
+        infoBox.append(nameParagraph);
+
+        paragraph.innerHTML = obj.desc + "<br>" + obj.costString;
         infoBox.append(paragraph);
 
         let buyButton = document.createElement("div");
