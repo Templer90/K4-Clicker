@@ -7,8 +7,8 @@ g.b.list = [
         {perSec: 1, type: "Hydrogen"},
         {
             type: "Hydrogen",
-            func: (value, delta, obj, destination) => {
-                destination[obj.type] += value * delta * (g.u.owned["Building_Test"] ? g.resources.perClick.Hydrogen.amount : 1);
+            func: (value, delta, reward, destination) => {
+                destination[reward.type] += value * delta * (g.u.owned["Building_Test"] ? g.resources.perClick.Hydrogen.amount : 1);
             }
         }),
     new Building("Oxygen build", "Create some oxygen", {
@@ -19,8 +19,8 @@ g.b.list = [
         {perSec: 1, type: "Oxygen"},
         {
             type: "Oxygen",
-            func: (value, delta, obj, destination) => {
-                destination[obj.type] += value * delta * (g.u.owned["Building_Test"] ? g.resources.perClick.Oxygen.amount : 1);
+            func: (value, delta, reward, destination) => {
+                destination[reward.type] += value * delta * (g.u.owned["Building_Test"] ? g.resources.perClick.Oxygen.amount : 1);
             },
         }),
     new Building("Energy build", "Create some Energy", {
@@ -31,8 +31,8 @@ g.b.list = [
         {perSec: 1, type: "Energy"},
         {
             type: "Energy",
-            func: (value, delta, obj, destination) => {
-                destination[obj.type] += value * delta * (g.u.owned["Building_Test"] ? g.resources.perClick.Energy.amount : 1)
+            func: (value, delta, reward, destination) => {
+                destination[reward.type] += value * delta * (g.u.owned["Building_Test"] ? g.resources.perClick.Energy.amount : 1)
             }
         }),
     new Building("Autonomous Collider", "Run the Collider", {
@@ -51,20 +51,44 @@ g.b.list = [
                 }
                 return 'click /sec';
             },
-            func: (value, delta, obj) => {
-                obj.accumulator += value * delta;
+            func: (value, delta, reward) => {
+                reward.accumulator += value * delta;
 
-                if (obj.accumulator < 1) return;
+                if (reward.accumulator < 1) return;
 
-                if (g.resources.perClick.Collider.can(g.resources.owned, Math.floor(obj.accumulator))) {
-                    g.resources.perClick.Collider.click(g.resources.owned, Math.floor(obj.accumulator));
-                    obj.accumulator -= Math.floor(obj.accumulator);
+                if (g.resources.perClick.Collider.can(g.resources.owned, Math.floor(reward.accumulator))) {
+                    g.resources.perClick.Collider.click(g.resources.owned, Math.floor(reward.accumulator));
+                    reward.accumulator -= Math.floor(reward.accumulator);
                 } else {
-                    while (obj.accumulator > 1) {
-                        obj.accumulator -= 1;
+                    while (reward.accumulator > 1) {
+                        reward.accumulator -= 1;
                         game.earn('collider');
                     }
                 }
             }
-        }, true)
+        }, true),
+    
+    new Building("AutoUpgrade Hydrogen build", "Takes 134 Atoms of Hydrogen and makes Helium, Carbon, Neon, Oxygen, Silicon and Iron", {
+            amount: 25,
+            type: 'Hydrogen',
+            inflation: 1.09
+        },
+        {perSec: 1.0/7.0, type: "Hydrogen"},
+        {
+            type: "Hydrogen",
+            rewardPerSecondString: (owned) => {
+                return 'Around ' + (owned/7 * 6) + ' Atoms/sec';
+            },
+            func: (value, delta, reward, destination) => {
+                if (destination.Hydrogen <= 134 * value * delta) return;
+                
+                destination.Hydrogen -= 134 * value * delta;
+                destination.Helium += value * delta;
+                destination.Carbon += value * delta;
+                destination.Neon += value * delta;
+                destination.Oxygen += value * delta;
+                destination.Silicon += value * delta;
+                destination.Iron += value * delta;
+            }
+        }, false)
 ];

@@ -434,7 +434,7 @@ game.displayHorde = () => {
         const avogadro = rawNumber / elements.avogadro;
 
         element.stashLink.innerHTML = line;
-        element.stashPanel.innerHTML = rawNumber + "<br>" + numbers.beautify(avogadro, 22) + " mol";
+        element.stashPanel.innerHTML = rawNumber + " Atoms<br>" + numbers.beautify(avogadro, 22) + " mol";
         element.stashPanel.dataset.oldValue = g.resources.owned[element.name];
     });
 };

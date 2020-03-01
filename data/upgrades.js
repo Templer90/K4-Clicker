@@ -87,6 +87,7 @@ g.u.list = [
     }),
     new Upgrade("Add Iron to Collider", "Add Iron", 'Collider,Iron', {'Silicon': 1000}, () => {
         g.collider.options.usableElements.push('Fe');
+        g.b.list.find((b) => b.name === "AutoUpgrade_Hydrogen_build").visible = true;
         game.collider.updateAllowedElements();
     }),
     new MultiUpgrade("More Emitters", "Emitter++", 'Collider,Emitter', {'Hydrogen': 1}, 8, (self) => {
