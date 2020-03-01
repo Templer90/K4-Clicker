@@ -107,10 +107,6 @@ game.init = () => {
     g.options.init = true;
 };
 game.currentTab = 'stash';
-game.sortResources = false;
-game.toggleStash = () => {
-    game.sortResources = !game.sortResources;
-};
 game.clearHolding = () => {
     game.holding.forEach((i) =>
         window.clearInterval(i)
@@ -146,7 +142,7 @@ game.display = () => {
         "Meat : " + numbers.fix(g.resources.owned.Meat, 2) + "<br>" +
         "Cells : " + numbers.fix(g.resources.owned.Cells, 0) + "/" + numbers.fix(h.maxCells(), 0);
 
-    g.displayHorde(game.sortResources);
+    g.displayHorde();
 };
 game.buttons = () => {
     Array.from(document.getElementsByClassName("genResource")).forEach(
@@ -423,17 +419,13 @@ game.changeHoldInterval = () => {
         document.getElementById("holdText").innerHTML = "Click every 1/" + val + "sec";
     }
 };
-game.displayHorde = (sorting = false) => {
+game.displayHorde = () => {
     if (game.currentTab !== 'stash') return;
     let text = "Energy".padEnd(13, String.fromCharCode(160)) + ": " + numbers.fix(g.resources.owned.Energy, 0) + "<br>";
 
     let list = elements.list;
-    if (sorting) {
-        list = list.sort((a, b) => g.resources.owned[b.name] - g.resources.owned[a.name]);
-    }
-    const parent=list[0].stashLink.parentNode.parentNode.parentNode;
 
-    list.forEach((element,i) => {
+    list.forEach((element, i) => {
         //This is correct, because I want to type coerce
         if (element.stashPanel.dataset.oldValue.toString() === g.resources.owned[element.name].toString()) return;
         const rawNumber = g.resources.owned[element.name];

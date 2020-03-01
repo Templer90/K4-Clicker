@@ -41,6 +41,7 @@ g.collider.statistic = {
 g.collider.options = {
     maxEmitter: 5,
     usableElements: ['H', 'He'],
+    autoElements: [],
     collider: 1
 };
 g.collider.emitters = {
@@ -172,7 +173,7 @@ g.collider.emitters = {
         return emitter;
     },
     removeEmitter(emitter) {
-        let em = this.emitter.find((obj, i) => {
+        let em = this.emitter.find((obj) => {
             return obj.id === emitter.id;
         });
         let hol = em.dirIndicator;
@@ -203,7 +204,7 @@ g.collider.emitters = {
         this.drawable.push(holder);
     },
     getClosest(pos) {
-        let minDist, i, dist, x, y, foundCircle;
+        let minDist, dist, x, y, foundCircle;
         minDist = Infinity;
         this.each(c => {
             x = pos.x - c.x;
@@ -231,7 +232,7 @@ game.collider.init = () => {
         {x1: ctx.canvas.width, y1: 0, x2: 0, y2: 0}
     ];
 
-    function mainLoop(time) {
+    function mainLoop() {
         // this is called 60 times a second if there is no delay
         if (game.collider.changed) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -282,7 +283,7 @@ game.collider.init = () => {
             this.currentObj = obj;
             if (type !== "create") {
                 let oldSelected = this.currentObj.selected;
-                g.collider.emitters.each((obj, i) => {
+                g.collider.emitters.each((obj) => {
                     obj.selected = false;
                 });
                 this.currentObj.selected = !oldSelected;
@@ -376,7 +377,7 @@ game.collider.compileStatistics = () => {
 
     let accumulate = function (arr, callback) {
         let acc = {};
-        arr.forEach((obj, i) => {
+        arr.forEach((obj) => {
             if (obj.element === undefined) return;
             if (acc[obj.element.name] === undefined) {
                 acc[obj.element.name] = 0;
@@ -387,20 +388,24 @@ game.collider.compileStatistics = () => {
     };
 
     accumulate(statistic.inputEmitters, ([key, value]) => {
-        inputText += "<br>" + key + " :" + value;
-        g.collider.statistic.inputElements.push({element: key, value: value});
+        if (g.collider.options.autoElements.includes(elements.find(key).symbol)) {
+            inputText += "<br>(" + key + ": " + value + ")";
+        } else {
+            inputText += "<br>" + key + ": " + value;
+            g.collider.statistic.inputElements.push({element: key, value: value});
+        }
     });
 
     let energy = 0;
-    statistic.inputEmitters.forEach((obj, i) => {
+    statistic.inputEmitters.forEach((obj) => {
         let percent = obj.length / obj.maxLength;
         energy += percent * 10;
     });
-    statistic.pseudo.forEach((obj, i) => {
+    statistic.pseudo.forEach((obj) => {
         energy /= obj.efficiency;
     });
     g.collider.statistic.inputEnergy = energy;
-    inputText += "<br>Energy " + numbers.fix(energy, 0);
+    inputText += "<br>Energy " + numbers.fix(energy < 1 ? 1 : energy, 0);
 
     accumulate(statistic.outputEmitters, ([key, value]) => {
         outputText += "<br>\t" + key + " :" + value;
@@ -408,7 +413,7 @@ game.collider.compileStatistics = () => {
     });
 
 
-    g.c.selectedEmitter = g.c.emitters.emitter.find((obj, i) => (obj.selected));
+    g.c.selectedEmitter = g.c.emitters.emitter.find((obj) => (obj.selected));
     if (g.c.selectedEmitter !== undefined) {
         document.getElementById('emitterId').innerText = g.c.selectedEmitter.id;
         document.getElementById('emitterLength').innerText = (g.c.selectedEmitter.length / g.c.selectedEmitter.maxLength);
