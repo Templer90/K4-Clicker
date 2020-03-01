@@ -3,6 +3,18 @@ const elements = e = {};
 elements.avogadro = 6.02214076e+23;
 elements.list = [
     {
+        "name": "Neutron",
+        "atomic_mass": 1.008,
+        "stashLink": undefined,
+        "stashPanel": undefined,
+        "molar_heat": 1,
+        "number": 0,
+        "period": 0,
+        "symbol": "n",
+        "xpos": 0,
+        "ypos": 0
+    },
+    {
         "name": "Hydrogen",
         "atomic_mass": 1.008,
         "stashLink": undefined,
@@ -1337,14 +1349,14 @@ elements.list = [
         "xpos": 1,
         "ypos": 8
     }];
-elements.init = function () {
+elements.init =  () => {
     elements.map = new Map();
     elements.list.forEach((value) => {
         elements.map.set(value.name, value);
         elements.map.set(value.symbol, value);
     });
 };
-elements.combine = function (a, b) {
+elements.combine =  (a, b)  => {
     if ((a === undefined) || (b === undefined)) return undefined;
 
     let elementA = a;
@@ -1368,11 +1380,15 @@ elements.combine = function (a, b) {
         return Math.floor(value.atomic_mass) === mass;
     });
 };
-elements.find = function (a) {
+elements.find =  (a) => {
     if (a === undefined) return undefined;
     if (typeof a === 'string') return elements.map.get(a);
     if (a.name !== undefined) return elements.map.get(a.name);
     if (a.symbol !== undefined) return elements.map.get(a.symbol);
 
     return undefined;
+};
+
+elements.contains = (haystack, needle) => {
+
 };

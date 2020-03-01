@@ -72,14 +72,14 @@ class Emitter extends Drawable {
         ctx.fill();
 
         ctx.moveTo(this.x, this.y);
-        let oldgradient = ctx.strokeStyle;
+        let oldGradient = ctx.strokeStyle;
         let gradient = ctx.createLinearGradient(this.x, this.y, this.xEnd, this.yEnd);
         gradient.addColorStop(0, "blue");
         gradient.addColorStop(1.0, "red");
         ctx.strokeStyle = gradient;
         ctx.lineTo(this.xEnd, this.yEnd);
         ctx.stroke();
-        ctx.strokeStyle = oldgradient;
+        ctx.strokeStyle = oldGradient;
 
         ctx.fillStyle = "rgba(0,0,0)";
         ctx.fillText(this.element.symbol, this.x, this.y);
@@ -123,33 +123,74 @@ class Emitter extends Drawable {
     }
 }
 
+
+class NeutronEmitter extends Emitter {
+    constructor(x, y, emitter) {
+        super(x, y);
+        delete this.whileDrag;
+        this.emitter = emitter;
+        this.element = elements.find("n");
+        this.efficiency = 1;
+
+        let angle1 = Math.atan2(this.emitter.emitterA.x - this.x, this.emitter.emitterA.y - this.y);
+        let angle2 = Math.atan2(this.emitter.emitterB.x - this.x, this.emitter.emitterB.y - this.y);
+        
+        noise.seed(emitter.angle);
+        this.angle = noise.simplex2(x / 10, y / 10) * Math.PI * 2;
+        
+        this.radius = 2;
+        this.maxLength = 400;
+        this.length = this.maxLength;
+
+        this.xEnd = this.x + Math.sin(this.angle) * this.length;
+        this.yEnd = this.y + Math.cos(this.angle) * this.length;
+    }
+
+    draw(ctx) {
+        ctx.moveTo(this.x, this.y);
+        let oldGradient = ctx.strokeStyle;
+        ctx.strokeStyle = "rgba(128,128,255,1)";
+        ctx.lineTo(this.xEnd, this.yEnd);
+        ctx.stroke();
+        ctx.strokeStyle = oldGradient;
+
+        ctx.fillStyle = "rgba(0,0,0)";
+        ctx.fillText(this.element.symbol, this.x, this.y);
+    }
+    
+}
 class PseudoEmitter extends Emitter {
+    /**
+     * 
+     * @param x
+     * @param y
+     * @param emitterA Emitter
+     * @param emitterB Emitter
+     */
     constructor(x, y, emitterA, emitterB) {
         super(x, y);
+        delete this.whileDrag;
+
         //this.id = "Pseudo("+emitterA.id+","+emitterB.id+")";
         this.emitterA = emitterA;
         this.emitterB = emitterB;
-
-        this.element = elements.combine(emitterA.element, emitterB.element);
 
         //this is not working correctly
         let angle1 = Math.atan2(this.emitterA.x - this.x, this.emitterA.y - this.y);
         let angle2 = Math.atan2(this.emitterB.x - this.x, this.emitterB.y - this.y);
         let angle3 = Math.atan2(this.emitterA.y - this.emitterB.y, this.emitterA.x - this.emitterB.x);
-        
-        if(angle1>Math.PI)angle1=-(Math.PI-angle1);
-        if(angle2>Math.PI)angle2=-(Math.PI-angle2);
-        this.angle = Math.PI+angle1 + (angle2 - angle1) / 2;// diffAngle + ((diffAngle > Math.PI) ? +Math.PI : -Math.PI);
-        
+
+        if (angle1 > Math.PI) angle1 = -(Math.PI - angle1);
+        if (angle2 > Math.PI) angle2 = -(Math.PI - angle2);
+        this.angle = Math.PI + angle1 + (angle2 - angle1) / 2;// diffAngle + ((diffAngle > Math.PI) ? +Math.PI : -Math.PI);
+
         this.radius = 6;
         this.maxLength = 90;
         this.length = this.maxLength;
 
-        this.xEnd = this.x + Math.sin(this.angle) * this.length;
-        this.yEnd = this.y + Math.cos(this.angle) * this.length;
 
-        let len1=g.collider.length(this.emitterA.x, this.emitterA.y, this.x,this.y);
-        let len2=g.collider.length( this.emitterB.x, this.emitterB.y, this.x,this.y);
+        let len1 = g.collider.length(this.emitterA.x, this.emitterA.y, this.x, this.y);
+        let len2 = g.collider.length(this.emitterB.x, this.emitterB.y, this.x, this.y);
         let eff = Math.abs(len1 - len2);
         this.efficiency = 1;
         if (eff - 10 > 0) {
@@ -157,12 +198,29 @@ class PseudoEmitter extends Emitter {
         } else if (eff - 3 > 0) {
             this.efficiency = eff;
         }
-        
-        this.whileDrag = null;
+
+
+        this.element = elements.combine(emitterA.element, emitterB.element);
+        this.emitters = [this];
+
+        if (((emitterA.element.symbol === "D") && (emitterB.element.symbol === "T")) || ((emitterA.element.symbol === "T") && (emitterB.element.symbol === "D"))) {
+            this.element = elements.find("He");
+            const em = new NeutronEmitter(x, y, this);
+            this.emitters.push(em);
+        }
+
+
+        this.xEnd = this.x + Math.sin(this.angle) * this.length;
+        this.yEnd = this.y + Math.cos(this.angle) * this.length;
+    }
+
+    //Get the emitters that will be used
+    getEmitters() {
+        return this.emitters;
     }
 
     draw(ctx) {
-        let abs = g.collider.length(this.emitterA.x, this.emitterA.y, this.emitterB.x, this.emitterB.y)-20;
+        const abs = g.collider.length(this.emitterA.x, this.emitterA.y, this.emitterB.x, this.emitterB.y)-20;
         if (abs < (this.emitterA.length + this.emitterB.length)/1.5) {
             ctx.beginPath();
             ctx.strokeStyle = "rgba(255,242,15,0.5)";
@@ -174,24 +232,32 @@ class PseudoEmitter extends Emitter {
         }
         
         ctx.beginPath();
+
+
         if ( this.element !== undefined) {
             ctx.fillStyle = "rgba(141,255,40,0.1)";
         } else {
             ctx.fillStyle = "rgba(255,20,57,0.22)";
         }
-       
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         ctx.fill();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "rgba(0,0,0,0.3)";
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.stroke();
         ctx.moveTo(this.x, this.y);
-        
-        let oldgradient = ctx.strokeStyle;
-        let gradient = ctx.createLinearGradient(this.x, this.y, this.xEnd, this.yEnd);
-        gradient.addColorStop(0, "green");
-        gradient.addColorStop(1.0, "red");
+
+
+        ctx.beginPath();
+        const oldGradient = ctx.strokeStyle;
+        const gradient = ctx.createLinearGradient(this.x, this.y, this.xEnd, this.yEnd);
+        gradient.addColorStop(0, "rgb(146,255,78)");
+        gradient.addColorStop(1.0, "rgb(255,0,0)");
         ctx.strokeStyle = gradient;
+        ctx.moveTo(this.x, this.y);
         ctx.lineTo(this.xEnd, this.yEnd);
         ctx.stroke();
-        ctx.strokeStyle = oldgradient;
+        ctx.strokeStyle = oldGradient;
 
         ctx.fillStyle = "rgb(0,0,0)";
         if (this.element !== undefined) {

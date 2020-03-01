@@ -2,6 +2,7 @@ g.u.list = [
     new Upgrade("Hydrogen Isotopes", "You sometimes get an additional Hydrogen Isotope when collecting Hydrogen", 'Hydrogen,Output,Isotopes', {'Hydrogen': 10}, () => {
         game.resources.perClick.Hydrogen.amount *= 2;
         game.collider.options.usableElements.push('D');
+        game.collider.updateAllowedElements();
     }),
     new Upgrade("Hydrogen I", "Hydrogen/click x2", 'Hydrogen,Output', {'Hydrogen': 10}, () => {
         game.resources.perClick.Hydrogen.amount *= 2;

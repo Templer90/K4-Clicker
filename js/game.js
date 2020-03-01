@@ -425,7 +425,8 @@ game.displayHorde = () => {
 
     let list = elements.list;
 
-    list.forEach((element, i) => {
+    list.forEach((element) => {
+        if (element.symbol === 'n') return;
         //This is correct, because I want to type coerce
         if (element.stashPanel.dataset.oldValue.toString() === g.resources.owned[element.name].toString()) return;
         const rawNumber = g.resources.owned[element.name];

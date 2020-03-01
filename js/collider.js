@@ -154,9 +154,12 @@ g.collider.emitters = {
             if (pseudo.element === undefined) {
                 g.collider.statistic.unstable = true;
             }
-            allEmitter.push(pseudo);
-            this.pseudo.push(pseudo);
-            g.collider.statistic.pseudo.push(pseudo);
+
+            pseudo.getEmitters().forEach((obj)=>{
+                allEmitter.push(obj);
+                this.pseudo.push(obj);
+                g.collider.statistic.pseudo.push(obj);
+            });
         }
     },
     addEmitter(x, y, element) {
