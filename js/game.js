@@ -24,6 +24,7 @@ g.cellCost = 5;
 g.buyMultiplier = 1;
 
 g.username = undefined;
+g.currentTab = 'stash';
 g.holding = [];
 
 // CORE FUNCTIONS
@@ -37,9 +38,9 @@ game.init = () => {
     const stashWell = document.getElementById("stash-well");
     elements.list.forEach((element) => {
         const div = document.createElement("div");
-        
+
         const h = document.createElement("h6");
-        h.className='panel-heading';
+        h.className = 'panel-heading';
         div.append(h);
 
         const a = document.createElement("a");
@@ -60,7 +61,6 @@ game.init = () => {
 
         stashWell.append(div);
     });
-
 
     save.loadData();
     save.checkSave();
@@ -106,7 +106,6 @@ game.init = () => {
 
     g.options.init = true;
 };
-game.currentTab = 'stash';
 game.clearHolding = () => {
     game.holding.forEach((i) =>
         window.clearInterval(i)
@@ -189,6 +188,14 @@ game.status = () => {
 };
 
 game.resources.init = () => {
+    g.resources.owned = new Proxy({}, {
+        set: function (target, prop, value /*,receiver*/) {
+            g.resources.total[prop] += (value - target[prop] > 0) ? (value - target[prop]) : 0;
+            target[prop] = value;
+            return true;
+        }
+    });
+    
     //Add the specials
     game.resources.special.forEach((resource) => {
         g.resources.owned[resource] = 0;
@@ -396,7 +403,11 @@ game.load = (saveObj) => {
     game.options = saveObj.options;
     document.getElementById('holdIntervalSlider').value = game.options.hold;
     game.changeHoldInterval();
-    g.resources.owned = saveObj.resources.owned;
+
+    Object.keys(saveObj.resources.owned).forEach((key)=>{
+        g.resources.owned[key] = saveObj.resources.owned[key];
+    });
+
 
     Object.keys(saveObj.resources.click).forEach((obj) => {
         let params = saveObj.resources.click[obj];
@@ -430,11 +441,12 @@ game.displayHorde = () => {
         //This is correct, because I want to type coerce
         if (element.stashPanel.dataset.oldValue.toString() === g.resources.owned[element.name].toString()) return;
         const rawNumber = g.resources.owned[element.name];
+        const total = g.resources.total[element.name];
         const line = element.name.padEnd(13, String.fromCharCode(160)) + ": " + numbers.element(rawNumber);
         const avogadro = rawNumber / elements.avogadro;
 
         element.stashLink.innerHTML = line;
-        element.stashPanel.innerHTML = rawNumber + " Atoms<br>" + numbers.beautify(avogadro, 22) + " mol";
+        element.stashPanel.innerHTML = rawNumber + " Atoms<br>"+total+" Total Atoms created<br>" + numbers.beautify(avogadro, 22) + " mol";
         element.stashPanel.dataset.oldValue = g.resources.owned[element.name];
     });
 };
