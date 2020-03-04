@@ -1,5 +1,6 @@
-var game = g = {};
+const game = g = {};
 
+g.gameName = 'Element Clicker';
 g.options = {};
 g.options.devMode = true;
 g.options.fps = 60;
@@ -68,13 +69,15 @@ game.init = () => {
     g.devMode();
     g.builds.checkSave();
     g.upgrades.checkSave();
-    g.tutorial.saveCheck();
+    g.tutorial.checkSave();
     g.upgrades.check();
     g.upgrades.hide();
     g.builds.update();
     g.buttons();
 
-    if (g.t.intro5.check !== true) g.tutorial.intro();
+    if ( game.t.counter !== game.t.list.length) {
+        game.tutorial.tutorial();
+    }
 
     if (g.options.hold !== 100) {
         game.addHoldingFunction();
@@ -86,9 +89,10 @@ game.init = () => {
         $(obj).tooltip();
     });
 
-    Array.from(document.getElementsByClassName('header-small')).forEach((obj) => {
-        obj.innerHTML = g.options.version;
-    });
+    const nameElement = document.getElementById('game-name');
+    nameElement.innerHTML = nameElement.innerHTML.replace('[name]', g.gameName);
+    document.getElementById('game-version').innerHTML = g.options.version;
+
 
     const saveInterval = game.options.saveIntervalTime / 1000;
     document.getElementById("saveIntervalSlider").value = saveInterval;
@@ -183,6 +187,10 @@ game.loop = () => {
     }
 };
 game.status = () => {
+    if (g.t.done === false) {
+        g.t.check();
+    }
+    
     g.upgrades.checkBuyStatus();
     g.builds.checkBuyStatus();
 };
@@ -350,7 +358,7 @@ game.earn = function (type, multi = 1) {
         g.resources.perClick[str].click(g.resources.owned, multi)
     }
 
-    if (g.t.fast.check === true) {
+    if (g.t.done === true) {
 
     } else {
         g.t.check();
@@ -376,7 +384,7 @@ game.changeBuy = () => {
 game.devMode = () => {
     if (g.options.devMode === true) {
         console.warn("Dev mode enabled!");
-        g.t.fast.check = true;
+        g.t.done = true;
     }
 };
 game.changeSaveInterval = () => {
@@ -394,10 +402,14 @@ game.save = () => {
     let res = {
         owned: g.resources.owned,
         click: g.resources.perClick,
-        total: g.resources.total,
+        total: g.resources.total
     };
     g.options.hold = document.getElementById('holdIntervalSlider').value;
-    return {options: game.options, resources: res};
+    return {
+        options: game.options,
+        tutorial: game.tutorial.counter,
+        resources: res
+    };
 };
 game.load = (saveObj) => {
     game.options = saveObj.options;
@@ -407,8 +419,7 @@ game.load = (saveObj) => {
     Object.keys(saveObj.resources.owned).forEach((key)=>{
         g.resources.owned[key] = saveObj.resources.owned[key];
     });
-
-
+    
     Object.keys(saveObj.resources.click).forEach((obj) => {
         let params = saveObj.resources.click[obj];
         Object.keys(params).forEach((param) => {
@@ -417,6 +428,7 @@ game.load = (saveObj) => {
     });
 
     g.resources.total = saveObj.resources.total;
+    g.tutorial.counter = saveObj.tutorial;
 };
 game.changeHoldInterval = () => {
     let val = document.getElementById('holdIntervalSlider').value;
@@ -432,7 +444,7 @@ game.changeHoldInterval = () => {
 };
 game.displayHorde = () => {
     if (game.currentTab !== 'stash') return;
-    let text = "Energy".padEnd(13, String.fromCharCode(160)) + ": " + numbers.fix(g.resources.owned.Energy, 0) + "<br>";
+   // let text = "Energy".padEnd(13, String.fromCharCode(160)) + ": " + numbers.fix(g.resources.owned.Energy, 0) + "<br>";
 
     let list = elements.list;
 

@@ -24,7 +24,7 @@
 <header class="no-select">
     <div class="container">
         <div class="row">
-            <div class="col-md-6"><h4 class="header">K4-Clicker <small class="header-small"></small></h4></div>
+            <div class="col-md-6"><h4 class="header" id="game-name">[name] <small id="game-version" class="header-small">version</small></h4></div>
             <div class="col-md-6"></div>
         </div>
     </div>
@@ -33,20 +33,20 @@
 <div class="container no-select">
     <div class="row">
         <div class="col-md-3">
-            <div id="resources-well" class="well" style="display: none;">
+            <div id="resources-well" class="well" >
                 <p><u>Resources :</u></p>
-                <p id="resources-display" class="no-margin"></p>
+                <p id="resources-display" class="no-margin">Resources</p>
             </div>
             <div class="spacer"></div>
             <p>
                 <a id="btn-energy" type="button" class="multiClickable genResource btn btn-warning btn-sm btn-block" 
-                   onclick="game.earn('energy')" style="display: none;" data-template="Create Energy (+[number])" data-element="Energy" >Create Energy (+1)</a>
+                   onclick="game.earn('energy')"  data-template="Create Energy (+[number])" data-element="Energy" >Create Energy (+1)</a>
                 <a id="btn-hydrogen" type="button" class="multiClickable genResource btn btn-primary btn-sm btn-block"
                    onclick="game.earn('hydrogen')" 
-                   style="display: none;"  data-template="Create Hydrogen (+[number])" data-element="Hydrogen">Create hydrogen (+1)</a>
+                     data-template="Create Hydrogen (+[number])" data-element="Hydrogen">Create hydrogen (+1)</a>
                 <a id="btn-collider" type="button" class="multiClickable genResource btn btn-primary btn-sm btn-block"
                    onclick="game.earn('collider')"
-                   style="display: none;"  data-template="Run Collider" data-element="Energy">Run Collider</a>
+                     data-template="Run Collider" data-element="Energy">Run Collider</a>
             </p>
             <p>
                 <a id="btn-deuterium" type="button" class="multiClickable genResource btn btn-primary btn-sm btn-block"
@@ -58,35 +58,35 @@
             </p>
             <p>
                 <a id="btn-3-1" type="button" class="btn btn-info btn-block" onclick="game.earn('cells')"
-                   data-toggle="tooltip" data-placement="top" title="Cost 5 energy" style="display: none;">Generate cell
+                   data-toggle="tooltip" data-placement="top" title="Cost 5 energy" >Generate cell
                     (+1)</a>
                 <a id="btn-3-2" type="button" class="btn btn-success btn-block" onclick="game.earn('sun')"
                    data-toggle="tooltip" data-placement="top" title="Cost 75 hydrogen, 10 oxygen, 15 energy"
-                   style="display: none;">Create Sun</a>
+                   >Create Sun</a>
                 <a id="btn-3-3" type="button" class="btn btn-success btn-block" onclick="game.earn('Atmosphere Generator')"
                    data-toggle="tooltip" data-placement="top" title="Cost 150 hydrogen, 100 oxygen, 50 energy"
-                   style="display: none;">Build an 'Atmosphere Generator'</a>
+                   >Build an 'Atmosphere Generator'</a>
             </p>
             <p>
                 <a id="btn-buy-multiplier" type="button" class="btn btn-success btn-block" onclick="game.changeBuy()"
-                   style="display: none;">Buy x1</a>
+                   >Buy x1</a>
             </p>
         </div>
         <div id="menu" class="col-md-9">
             <ul class="nav nav-tabs nav-justified" role="tablist">
                 <li id="log-nav" role="presentation" class="active"><a href="#log" data-toggle="tab">
                     <i class="fas fa-comment-alt"></i>Log</a></li>
-                <li id="stash-nav" role="presentation" class="active"><a href="#stash" data-toggle="tab"><i
+                <li id="stash-nav" role="presentation" ><a href="#stash" data-toggle="tab"><i
                         class="fa fa-pen-square"></i>Stash</a></li>
-                <li id="upgrades-nav" role="presentation" style="display: none;"><a href="#upgrades"
+                <li id="upgrades-nav" role="presentation" ><a href="#upgrades"
                                                                                     data-toggle="tab"><i
                         class="fa fa-level-up-alt"></i> Upgrades</a></li>
                 <li id="collider-nav" role="presentation" style=""><a href="#collider"
                                                                       data-toggle="tab"><i
                         class="fas fa-border-none"></i> Collider</a></li>
-                <li id="builds-nav" role="presentation" style="display: none;"><a href="#builds" data-toggle="tab"><i
+                <li id="builds-nav" role="presentation" ><a href="#builds" data-toggle="tab"><i
                         class="fa fa-building"></i> Builds</a></li>
-                <li id="dropdown-nav" role="presentation" class="dropdown" style="display: none;">
+                <li id="dropdown-nav" role="presentation" class="dropdown" >
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
                        aria-expanded="false">More <span class="caret"></span></a>
                     <ul class="dropdown-menu">
@@ -99,10 +99,10 @@
                 </li>
             </ul>
             <div class="tab-content">
-                <div id="log" class="tab-pane fade">
+                <div id="log" class="tab-pane fade in active show">
                     <div id="log-well" class="well"></div>
                 </div>
-                <div id="stash" class="tab-pane fade in active show" data-frag="fragments/stash.html" ></div>
+                <div id="stash" class="tab-pane fade" data-frag="fragments/stash.html" ></div>
                 <div id="upgrades" class="tab-pane fade" data-frag="fragments/upgrades.html"></div>
                 <div id="builds" class="tab-pane fade">
                     <div class="well">

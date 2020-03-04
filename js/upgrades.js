@@ -109,7 +109,7 @@ game.upgrades.init = () => {
 
         let main = document.createElement("div");
         main.setAttribute('id', 'upgrades-row-' + i);
-        main.setAttribute('class', 'row bottom-spacer upgrade-holder');
+        main.setAttribute('class', 'row bottom-spacer outlined');
 
         let infoBox = document.createElement("div");
         infoBox.setAttribute('class', 'col-md-8');

@@ -1,151 +1,106 @@
-g.tutorial = g.t = {};
-g.t.spacer = "<br>--------------<br>";
-g.t.allElements = "#btn-hydrogen, #btn-collider, #btn-energy, #btn-2-1, #btn-3-1, #btn-buy-multiplier, #resources-well, #upgrades-nav, #builds-nav, #dropdown-nav";
-g.t.fast = {
-    check: false,
-};
-g.t.back = {
-    check: false,
-    string: 'Welcome back to <b>Universe-God</b>!'
-};
-g.t.intro1 = {
-    check: false,
-    string: 'Welcome to <b>Universe-God</b>.<br> ' +
-        "In this game, you are the god.<br> " +
-        "Your first goal is to create your first <b>habitable</b> planet, let's call this planet <b>the Earth</b>.<br> " +
-        "Reach <b>20 atoms</b> of hydrogen and <b>10 atoms</b> of oxygen." + g.t.spacer
-};
-g.t.intro2 = {
-    check: false,
-    string: 'Good job! You can now generate some <b>water</b>.<br> ' +
-        "Water cost 20 hydrogen and 10 oxygen : this cost doesn't increase!<br> " +
-        "You can also buy some <b>upgrades</b> to help you earn more <b>resources/click</b>.<br> " +
-        "Reach <b>3 mL</b> of water. " + g.t.spacer
-};
-g.t.intro3 = {
-    check: false,
-    string: "Nice, your planet now got some <b>water</b>, but this water is cold.<br> " +
-        "You need to raise the <b>temperature</b>.<br> " +
-        "Let's create a <b>sun</b>. To make it, you need :<br> " +
-        "75 hydrogen, 15 Energy and 10 oxygen.<br> " +
-        "Then, create the Sun." + g.t.spacer
-};
-g.t.intro4 = {
-    check: false,
-    string: "You created the Sun, it's a good beginning.<br> " +
-        "Your planet also need an <b>atmosphere</b>.<br> " +
-        "Without atmosphere, the cells can not live.<br> " +
-        "Build an <b>atmoshpere generator</b>." + g.t.spacer
-};
-g.t.intro5 = {
-    check: false,
-    string: "Great, now you can generate cells.<br> " +
-        "But your amount of cells is limited by your amount of water :<br> " +
-        "<b>10 cells/mL of water</b>.<br> " +
-        "Each cell generate <b>0.1 meat/sec</b>. " + g.t.spacer +
-        "<b>This is the end of the tutorial.<br> Keep playing to unlock new features!</b>"
-};
+game.tutorial = game.t = {};
+game.t.counter = 0;
+game.t.done = false;
+game.t.list = [
+    {
+        header: "Welcome to " + game.gameName,
+        desc: "Welcome to " + game.gameName + "<br>Do you wish to see the tutorial? <br><div class='row'>" +
+            '<a id="tut-start" type="button" class="col-md-8 btn btn-sm btn-success" onClick="game.t.startTutorial();"> Yes </a>' +
+            '<a id="tut-end" type="button" class="col-md-4 btn btn-sm btn-danger" onClick="game.t.endTutorial();"> No </a>' +
+            '</div>',
+        test: () => {
+            return false;
+        }
+    },
+    {
+        header: "Get",
+        desc: "Get 10 Hydrogen",
+        test: () => {
+            return game.resources.owned.Hydrogen > 10;
+        }
+    },
+    {
+        header: "Done",
+        desc: "Have fun with " + game.gameName,
+        test: () => {
+            game.t.done = true;
+            return false;
+        }
+    }
+];
+game.tutorial.startTutorial = function () {
+    document.getElementById("tut-start").remove();
+    document.getElementById("tut-end").remove();
 
-game.tutorial.intro = function () {
-    if (g.t.fast.check == true) {
-        g.t.intro1.string = 'Dev mode enabled.';
-        $(g.t.allElements).fadeIn('slow');
+    game.tutorial.next();
+};
+game.tutorial.endTutorial = function () {
+    document.getElementById("tut-start").remove();
+    document.getElementById("tut-end").remove();
+    game.t.counter = game.t.list.length;
+    game.t.done = true;
+};
+game.tutorial.next = function () {
+    game.t.counter++;
+    game.tutorial.tutorial();
+};
+game.tutorial.tutorial = function () {
+    if ((game.t.counter === game.t.list.length) || (game.t.done === true)) {
         return;
     }
-    if (g.t.intro1.check == false) {
-        $("#log-well").append('<p class="no-margin"><span id="intro-text-1"></span></p>');
-        $("#intro-text-1").typed({
-            strings: [g.t.intro1.string],
-            typeSpeed: 1,
-            callback: function () {
-                $("#btn-hydrogen, #btn-collider, #resources-well").fadeIn('slow');
-                g.display();
-                h.removeCursor();
-            }
-        });
-    }
-    if (g.t.intro1.check == true && g.t.intro2.check == false) {
-        $("#log-well").append('<p class="no-margin"><span id="intro-text-2"></span></p>');
-        $("#intro-text-2").typed({
-            strings: [g.t.intro2.string],
-            typeSpeed: 1,
-            callback: function () {
-                $("#btn-2-1, #upgrades-nav").fadeIn('slow');
-                h.removeCursor();
-            }
-        });
-    }
-    if (g.t.intro2.check == true && g.t.intro3.check == false) {
-        $("#log-well").append('<p class="no-margin"><span id="intro-text-3"></span></p>');
-        $("#intro-text-3").typed({
-            strings: [g.t.intro3.string],
-            typeSpeed: 1,
-            callback: function () {
-                $("#btn-energy, #btn-3-2").fadeIn('slow');
-                h.removeCursor();
-            }
-        });
-    }
-    if (g.t.intro3.check == true && g.t.intro4.check == false) {
-        $("#log-well").append('<p class="no-margin"><span id="intro-text-4"></span></p>');
-        $("#intro-text-4").typed({
-            strings: [g.t.intro4.string],
-            typeSpeed: 1,
-            callback: function () {
-                $("#btn-3-3").fadeIn('slow');
-                h.removeCursor();
-            }
-        });
-    }
-    if (g.t.intro4.check == true && g.t.intro5.check == false) {
-        $("#log-well").append('<p class="no-margin"><span id="intro-text-5"></span></p>');
-        $("#intro-text-5").typed({
-            strings: [g.t.intro5.string],
-            typeSpeed: 1,
-            callback: function () {
-                $("#btn-3-1, #btn-buy-multiplier, #builds-nav, #dropdown-nav").fadeIn('slow');
-                h.removeCursor();
-            }
-        });
+    const data = game.t.list[game.t.counter];
+    game.tutorial.genText(data.header, data.desc);
+};
+game.tutorial.genText = (title, text, func) => {
+    let main = document.createElement('div');
+    main.setAttribute('id', 'tutorial-' + title.replace(' ', '_'));
+    main.setAttribute('class', 'row bottom-spacer outlined');
+
+    let infoBox = document.createElement('p');
+    infoBox.setAttribute('class', 'col-md-12 text-center');
+    infoBox.innerHTML = title;
+    main.append(infoBox);
+
+    let paragraph = document.createElement('p');
+    paragraph.setAttribute('class', 'col-md-12');
+    paragraph.innerHTML = text;
+    main.append(paragraph);
+
+    document.getElementById('log-well').appendChild(main);
+};
+game.tutorial.check = () => {
+    if (game.t.list[game.t.counter].test()) {
+        game.tutorial.next();
     }
 };
-game.tutorial.check = function () {
-    if (g.t.intro1.check === false && g.resources.owned["Hydrogen"] >= 20 && g.resources.owned["Oxygen"] >= 10) {
-        g.t.intro1.check = true;
-        g.t.intro();
+game.tutorial.checkSave = function () {
+    if ( game.t.counter === game.t.list.length) {
+        game.t.done = true;
+        return;
     }
-    if (g.t.intro2.check === false && g.resources.owned["Water"] >= 3) {
-        g.t.intro2.check = true;
-        g.t.intro();
+
+    for (let i = 1; i < game.t.counter; i++) {
+        const data = game.t.list[i];
+        game.tutorial.genText(data.header, data.desc);
     }
-    if (g.t.intro3.check === false && g.resources.owned["Sun"] === 1) {
-        g.t.intro3.check = true;
-        g.t.intro();
-    }
-    if (g.t.intro4.check === false && g.resources.owned["Atmosphere Generator"] === 1) {
-        g.t.intro4.check = true;
-        g.t.intro();
-        g.t.intro5.check = true;
-    }
-};
-game.tutorial.saveCheck = function () {
+    
     $("#btn-hydrogen, #btn-collider, #resources-well").fadeIn('slow');
-    if (g.t.intro1.check == true && g.t.intro2.check == false)
+    if (true) {
         $("#btn-2-1, #upgrades-nav").fadeIn('slow');
-    if (g.t.intro2.check == true && g.t.intro3.check == false)
+
         $("#btn-energy, #btn-3-2, #btn-2-1, #upgrades-nav").fadeIn('slow');
-    if (g.t.intro3.check == true && g.t.intro4.check == false)
+
         $("#btn-energy, #btn-3-2, #btn-2-1, #upgrades-nav, #btn-3-3").fadeIn('slow');
-    if ((g.t.intro4.check == true && g.t.intro5.check == false) || g.t.intro5.check == true) {
+
         $("#btn-energy, #btn-3-2, #btn-2-1, #upgrades-nav, #btn-3-1, #btn-buy-multiplier, #builds-nav, #dropdown-nav").fadeIn('slow');
         $("#btn-3-2").css('display', 'none');
         $("#log-well").append('<p class="no-margin"><span id="log-back"></span></p>');
-        $("#log-back").typed({
-            strings: [g.t.back.string],
-            typeSpeed: 1,
-            callback: function () {
-                h.removeCursor();
-            }
-        });
+        //$("#log-back").typed({
+        //    strings: [game.t.back.string],
+        //    typeSpeed: 1,
+        //    callback: function () {
+        //        h.removeCursor();
+        //    }
+        //});
     }
 };
