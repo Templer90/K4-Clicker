@@ -1349,14 +1349,14 @@ elements.list = [
         "xpos": 1,
         "ypos": 8
     }];
-elements.init =  () => {
+elements.init = () => {
     elements.map = new Map();
     elements.list.forEach((value) => {
         elements.map.set(value.name, value);
         elements.map.set(value.symbol, value);
     });
 };
-elements.combine =  (a, b)  => {
+elements.combine = (a, b)  => {
     if ((a === undefined) || (b === undefined)) return undefined;
 
     let elementA = a;
@@ -1380,7 +1380,7 @@ elements.combine =  (a, b)  => {
         return Math.floor(value.atomic_mass) === mass;
     });
 };
-elements.find =  (a) => {
+elements.find = (a) => {
     if (a === undefined) return undefined;
     if (typeof a === 'string') return elements.map.get(a);
     if (a.name !== undefined) return elements.map.get(a.name);

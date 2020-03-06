@@ -33,8 +33,9 @@ game.init = () => {
     elements.init();
     g.resources.init();
     g.upgrades.init();
-    g.builds.init();
     g.collider.init();
+    g.builds.init();
+
 
     const stashWell = document.getElementById("stash-well");
     elements.list.forEach((element) => {
@@ -70,6 +71,10 @@ game.init = () => {
     g.builds.checkSave();
     g.upgrades.checkSave();
     g.tutorial.checkSave();
+
+    g.c.emitters.calcTrajectory();
+    g.c.compileStatistics();
+    
     g.upgrades.check();
     g.upgrades.hide();
     g.builds.update();
@@ -92,8 +97,7 @@ game.init = () => {
     const nameElement = document.getElementById('game-name');
     nameElement.innerHTML = nameElement.innerHTML.replace('[name]', g.gameName);
     document.getElementById('game-version').innerHTML = g.options.version;
-
-
+    
     const saveInterval = game.options.saveIntervalTime / 1000;
     document.getElementById("saveIntervalSlider").value = saveInterval;
     document.getElementById("intervalText").innerHTML = "The game autosaves every " + saveInterval + " seconds.";
@@ -452,13 +456,16 @@ game.displayHorde = () => {
         if (element.symbol === 'n') return;
         //This is correct, because I want to type coerce
         if (element.stashPanel.dataset.oldValue.toString() === g.resources.owned[element.name].toString()) return;
-        const rawNumber = g.resources.owned[element.name];
-        const total = g.resources.total[element.name];
+        const rawNumber = Math.round(g.resources.owned[element.name]);
+        const total =  Math.round(g.resources.total[element.name]);
         const line = element.name.padEnd(13, String.fromCharCode(160)) + ": " + numbers.element(rawNumber);
         const avogadro = rawNumber / elements.avogadro;
 
         element.stashLink.innerHTML = line;
-        element.stashPanel.innerHTML = rawNumber + " Atoms<br>"+total+" Total Atoms created<br>" + numbers.beautify(avogadro, 22) + " mol";
+        element.stashPanel.innerHTML =
+            numbers.zeroPad(rawNumber, 22) + " Atoms<br>"
+            + numbers.zeroPad(total, 22) + " Total Atoms created<br>"
+            + numbers.beautify(avogadro, 20) + " mol";
         element.stashPanel.dataset.oldValue = g.resources.owned[element.name];
     });
 };

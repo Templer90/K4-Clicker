@@ -6,6 +6,7 @@ class Building {
         this.visible = visible;
         this.price = price;
         this.index = -1;
+        this.enabled = true;
 
         //if (!Array.isArray(price)) {
         //    this.price = [price];
@@ -63,7 +64,7 @@ game.builds.init = () => {
         paragraph.setAttribute('class', 'no-margin');
 
         const line1 = obj.displayName + " : " + obj.valuePerSec.type + " " + obj.valuePerSec.perSec + "/sec";
-        const line2 = g.b.owned[i] + " owned : " + h.buildReward(i) + " " + obj.price.type.toLowerCase() + "/sec";
+        const line2 = numbers.fix(g.b.owned[i], 0) + " owned : " + obj.reward.rewardPerSecondString(g.b.owned[i], paragraph);
         const line3 = "Cost " + obj.costString;
         paragraph.innerHTML = line1 + "<br>" + line2 + "<br>" + line3;
         infoBox.append(paragraph);
@@ -71,17 +72,40 @@ game.builds.init = () => {
         const buyButton = document.createElement("div");
         buyButton.setAttribute('class', 'col-md-4');
 
-        const buyLink = document.createElement("a");
+        const inputGroup = document.createElement("div");
+        inputGroup.className = 'input-group mb-3';
+        
+        const inputPrepend = document.createElement("div");
+        inputPrepend.className = 'input-group-prepend';
+        inputGroup.append(inputPrepend);
+        
+        const inputBackground = document.createElement("div");
+        inputBackground.className = 'btn building-checkbox input-group-text';
+        inputPrepend.append(inputBackground);
+
+        const inputCheckbox = document.createElement("input");
+        inputCheckbox.className = 'btn-primary';
+        inputCheckbox.setAttribute('aria-label', 'Checkbox for following text input');
+        inputCheckbox.type = 'checkbox';
+        inputCheckbox.checked = true;
+        inputCheckbox.onclick = () => {
+            obj.enabled = !obj.enabled;
+        };
+        inputBackground.append(inputCheckbox);
+        
+        const buyLink = document.createElement('a');
         buyLink.id = 'builds-btn-' + obj.name;
-        buyLink.setAttribute('class', 'btn btn-primary btn-block');
+        buyLink.className='btn btn-primary btn-block form-control';
         buyLink.setAttribute('type', 'button');
         buyLink.onclick = () => {
             g.b.buy(i, obj);
         };
         buyLink.innerHTML = 'Buy build';
-        obj.buylink = buyLink;
+        obj.buttons = [buyLink];
 
-        buyButton.append(buyLink);
+        inputGroup.append(buyLink);
+        buyButton.append(inputGroup);
+       // buyButton.append(buyLink);
         main.append(infoBox);
         main.append(buyButton);
         panel.append(main);
@@ -89,13 +113,15 @@ game.builds.init = () => {
 };
 game.builds.checkBuyStatus = () => {
     g.b.list.forEach((obj) => {
-        if (obj.buyable()) {
-            obj.buylink.removeAttribute('disabled');
-            obj.buylink.classList.remove('disabled');
-        } else {
-            obj.buylink.setAttribute('disabled', 'disabled');
-            obj.buylink.classList.add('disabled');
-        }
+        obj.buttons.forEach((button) => {
+            if (obj.buyable()) {
+                button.removeAttribute('disabled');
+                button.classList.remove('disabled');
+            } else {
+                button.setAttribute('disabled', 'disabled');
+                button.classList.add('disabled');
+            }
+        });
     });
 };
 game.builds.buy = (index) => {
@@ -108,7 +134,7 @@ game.builds.buy = (index) => {
 game.builds.earn = (times) => {
     const delta = times / g.options.fps;
     for (let i = 0; i < g.b.list.length; i++) {
-        if (g.b.owned[i] > 0) {
+        if (g.b.owned[i] > 0 && g.b.list[i].enabled) {
             const reward = g.b.list[i].reward;
             g.b.list[i].reward.func(g.b.list[i].valuePerSec.perSec * g.b.owned[i] * g.b.multiplier[i],
                 delta,
@@ -134,11 +160,12 @@ game.builds.update = () => {
             row.style.display = 'none';
         }
 
+        const constElement= document.getElementById("builds-infos-" + i);
         const line1 = obj.name + " : " + numbers.fix(obj.valuePerSec.perSec, 2) + " " + obj.valuePerSec.type.toLowerCase() + "/sec";
-        const line2 = numbers.fix(g.b.owned[i], 0) + " owned : " + obj.reward.rewardPerSecondString(g.b.owned[i]);
+        const line2 = numbers.fix(g.b.owned[i], 0) + " owned : " + obj.reward.rewardPerSecondString(g.b.owned[i], constElement);
         const line3 = "Cost " + numbers.fix(obj.buildPrice(), 0) + " " + obj.price.type.toLowerCase();
 
-        document.getElementById("builds-infos-" + i).innerHTML = line1 + "<br>" + line2 + "<br>" + line3 + "<br>";
+        constElement.innerHTML = line1 + "<br>" + line2 + "<br>" + line3 + "<br>";
     });
 };
 

@@ -320,17 +320,19 @@ game.collider.init = () => {
                 }
             }
             c = dragging.currentObj;
-            if (dragging.type === "create") {
-                dragging.currentObj.dirIndicator.x = mouse.x;
-                dragging.currentObj.dirIndicator.y = mouse.y;
-            } else if (dragging.type === "move") {
-                x = dragging.startX - mouse.x;
-                y = dragging.startY - mouse.y;
-                c.x -= x;
-                c.y -= y;
-                dragging.startX = mouse.x;
-                dragging.startY = mouse.y;
-                dragging.currentObj.whileDrag(ctx);
+            if(c!==undefined && c!==null) {
+                if (dragging.type === "create") {
+                    dragging.currentObj.dirIndicator.x = mouse.x;
+                    dragging.currentObj.dirIndicator.y = mouse.y;
+                } else if (dragging.type === "move") {
+                    x = dragging.startX - mouse.x;
+                    y = dragging.startY - mouse.y;
+                    c.x -= x;
+                    c.y -= y;
+                    dragging.startX = mouse.x;
+                    dragging.startY = mouse.y;
+                    dragging.currentObj.whileDrag(ctx);
+                }
             }
             cursor = "none";
         } else {  // button must be up

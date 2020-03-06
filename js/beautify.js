@@ -1,4 +1,4 @@
-var numbers = {};
+const numbers = {};
 numbers.prefixes = ["million ", "billion ", "trillion ", "quadrillion ", "quintillion ", "sextillion ", "septillion ", "octillion ", "nonillion ",
     "decillion ", "undecillion ", "duodecillion ", "tredecillion ", "quattuordecillion ", "quindecillion ", "sexdecillion ", "septendecillion ", "octodecillion ", "novemdecillion ",
     "vigintillion ", "unvigintillion ", "duovigintillion ", "trevigintillion ", "quattuorvigintillion ", "quinvigintillion ", "sexvigintillion ", "septenvigintillion ", "octovigintillion ", "novemvigintillion ",
@@ -15,6 +15,9 @@ numbers.beautify = function beautify(x, n) {
     } else {
         return numbers.numberWithCommas(x.toFixed(n));
     }
+};
+numbers.zeroPad = (num, places) => {
+    return String(num).padStart(places, '0');
 };
 numbers.numberWithCommas = function (n) {
     const parts = n.toString().split(".");

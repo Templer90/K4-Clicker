@@ -32,7 +32,7 @@
 <!-- game container -->
 <div class="container no-select">
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div id="resources-well" class="well" >
                 <p><u>Resources :</u></p>
                 <p id="resources-display" class="no-margin">Resources</p>
@@ -57,22 +57,13 @@
                    data-element="Helium">Create Helium (+1)</a>
             </p>
             <p>
-                <a id="btn-3-1" type="button" class="btn btn-info btn-block" onclick="game.earn('cells')"
-                   data-toggle="tooltip" data-placement="top" title="Cost 5 energy" >Generate cell
-                    (+1)</a>
-                <a id="btn-3-2" type="button" class="btn btn-success btn-block" onclick="game.earn('sun')"
-                   data-toggle="tooltip" data-placement="top" title="Cost 75 hydrogen, 10 oxygen, 15 energy"
-                   >Create Sun</a>
-                <a id="btn-3-3" type="button" class="btn btn-success btn-block" onclick="game.earn('Atmosphere Generator')"
-                   data-toggle="tooltip" data-placement="top" title="Cost 150 hydrogen, 100 oxygen, 50 energy"
-                   >Build an 'Atmosphere Generator'</a>
+
             </p>
             <p>
-                <a id="btn-buy-multiplier" type="button" class="btn btn-success btn-block" onclick="game.changeBuy()"
-                   >Buy x1</a>
+                <a id="btn-buy-multiplier" type="button" class="btn btn-success btn-block" onclick="game.changeBuy()">Buy x1</a>
             </p>
         </div>
-        <div id="menu" class="col-md-9">
+        <div id="menu" class="col-md-8">
             <ul class="nav nav-tabs nav-justified" role="tablist">
                 <li id="log-nav" role="presentation" class="active"><a href="#log" data-toggle="tab">
                     <i class="fas fa-comment-alt"></i>Log</a></li>

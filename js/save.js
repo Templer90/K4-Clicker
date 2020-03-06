@@ -29,8 +29,8 @@ save.loadData = function () {
 
         game.load(saveGame.game);
         game.upgrades.load(saveGame.upgrades);
-        game.builds.load(saveGame.builds);
         game.collider.load(saveGame.collider);
+        game.builds.load(saveGame.builds);
     }
 };
 
