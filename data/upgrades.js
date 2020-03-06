@@ -96,5 +96,6 @@ g.u.list = [
     }),
     new MultiUpgrade("More Collider", "Collider++", 'Collider', {'Hydrogen': 1}, 8, (self) => {
         g.collider.options.collider += 1;
+        game.collider.update();
     }),
 ];

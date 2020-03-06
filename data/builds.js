@@ -45,22 +45,23 @@ g.b.list = [
             type: "Collider",
             accumulator: 0,
             rewardPerSecondString: (owned, element) => {
-                if (g.collider.statistic.outputElements.length === 1) {
-                    const element = g.collider.statistic.outputElements[0];
+                const statistic = g.collider.statistic;
+                if (statistic.outputElements.length === 1) {
+                    const element = statistic.outputElements[0];
                     return element.element + " " + (element.value * owned) + " /sec";
                 }
                 element.dataset.toggle = 'tooltip';
                 element.dataset.placement = 'top';
 
                 let tooltip = 'Input:\n';
-                tooltip += '\tEnergy: ' + Math.round(g.collider.statistic.inputEnergy) + '\n\t';
-                tooltip += g.collider.statistic.inputElements.map((output) => output.element + " " + (output.value * owned)).join('\n\t');
+                tooltip += '\tEnergy: ' + Math.round(statistic.inputEnergy) + '\n\t';
+                tooltip += statistic.inputElements.map((output) => output.element + " " + (output.value * owned)).join('\n\t');
                 tooltip += '\nOutput:\n';
-                tooltip += '\tEnergy: ' + Math.round(g.collider.statistic.outputEnergy) + '\n\t';
-                tooltip += g.collider.statistic.outputElements.map((output) => output.element + ": " + (output.value * owned)).join('\n\t');
+                tooltip += '\tEnergy: ' + Math.round(statistic.outputEnergy) + '\n\t';
+                tooltip += statistic.outputElements.map((output) => output.element + ": " + (output.value * owned)).join('\n\t');
                 element.setAttribute('title', tooltip);
 
-                return g.collider.statistic.outputElements.map((output) => elements.find(output.element).symbol + (output.value * owned)).join(" & ") + ' /sec';
+                return statistic.outputElements.map((output) => elements.find(output.element).symbol + (output.value * owned)).join(" & ") + ' /sec';
             },
             func: (value, delta, reward) => {
                 reward.accumulator += value * delta;

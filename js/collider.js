@@ -41,7 +41,7 @@ g.collider.statistic = {
 g.collider.options = {
     maxEmitter: 5,
     usableElements: ['H', 'He'],
-    autoElements: [],
+    autoElements: [], //TODO Is not really Implemented yet
     collider: 1
 };
 g.collider.emitters = {
@@ -67,14 +67,15 @@ g.collider.emitters = {
         //2) pick intersection that is the closest to both    
         //3) remove them from list and add pseudo emitter
         //4) repeat
-        g.collider.statistic.inputEmitters = this.emitter;
-        g.collider.statistic.outputEmitters = [];
-        g.collider.statistic.pseudo = [];
-        g.collider.statistic.inputElements = [];
-        g.collider.statistic.outputElements = [];
+        const statistic={};
+        statistic.inputEmitters = this.emitter;
+        statistic.outputEmitters = [];
+        statistic.pseudo = [];
+        statistic.inputElements = [];
+        statistic.outputElements = [];
 
-        g.collider.statistic.unstable = false;
-        g.collider.statistic.inputEnergy = 0;
+        statistic.unstable = false;
+        statistic.inputEnergy = 0;
 
         let allEmitter = [];
         this.pseudo = [];
@@ -120,7 +121,7 @@ g.collider.emitters = {
             }
 
             if (potentials.length === 0) {
-                g.collider.statistic.outputEmitters = allEmitter;
+                statistic.outputEmitters = allEmitter;
                 break;
             }
 
@@ -152,14 +153,16 @@ g.collider.emitters = {
 
             let pseudo = new PseudoEmitter(potentialHit.pos.x, potentialHit.pos.y, potentialHit.a, potentialHit.b);
             if (pseudo.element === undefined) {
-                g.collider.statistic.unstable = true;
+                statistic.unstable = true;
             }
 
             pseudo.getEmitters().forEach((obj)=>{
                 allEmitter.push(obj);
                 this.pseudo.push(obj);
-                g.collider.statistic.pseudo.push(obj);
+                statistic.pseudo.push(obj);
             });
+
+            g.collider.statistic = statistic;
         }
     },
     addEmitter(x, y, element) {
@@ -375,8 +378,8 @@ game.collider.removeSelectedEmitter = () => {
     }
 };
 game.collider.compileStatistics = () => {
-    let statistic = g.collider.statistic;
-    let restText = (g.collider.options.maxEmitter - statistic.inputEmitters.length) + " remaining";
+    const statistic = g.collider.statistic;
+    const restText = (g.collider.options.maxEmitter - statistic.inputEmitters.length) + " remaining";
     let inputText = "Input " + statistic.inputEmitters.length + " " + (statistic.unstable ? "!!!UNSTABLE!!!" : "") + " " + restText;
     let outputText = "Output " + statistic.outputEmitters.length;
 
@@ -397,7 +400,7 @@ game.collider.compileStatistics = () => {
             inputText += "<br>(" + key + ": " + value + ")";
         } else {
             inputText += "<br>" + key + ": " + value;
-            g.collider.statistic.inputElements.push({element: key, value: value});
+            statistic.inputElements.push({element: key, value: value});
         }
     });
 
@@ -409,12 +412,12 @@ game.collider.compileStatistics = () => {
     statistic.pseudo.forEach((obj) => {
         energy /= obj.efficiency;
     });
-    g.collider.statistic.inputEnergy = energy;
+    statistic.inputEnergy = energy;
     inputText += "<br>Energy " + numbers.fix(energy < 1 ? 1 : energy, 0);
 
     accumulate(statistic.outputEmitters, ([key, value]) => {
         outputText += "<br>\t" + key + " :" + value;
-        g.collider.statistic.outputElements.push({element: key, value: value});
+        statistic.outputElements.push({element: key, value: value});
     });
 
 
@@ -473,6 +476,25 @@ game.collider.load = (saveObj) => {
     game.collider.updateAllowedElements();
     game.collider.changed = true;
 };
-game.collider.update = (event) => {
+game.collider.changeCollider = (selector) => {
+    console.log(selector.value);
+};
+game.collider.update = () => {
+    const select = document.getElementById('colliderSelector');
+    select.innerHTML='';
+    
+    const option = document.createElement('option');
+    option.value = 0;
+    option.innerHTML = 'Main';
+    option.selected='selected';
+    select.add(option);
+    
+    for (let i = 1; i < g.collider.options.collider; i++) {
+        let option = document.createElement('option');
+        option.value = i;
+        option.innerHTML = 'Collider #'+i;
+
+        select.add(option);
+    }
 
 };

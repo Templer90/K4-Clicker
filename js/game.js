@@ -35,8 +35,7 @@ game.init = () => {
     g.upgrades.init();
     g.collider.init();
     g.builds.init();
-
-
+    
     const stashWell = document.getElementById("stash-well");
     elements.list.forEach((element) => {
         const div = document.createElement("div");
@@ -77,6 +76,8 @@ game.init = () => {
     
     g.upgrades.check();
     g.upgrades.hide();
+    
+    g.collider.update();
     g.builds.update();
     g.buttons();
 
