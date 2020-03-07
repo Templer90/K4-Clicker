@@ -45,21 +45,21 @@ g.b.list = [
             type: "Collider",
             accumulator: 0,
             rewardPerSecondString: (owned, element) => {
-                const statistic = g.collider.statistic;
-                if (statistic.outputElements.length === 1) {
-                    const element = statistic.outputElements[0];
-                    return element.element + " " + (element.value * owned) + " /sec";
-                }
-                element.dataset.toggle = 'tooltip';
-                element.dataset.placement = 'top';
-
+                const statistic = g.collider.statistic[0];
+                element.removeAttribute('title');
+                element.removeAttribute('data-original-title');
+               
                 let tooltip = 'Input:\n';
-                tooltip += '\tEnergy: ' + Math.round(statistic.inputEnergy) + '\n\t';
+                tooltip += '\tEnergy: ' + Math.round(statistic.inputEnergy * owned) + '\n\t';
                 tooltip += statistic.inputElements.map((output) => output.element + " " + (output.value * owned)).join('\n\t');
                 tooltip += '\nOutput:\n';
-                tooltip += '\tEnergy: ' + Math.round(statistic.outputEnergy) + '\n\t';
+                tooltip += '\tEnergy: ' + Math.round(statistic.outputEnergy * owned) + '\n\t';
                 tooltip += statistic.outputElements.map((output) => output.element + ": " + (output.value * owned)).join('\n\t');
-                element.setAttribute('title', tooltip);
+
+                element.setAttribute('data-original-title', tooltip);
+                $(element).tooltip('update');
+                element.dataset.toggle = 'tooltip';
+                element.dataset.placement = 'top';
 
                 return statistic.outputElements.map((output) => elements.find(output.element).symbol + (output.value * owned)).join(" & ") + ' /sec';
             },

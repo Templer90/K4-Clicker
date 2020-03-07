@@ -28,20 +28,28 @@ g.collider.genHitDiff = function (p) {
     let b = g.collider.length(p.pos.x, p.pos.y, p.b.x, p.b.y);
     return Math.abs(a - b);
 };
-g.collider.statistic = {
-    unstable: true,
-    inputEnergy: 0,
-    outputEnergy: 0,
-    inputEmitters: [],
-    outputEmitters: [],
-    pseudo: [],
-    inputElements: [],
-    outputElements: []
+
+g.collider.newStatistic = () => {
+    return {
+        unstable: true,
+        inputEnergy: 0,
+        outputEnergy: 0,
+        inputEmitters: [],
+        outputEmitters: [],
+        pseudo: [],
+        inputElements: [],
+        outputElements: []
+    };
 };
+g.collider.currentCollider = g.collider.newStatistic();
+g.collider.currentColliderID = 0;
+g.collider.statistic = [];
+g.collider.statistic[0] = g.collider.newStatistic();
+
 g.collider.options = {
     maxEmitter: 5,
     usableElements: ['H', 'He'],
-    autoElements: [], //TODO Is not really Implemented yet
+    autoElements: [], //TODO Is this really Implemented right?
     collider: 1
 };
 g.collider.emitters = {
@@ -67,7 +75,7 @@ g.collider.emitters = {
         //2) pick intersection that is the closest to both    
         //3) remove them from list and add pseudo emitter
         //4) repeat
-        const statistic={};
+        const statistic=g.collider.newStatistic();
         statistic.inputEmitters = this.emitter;
         statistic.outputEmitters = [];
         statistic.pseudo = [];
@@ -162,7 +170,7 @@ g.collider.emitters = {
                 statistic.pseudo.push(obj);
             });
 
-            g.collider.statistic = statistic;
+            g.collider.currentCollider = statistic;
         }
     },
     addEmitter(x, y, element) {
@@ -378,7 +386,10 @@ game.collider.removeSelectedEmitter = () => {
     }
 };
 game.collider.compileStatistics = () => {
-    const statistic = g.collider.statistic;
+    const statistic = g.collider.currentCollider;
+    statistic.inputElements = [];
+    statistic.outputElements = [];
+
     const restText = (g.collider.options.maxEmitter - statistic.inputEmitters.length) + " remaining";
     let inputText = "Input " + statistic.inputEmitters.length + " " + (statistic.unstable ? "!!!UNSTABLE!!!" : "") + " " + restText;
     let outputText = "Output " + statistic.outputEmitters.length;
@@ -419,8 +430,7 @@ game.collider.compileStatistics = () => {
         outputText += "<br>\t" + key + " :" + value;
         statistic.outputElements.push({element: key, value: value});
     });
-
-
+    
     g.c.selectedEmitter = g.c.emitters.emitter.find((obj) => (obj.selected));
     if (g.c.selectedEmitter !== undefined) {
         document.getElementById('emitterId').innerText = g.c.selectedEmitter.id;
@@ -451,33 +461,67 @@ game.collider.updateAllowedElements = () => {
 };
 game.collider.save = () => {
     let saveObj = {
-        emitters: [],
+        collider: [],
         options: {}
     };
-    g.collider.emitters.emitter.forEach((obj) => {
-        saveObj.emitters.push({
-            x: obj.x,
-            y: obj.y,
-            dirIndicator: {x: obj.dirIndicator.x, y: obj.dirIndicator.y},
-            element: obj.element.symbol
+    g.collider.statistic.forEach((collider, i) => {
+        saveObj.collider[i] = [];
+        collider.inputEmitters.forEach((emitter) => {
+            saveObj.collider[i].push({
+                x: emitter.x,
+                y: emitter.y,
+                dirIndicator: {x: emitter.dirIndicator.x, y: emitter.dirIndicator.y},
+                element: emitter.element.symbol
+            });
         });
     });
+    
     saveObj.options = g.collider.options;
     return saveObj;
 };
 game.collider.load = (saveObj) => {
+    saveObj.collider.forEach((collider, i) => {
+        g.collider.emitters.reset();
+        g.collider.statistic[i] = g.collider.newStatistic();
+        g.collider.currentCollider = g.collider.newStatistic();
+        g.collider.currentColliderID = i;
+        collider.forEach((emitter) => {
+            g.collider.emitters.load(emitter.x, emitter.y, emitter.dirIndicator.x, emitter.dirIndicator.y, emitter.element);
+            g.collider.emitters.calcTrajectory();
+            g.collider.compileStatistics();
+            g.collider.statistic[i] = g.collider.currentCollider;
+        });
+    });
+    
+    g.collider.currentColliderID = 0;
     g.collider.emitters.reset();
-
-    saveObj.emitters.forEach((obj) => {
+    g.collider.currentCollider = g.collider.statistic[g.collider.currentColliderID];
+    g.collider.currentCollider.inputEmitters.forEach((obj) => {
         g.collider.emitters.load(obj.x, obj.y, obj.dirIndicator.x, obj.dirIndicator.y, obj.element);
     });
+    
     g.collider.options = saveObj.options;
 
     game.collider.updateAllowedElements();
     game.collider.changed = true;
 };
 game.collider.changeCollider = (selector) => {
-    console.log(selector.value);
+    g.collider.currentColliderID = Number.parseInt(selector.value);
+
+    g.collider.emitters.reset();
+    g.collider.currentCollider = g.collider.statistic[g.collider.currentColliderID];
+    g.collider.currentCollider.inputEmitters.forEach((obj) => {
+        g.collider.emitters.load(obj.x, obj.y, obj.dirIndicator.x, obj.dirIndicator.y, obj.element);
+    });
+
+    game.collider.changed = true;
+};
+game.collider.useCollider = () => {
+    const selector = document.getElementById('colliderSelector');
+    g.collider.currentColliderID = Number.parseInt(selector.value);
+    g.collider.statistic[g.collider.currentColliderID] = g.collider.currentCollider;
+    game.collider.compileStatistics();
+    game.builds.update();
 };
 game.collider.update = () => {
     const select = document.getElementById('colliderSelector');
@@ -495,6 +539,9 @@ game.collider.update = () => {
         option.innerHTML = 'Collider #'+i;
 
         select.add(option);
+  
+        if (g.collider.statistic[i] === undefined) {
+            g.collider.statistic.push(g.collider.newStatistic());
+        }
     }
-
 };

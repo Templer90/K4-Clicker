@@ -201,6 +201,7 @@ game.status = () => {
 };
 
 game.resources.init = () => {
+    //Set up the  Proxy for the total Atoms Count
     g.resources.owned = new Proxy({}, {
         set: function (target, prop, value /*,receiver*/) {
             g.resources.total[prop] += (value - target[prop] > 0) ? (value - target[prop]) : 0;
@@ -209,28 +210,12 @@ game.resources.init = () => {
         }
     });
     
-    //Add the specials
-    game.resources.special.forEach((resource) => {
-        g.resources.owned[resource] = 0;
-        g.resources.total[resource] = 0;
-        g.resources.perClick[resource] = {
-            amount: 100,
-            can: () => {
-                return true;
-            },
-            click: function (owned, multi) {
-                owned[resource] += this.amount * multi;
-                return owned[resource];
-            }
-        };
-    });
-
     //Add the normals
     elements.list.forEach((resource) => {
         g.resources.owned[resource.name] = 0;
         g.resources.total[resource.name] = 0;
         g.resources.perClick[resource.name] = {
-            amount: 100,
+            amount: g.options.devMode ? 100 : 1,
             can: () => {
                 return true;
             },
@@ -241,119 +226,23 @@ game.resources.init = () => {
         };
     });
 
-    g.resources.perClick.Hydrogen.click = function (owned, multi) {
-        owned["Hydrogen"] += this.amount;
-        owned["Deuterium"] += g.u.owned["Hydrogen_Isotopes"] * (0.000115 * g.resources.perClick.Deuterium.amount * this.amount * multi);
-        return owned["Hydrogen"];
-    };
-
-    g.resources.perClick.Collider = {
-        amount: 1,
-        can: function (owned, multi) {
-            const statistic = g.collider.statistic;
-            const perClick = this.amount * multi;
-
-            if (statistic.unstable) return false;
-            if (owned.Energy <= statistic.inputEnergy * multi) return false;
-            let found = statistic.inputElements.find((obj) => {
-                return owned[obj.element] <= obj.value * perClick;
-            });
-
-            return found === undefined;
-        },
-        click: function (owned, multi) {
-            const statistic = g.collider.statistic;
-            const perClick = this.amount * multi;
-
-            owned.Energy -= statistic.inputEnergy * multi;
-            statistic.inputElements.forEach((obj) => {
-                owned[obj.element] -= obj.value * perClick;
-            });
-            statistic.outputElements.forEach((obj) => {
-                owned[obj.element] += obj.value * perClick;
-            });
-
-            return this.amount;
-        }
-    };
-
-    g.resources.perClick.Water = {
-        amount: 1,
-        can: function (owned) {
-            return owned.Hydrogen >= 20 * g.buyMultiplier && owned.Oxygen >= 10 * g.buyMultiplier;
-        },
-        click: function (owned) {
-            this.amount = 0;
-            if (g.buyMultiplier > 1) {
-                for (let i = 0; i < g.buyMultiplier; i++) {
-                    if (owned.Hydrogen >= 20 && owned.Oxygen >= 10) {
-                        owned.Hydrogen -= 20;
-                        owned.Oxygen -= 10;
-                        owned.Water++;
-                        this.amount++;
-                    }
-                }
-            } else {
-                owned.Hydrogen -= 20;
-                owned.Oxygen -= 10;
-                owned.Water++;
-                this.amount++;
+    //Add the specials
+    game.resources.special.forEach((resource) => {
+        g.resources.owned[resource] = 0;
+        g.resources.total[resource] = 0;
+        g.resources.perClick[resource] = {
+            amount: g.options.devMode ? 100 : 1,
+            can: () => {
+                return true;
+            },
+            click: function (owned, multi) {
+                owned[resource] += this.amount * multi;
+                return owned[resource];
             }
-        }
-    };
+        };
+    });
 
-    g.resources.perClick.Sun = {
-        amount: 1,
-        can: function (owned) {
-            return owned.Hydrogen >= 75 && owned.Water >= 15 && owned.Oxygen >= 10 && owned.Sun === 0;
-        },
-        click: function (owned) {
-            owned.Sun = 1;
-            owned.Hydrogen -= 75;
-            owned.Water -= 15;
-            owned.Oxygen -= 10;
-            $("#btn-3-2").fadeOut('slow', () => {
-                $("#btn-3-2, .tooltip").remove();
-            });
-        }
-    };
-
-    g.resources.perClick["Atmosphere Generator"] = {
-        amount: 1,
-        can: function (owned) {
-            return owned.Hydrogen >= 150 && owned.Oxygen >= 100 && owned.Water >= 50 && owned["Atmosphere Generator"] === 0;
-        },
-        click: function (owned) {
-            owned["Atmosphere Generator"] = 1;
-            owned.Hydrogen -= 150;
-            owned.Oxygen -= 100;
-            owned.Water -= 50;
-            $("#btn-3-3, .tooltip").fadeOut('slow', () => {
-                $("#btn-3-3, .tooltip").remove();
-            });
-        }
-    };
-
-    g.resources.perClick.Cells = {
-        amount: 1,
-        can: function (owned) {
-            return owned.Cells + g.buyMultiplier <= h.maxCells() && owned.Water >= g.cellCost * g.buyMultiplier;
-        },
-        click: function (owned) {
-            if (g.buyMultiplier > 1) {
-                for (let i = 0; i < g.buyMultiplier; i++) {
-                    if (owned.Water >= g.cellCost) {
-                        owned.Cells++;
-                        owned.Water -= g.cellCost;
-                    }
-                }
-            } else {
-                owned.Cells++;
-                owned.Water -= g.cellCost;
-            }
-        }
-    };
-
+    game.resources.specialInit();
 };
 
 // GAME FUNCTIONS
