@@ -1,6 +1,5 @@
-var save = {};
+const save = {};
 save.key = "K4Clicker_Save";
-save.tosave = {game: game, builds: builds, upgrades: upgrades, collider: collider};
 
 save.saveData = function () {
     console.info("Game saved. (Auto-save every " + (g.options.saveIntervalTime / 1000) + " seconds)");
@@ -8,7 +7,8 @@ save.saveData = function () {
         game: game.save(),
         upgrades: game.upgrades.save(),
         builds: game.builds.save(),
-        collider: game.collider.save()
+        collider: game.collider.save(),
+        achievements: game.achievements.save()
     }));
 };
 save.removeData = function () {
@@ -31,6 +31,7 @@ save.loadData = function () {
         game.upgrades.load(saveGame.upgrades);
         game.collider.load(saveGame.collider);
         game.builds.load(saveGame.builds);
+        game.achievements.load(saveGame.achievements);
     }
 };
 

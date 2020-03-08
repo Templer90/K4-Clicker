@@ -1,6 +1,7 @@
 //https://github.com/Bowserinator/Periodic-Table-JSON/blob/master/PeriodicTableJSON.json
 const elements = e = {};
 elements.avogadro = 6.02214076e+23;
+elements.amu = 1.66054e-27; // Atomic Mass Unit per kg
 elements.list = [
     {
         "name": "Neutron",

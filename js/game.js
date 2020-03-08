@@ -31,6 +31,7 @@ g.holding = [];
 // CORE FUNCTIONS
 game.init = () => {
     elements.init();
+    g.achievements.init();
     g.resources.init();
     g.upgrades.init();
     g.collider.init();
@@ -70,6 +71,7 @@ game.init = () => {
     g.builds.checkSave();
     g.upgrades.checkSave();
     g.tutorial.checkSave();
+    g.achievements.checkSave();
 
     g.c.emitters.calcTrajectory();
     g.c.compileStatistics();
@@ -161,20 +163,20 @@ game.buttons = () => {
 
     document.getElementById("btn-collider").html = "Run Collider";
 
-    const waterButton = $("#btn-2-1");
-    waterButton.html("Generate water (+" + numbers.fix(g.resources.perClick.Water.amount * g.buyMultiplier, 0) + " mL)");
-    waterButton.attr('data-original-title', 'Cost ' + numbers.fix((20 * g.buyMultiplier), 0) + ' hydrogen, ' + numbers.fix((10 * g.buyMultiplier), 0) + ' oxygen');
+    //const waterButton = $("#btn-2-1");
+    //waterButton.html("Generate water (+" + numbers.fix(g.resources.perClick.Water.amount * g.buyMultiplier, 0) + " mL)");
+    //waterButton.attr('data-original-title', 'Cost ' + numbers.fix((20 * g.buyMultiplier), 0) + ' hydrogen, ' + numbers.fix((10 * g.buyMultiplier), 0) + ' oxygen');
 
-    const cellButton = $("#btn-3-1");
-    cellButton.html("Generate cell (+" + numbers.fix(g.resources.perClick.Cells.amount * g.buyMultiplier, 0) + ")");
-    cellButton.attr('data-original-title', 'Cost ' + numbers.fix((g.cellCost * g.buyMultiplier), 0) + ' energy');
+    //const cellButton = $("#btn-3-1");
+    //cellButton.html("Generate cell (+" + numbers.fix(g.resources.perClick.Cells.amount * g.buyMultiplier, 0) + ")");
+    //cellButton.attr('data-original-title', 'Cost ' + numbers.fix((g.cellCost * g.buyMultiplier), 0) + ' energy');
 
-    if (g.resources.owned.Sun === 1) {
-        document.getElementById("btn-3-2").style.setProperty('display', 'none');
-    }
-    if (g.resources.owned["Atmosphere Generator"] === 1) {
-        document.getElementById("btn-3-3").style.setProperty('display', 'none');
-    }
+    //if (g.resources.owned.Sun === 1) {
+    //    document.getElementById("btn-3-2").style.setProperty('display', 'none');
+    //}
+    //if (g.resources.owned["Atmosphere Generator"] === 1) {
+    //    document.getElementById("btn-3-3").style.setProperty('display', 'none');
+    //}
 };
 game.loop = () => {
     if (g.options.init === true) {
@@ -350,12 +352,14 @@ game.displayHorde = () => {
         const total =  Math.round(g.resources.total[element.name]);
         const line = element.name.padEnd(13, String.fromCharCode(160)) + ": " + numbers.element(rawNumber);
         const avogadro = rawNumber / elements.avogadro;
+        const kilo = (rawNumber * element.atomic_mass) * elements.amu;
 
         element.stashLink.innerHTML = line;
         element.stashPanel.innerHTML =
             numbers.zeroPad(rawNumber, 22) + " Atoms<br>"
-            + numbers.zeroPad(total, 22) + " Total Atoms created<br>"
-            + numbers.beautify(avogadro, 20) + " mol";
+            + numbers.beautify(avogadro, 20) + " mol<br>"
+            + numbers.beautify(kilo, 20) + " kg<br>"
+            + numbers.zeroPad(total, 22) + " Total Atoms created";
         element.stashPanel.dataset.oldValue = g.resources.owned[element.name];
     });
 };
@@ -381,6 +385,7 @@ g.coreLoop = window.setInterval(() => {
 
 g.statusLoop = window.setInterval(() => {
     g.status();
+    g.achievements.checkLoop();
 }, 500);
 g.saveInterval = window.setInterval(() => {
     save.saveData();
