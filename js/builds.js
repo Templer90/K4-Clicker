@@ -39,33 +39,22 @@ class Building {
         g.resources.owned[this.price.type] -= this.buildPrice(this.index);
         this.costString = numbers.fix(this.buildPrice(), 0) + " " + this.price.type.toLowerCase();
     };
-}
 
-g.builds = g.b = {};
-g.b.owned = [];
-g.b.multiplier = [];
-
-game.builds.init = () => {
-    const panel = document.getElementById('builds-panelbody');
-    g.b.list.forEach((obj, i) => {
-        g.b.owned.push(0);
-        g.b.multiplier.push(1);
-        obj.index = i;
-
+    genHTML = (index) => {
         const main = document.createElement("div");
-        main.setAttribute('id', 'builds-row-' + i);
+        main.setAttribute('id', 'builds-row-' + index);
         main.setAttribute('class', 'row bottom-spacer');
 
         const infoBox = document.createElement("div");
         infoBox.setAttribute('class', 'col-md-8');
 
         const paragraph = document.createElement("p");
-        paragraph.id = "builds-infos-" + i;
+        paragraph.id = "builds-infos-" + index;
         paragraph.setAttribute('class', 'no-margin');
 
-        const line1 = obj.displayName + " : " + obj.valuePerSec.type + " " + obj.valuePerSec.perSec + "/sec";
-        const line2 = numbers.fix(g.b.owned[i], 0) + " owned : " + obj.reward.rewardPerSecondString(g.b.owned[i], paragraph);
-        const line3 = "Cost " + obj.costString;
+        const line1 = this.displayName + " : " + this.valuePerSec.type + " " + this.valuePerSec.perSec + "/sec";
+        const line2 = numbers.fix(g.b.owned[index], 0) + " owned : " + this.reward.rewardPerSecondString(g.b.owned[index], paragraph);
+        const line3 = "Cost " + this.costString;
         paragraph.innerHTML = line1 + "<br>" + line2 + "<br>" + line3;
         infoBox.append(paragraph);
 
@@ -74,11 +63,11 @@ game.builds.init = () => {
 
         const inputGroup = document.createElement("div");
         inputGroup.className = 'input-group mb-3';
-        
+
         const inputPrepend = document.createElement("div");
         inputPrepend.className = 'input-group-prepend';
         inputGroup.append(inputPrepend);
-        
+
         const inputBackground = document.createElement("div");
         inputBackground.className = 'btn building-checkbox input-group-text';
         inputPrepend.append(inputBackground);
@@ -89,26 +78,41 @@ game.builds.init = () => {
         inputCheckbox.type = 'checkbox';
         inputCheckbox.checked = true;
         inputCheckbox.onclick = () => {
-            obj.enabled = !obj.enabled;
+            this.enabled = !this.enabled;
         };
         inputBackground.append(inputCheckbox);
-        
+
         const buyLink = document.createElement('a');
-        buyLink.id = 'builds-btn-' + obj.name;
+        buyLink.id = 'builds-btn-' + this.name;
         buyLink.className='btn btn-primary btn-block form-control';
         buyLink.setAttribute('type', 'button');
         buyLink.onclick = () => {
-            g.b.buy(i, obj);
+            g.b.buy(index, this);
         };
         buyLink.innerHTML = 'Buy build';
-        obj.buttons = [buyLink];
+        this.buttons = [buyLink];
 
         inputGroup.append(buyLink);
         buyButton.append(inputGroup);
-       // buyButton.append(buyLink);
+        // buyButton.append(buyLink);
         main.append(infoBox);
         main.append(buyButton);
-        panel.append(main);
+        
+        return main;
+    };
+}
+
+g.builds = g.b = {};
+g.b.owned = [];
+g.b.multiplier = [];
+
+game.builds.init = () => {
+    const panel = document.getElementById('builds-panelbody');
+    g.b.list.forEach((b, i) => {
+        g.b.owned.push(0);
+        g.b.multiplier.push(1);
+        b.index = i;
+        panel.append(b.genHTML(i));
     });
 };
 game.builds.checkBuyStatus = () => {

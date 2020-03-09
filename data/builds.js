@@ -11,18 +11,6 @@ g.b.list = [
                 destination[reward.type] += value * delta * (g.u.owned["Building_Test"] ? g.resources.perClick.Hydrogen.amount : 1);
             }
         }),
-    new Building("Oxygen build", "Create some oxygen", {
-            amount: 25,
-            type: 'Oxygen',
-            inflation: 1.09
-        },
-        {perSec: 1, type: "Oxygen"},
-        {
-            type: "Oxygen",
-            func: (value, delta, reward, destination) => {
-                destination[reward.type] += value * delta * (g.u.owned["Building_Test"] ? g.resources.perClick.Oxygen.amount : 1);
-            },
-        }),
     new Building("Energy build", "Create some Energy", {
             amount: 25,
             type: 'Energy',

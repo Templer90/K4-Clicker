@@ -115,3 +115,7 @@ header {
     white-space:pre-wrap;
     text-align: left;
 }
+
+#changeCollider {
+    margin-bottom: 1em;
+}  
