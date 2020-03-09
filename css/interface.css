@@ -116,6 +116,10 @@ header {
     text-align: left;
 }
 
+.upgrades-title{
+    text-decoration: underline;
+}
+
 #changeCollider {
     margin-bottom: 1em;
 }  

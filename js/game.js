@@ -349,6 +349,7 @@ game.displayHorde = () => {
         //This is correct, because I want to type coerce
         if (element.stashPanel.dataset.oldValue.toString() === g.resources.owned[element.name].toString()) return;
         const rawNumber = Math.round(g.resources.owned[element.name]);
+        
         const total =  Math.round(g.resources.total[element.name]);
         const line = element.name.padEnd(13, String.fromCharCode(160)) + ": " + numbers.element(rawNumber);
         const avogadro = rawNumber / elements.avogadro;
@@ -356,9 +357,9 @@ game.displayHorde = () => {
 
         element.stashLink.innerHTML = line;
         element.stashPanel.innerHTML =
-            numbers.zeroPad(rawNumber, 22) + " Atoms<br>"
-            + numbers.beautify(avogadro, 20) + " mol<br>"
+            numbers.beautify(avogadro, 20) + " mol<br>"
             + numbers.beautify(kilo, 20) + " kg<br>"
+            + numbers.zeroPad(rawNumber, 22) + " Atoms<br>"
             + numbers.zeroPad(total, 22) + " Total Atoms created";
         element.stashPanel.dataset.oldValue = g.resources.owned[element.name];
     });

@@ -123,7 +123,7 @@ game.upgrades.init = () => {
         }
 
         let nameParagraph = document.createElement("p");
-        nameParagraph.setAttribute('class', 'no-margin text-center');
+        nameParagraph.setAttribute('class', 'no-margin text-center upgrades-title');
         nameParagraph.innerHTML = obj.displayName + dots;
         infoBox.append(nameParagraph);
 

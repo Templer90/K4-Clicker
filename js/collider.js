@@ -12,15 +12,15 @@ g.collider.intersect = function (x1, y1, x2, y2,
     const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
     const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
     if (t > 0 && t < 1 && u > 0 && u < 1) {
-        const pt = {};
-        pt.x = x1 + t * (x2 - x1);
-        pt.y = y1 + t * (y2 - y1);
-        return pt;
+        return {
+            x: x1 + t * (x2 - x1),
+            y: y1 + t * (y2 - y1)
+        };
     }
 };
 g.collider.length = function (x1, y1, x2, y2) {
-    let a = x1 - x2;
-    let b = y1 - y2;
+    const a = x1 - x2;
+    const b = y1 - y2;
     return Math.sqrt(a * a + b * b);
 };
 g.collider.genHitDiff = function (p) {
@@ -41,6 +41,7 @@ g.collider.newStatistic = () => {
         outputElements: []
     };
 };
+
 g.collider.currentCollider = g.collider.newStatistic();
 g.collider.currentColliderID = 0;
 g.collider.statistic = [];
@@ -94,9 +95,9 @@ g.collider.emitters = {
         }
 
         for (let iterations = 0; iterations < 100; iterations++) {
-            let lines = new Map();
-            let potentials = [];
-            let visited = [];
+            const lines = new Map();
+            const potentials = [];
+            const visited = [];
 
             for (let i = 0; i < allEmitter.length; i++) {
                 visited[i] = [];
@@ -109,13 +110,12 @@ g.collider.emitters = {
             for (let i = 0; i < allEmitter.length; i++) {
                 for (let j = 0; j < allEmitter.length; j++) {
                     if (i !== j) {
-                        let a = allEmitter[i];
-                        let b = allEmitter[j];
-                        let pot = a.calcTrajectory(b);
+                        const a = allEmitter[i];
+                        const b = allEmitter[j];
+                        const pot = a.calcTrajectory(b);
                         if (pot !== undefined) {
-                            let info = {a: a, b: b, pos: pot};
-
-
+                            const info = {a: a, b: b, pos: pot};
+                            
                             if ((visited[i][j] === false) && (visited[j][i] === false)) {
                                 visited[j][i] = true;
                                 visited[i][j] = true;
@@ -135,9 +135,9 @@ g.collider.emitters = {
 
             let smallestIndex = 0;
             for (let i = 0; i < potentials.length; i++) {
-                let potentialHit = potentials[0];
-                let la = lines.get(potentialHit.a).length;
-                let lb = lines.get(potentialHit.b).length;
+                const potentialHit = potentials[0];
+                const la = lines.get(potentialHit.a).length;
+                const lb = lines.get(potentialHit.b).length;
 
                 if ((la === 1) && (lb === 1)) {
                     //We found a Ray with ONE intersection
@@ -151,7 +151,7 @@ g.collider.emitters = {
                 }
             }
 
-            let potentialHit = potentials[smallestIndex];
+            const potentialHit = potentials[smallestIndex];
             allEmitter = allEmitter.filter((item) => {
                 return (item !== potentialHit.a) && (item !== potentialHit.b);
             });
@@ -159,7 +159,7 @@ g.collider.emitters = {
             potentialHit.a.endPos(potentialHit.pos.x, potentialHit.pos.y);
             potentialHit.b.endPos(potentialHit.pos.x, potentialHit.pos.y);
 
-            let pseudo = new PseudoEmitter(potentialHit.pos.x, potentialHit.pos.y, potentialHit.a, potentialHit.b);
+            const pseudo = new PseudoEmitter(potentialHit.pos.x, potentialHit.pos.y, potentialHit.a, potentialHit.b);
             if (pseudo.element === undefined) {
                 statistic.unstable = true;
             }
@@ -331,7 +331,7 @@ game.collider.init = () => {
                 }
             }
             c = dragging.currentObj;
-            if(c!==undefined && c!==null) {
+            if (c !== undefined && c !== null) {
                 if (dragging.type === "create") {
                     dragging.currentObj.dirIndicator.x = mouse.x;
                     dragging.currentObj.dirIndicator.y = mouse.y;
