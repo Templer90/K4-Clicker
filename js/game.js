@@ -10,7 +10,10 @@ g.options.interval = (1000 / g.options.fps);
 g.options.init = false;
 g.options.before = new Date().getTime();
 g.options.now = new Date().getTime();
-g.options.version = "0.001 Alpha";
+g.options.weight = "kg";
+g.options.length = "m";
+g.options.temperature = "C";
+g.options.version = "0.002 Alpha";
 
 g.resources = {};
 g.resources.special = ["Energy", "Collider", "Water", "Cells", "Meat", "Sun", "Atmosphere Generator"];
@@ -87,6 +90,21 @@ game.init = () => {
         game.tutorial.tutorial();
     }
 
+    game.setHTMLElements();
+
+    //Workaround because bootstrap has a bug
+    $('#menu a').click((function (e) {
+        e.preventDefault();
+        $(this).tab('show');
+    }));
+
+    $('a[data-toggle="tab"]').on('shown.bs.tab', ((e) => {
+        game.currentTab = e.target.hash.substring(1);
+    }));
+
+    g.options.init = true;
+};
+game.setHTMLElements = () => {
     if (g.options.hold !== 100) {
         game.addHoldingFunction();
     }
@@ -100,22 +118,16 @@ game.init = () => {
     const nameElement = document.getElementById('game-name');
     nameElement.innerHTML = nameElement.innerHTML.replace('[name]', g.gameName);
     document.getElementById('game-version').innerHTML = g.options.version;
-    
+
     const saveInterval = game.options.saveIntervalTime / 1000;
     document.getElementById("saveIntervalSlider").value = saveInterval;
     document.getElementById("intervalText").innerHTML = "The game autosaves every " + saveInterval + " seconds.";
-
-    //Workaround because bootstrap has a bug
-    $('#menu a').click((function (e) {
-        e.preventDefault();
-        $(this).tab('show');
-    }));
-
-    $('a[data-toggle="tab"]').on('shown.bs.tab', ((e) => {
-        game.currentTab = e.target.hash.substring(1);
-    }));
-
-    g.options.init = true;
+    
+    document.temperature['temperatureRadio_' + g.options.temperature].checked = true;
+    document.weight['weightRadio_' + g.options.weight].checked = true;
+};
+game.changeOption = (element, type) => {
+    g.options[type] = element.value;
 };
 game.clearHolding = () => {
     game.holding.forEach((i) =>
