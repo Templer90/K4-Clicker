@@ -23,7 +23,7 @@ g.b.list = [
                 destination[reward.type] += value * delta * (g.u.owned["Building_Test"] ? g.resources.perClick.Energy.amount : 1)
             }
         }),
-    new Building("Autonomous Collider", "Run the Collider", {
+    new ColliderBuilding("Autonomous Collider", "Run the Collider", {
             amount: 1,
             type: 'Hydrogen',
             inflation: 1.23

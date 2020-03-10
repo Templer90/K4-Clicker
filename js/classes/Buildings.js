@@ -24,23 +24,27 @@ class Building {
             }
         }
         this.valuePerSec = valuePerSec;
+
+        this.titleElement = undefined;
+        this.ownedElement = undefined;
+        this.upgradeCostElement = undefined;
     }
 
-    buildPrice = () => {
+    buildPrice() {
         return this.price.amount * Math.pow(this.price.inflation, g.b.owned[this.index]);
     };
 
-    buyable = () => {
+    buyable() {
         const cost = g.b.list[this.index].buildPrice(this.index);
         return g.resources.owned[g.b.list[this.index].price.type] >= cost;
     };
 
-    buy = () => {
+    buy() {
         g.resources.owned[this.price.type] -= this.buildPrice(this.index);
         this.costString = numbers.fix(this.buildPrice(), 0) + " " + this.price.type.toLowerCase();
     };
 
-    genHTML = (index) => {
+    genHTML(index) {
         const main = document.createElement("div");
         main.setAttribute('id', 'builds-row-' + index);
         main.setAttribute('class', 'row bottom-spacer');
@@ -52,10 +56,19 @@ class Building {
         paragraph.id = "builds-infos-" + index;
         paragraph.setAttribute('class', 'no-margin');
 
-        const line1 = this.displayName + " : " + this.valuePerSec.type + " " + this.valuePerSec.perSec + "/sec";
-        const line2 = numbers.fix(g.b.owned[index], 0) + " owned : " + this.reward.rewardPerSecondString(g.b.owned[index], paragraph);
-        const line3 = "Cost " + this.costString;
-        paragraph.innerHTML = line1 + "<br>" + line2 + "<br>" + line3;
+
+        this.titleElement = document.createElement("div");
+        this.titleElement.innerHTML = this.displayName + " : " + this.valuePerSec.type + " " + this.valuePerSec.perSec + "/sec";
+       
+        this.ownedElement = document.createElement("div");
+        this.ownedElement.innerHTML= numbers.fix(g.b.owned[index], 0) + " owned : " + this.reward.rewardPerSecondString(g.b.owned[index], paragraph);
+        
+        this.upgradeCostElement = document.createElement("div");
+        this.upgradeCostElement.innerHTML = "Cost " + this.costString;
+
+        paragraph.append(this.titleElement);
+        paragraph.append(this.ownedElement);
+        paragraph.append(this.upgradeCostElement);
         infoBox.append(paragraph);
 
         const buyButton = document.createElement("div");
@@ -100,4 +113,36 @@ class Building {
 
         return main;
     };
+}
+
+
+class ColliderBuilding extends Building {
+    constructor(name, desc, price, valuePerSec, reward, visible = true) {
+        super(name, desc, price, valuePerSec, reward, visible);
+    }
+
+    genHTML(index) {
+        const main = super.genHTML(index);
+        const div = document.createElement("div");
+        div.className = 'col-md-12';
+
+        const a = document.createElement("a");
+        a.innerHTML = this.titleElement.innerHTML;
+        a.className = 'collapsed';
+        a.dataset.toggle = "collapse";
+        a.dataset.target = "#build-" + this.name;
+        $(a).collapse();
+
+        this.titleElement.parentNode.replaceChild(a,this.titleElement);
+        this.titleElement = a;
+
+        const divPanel = document.createElement("div");
+        divPanel.id = "build-" + this.name;
+        divPanel.className = 'panel-collapse collapse';
+        divPanel.innerHTML = "TestTrings";
+        div.append(divPanel);
+
+        main.append(div);
+        return main;
+    }
 }

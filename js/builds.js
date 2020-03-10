@@ -52,20 +52,18 @@ game.builds.checkSave = () => {
     }
 };
 game.builds.update = () => {
-    g.b.list.forEach((obj, i) => {
+    g.b.list.forEach((build, i) => {
         const row = document.getElementById("builds-row-" + i);
-        if (obj.visible) {
+        if (build.visible) {
             row.style.display = 'flex';
         } else {
             row.style.display = 'none';
         }
 
-        const constElement= document.getElementById("builds-infos-" + i);
-        const line1 = obj.name + " : " + numbers.fix(obj.valuePerSec.perSec, 2) + " " + obj.valuePerSec.type.toLowerCase() + "/sec";
-        const line2 = numbers.fix(g.b.owned[i], 0) + " owned : " + obj.reward.rewardPerSecondString(g.b.owned[i], constElement);
-        const line3 = "Cost " + numbers.fix(obj.buildPrice(), 0) + " " + obj.price.type.toLowerCase();
-
-        constElement.innerHTML = line1 + "<br>" + line2 + "<br>" + line3 + "<br>";
+        const constElement = document.getElementById("builds-infos-" + i);
+        build.titleElement.innerHTML = build.name + " : " + numbers.fix(build.valuePerSec.perSec, 2) + " " + build.valuePerSec.type.toLowerCase() + "/sec";
+        build.ownedElement.innerHTML = numbers.fix(g.b.owned[i], 0) + " owned : " + build.reward.rewardPerSecondString(g.b.owned[i], constElement);
+        build.upgradeCostElement.innerHTML = "Cost " + numbers.fix(build.buildPrice(), 0) + " " + build.price.type.toLowerCase();
     });
 };
 
