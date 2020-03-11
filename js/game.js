@@ -128,6 +128,7 @@ game.setHTMLElements = () => {
 };
 game.changeOption = (element, type) => {
     g.options[type] = element.value;
+    game.displayHorde(true);
 };
 game.clearHolding = () => {
     game.holding.forEach((i) =>
@@ -350,19 +351,19 @@ game.changeHoldInterval = () => {
         document.getElementById("holdText").innerHTML = "Click every 1/" + val + "sec";
     }
 };
-game.displayHorde = () => {
-    if (game.currentTab !== 'stash') return;
-   // let text = "Energy".padEnd(13, String.fromCharCode(160)) + ": " + numbers.fix(g.resources.owned.Energy, 0) + "<br>";
+game.displayHorde = (force = false) => {
+    if ((game.currentTab !== 'stash') && !force) return;
+    // let text = "Energy".padEnd(13, String.fromCharCode(160)) + ": " + numbers.fix(g.resources.owned.Energy, 0) + "<br>";
 
     let list = elements.list;
 
     list.forEach((element) => {
         if (element.symbol === 'n') return;
         //This is correct, because I want to type coerce
-        if (element.stashPanel.dataset.oldValue.toString() === g.resources.owned[element.name].toString()) return;
+        if ((element.stashPanel.dataset.oldValue.toString() === g.resources.owned[element.name].toString()) && !force) return;
         const rawNumber = Math.round(g.resources.owned[element.name]);
-        
-        const total =  Math.round(g.resources.total[element.name]);
+
+        const total = Math.round(g.resources.total[element.name]);
         const line = element.name.padEnd(13, String.fromCharCode(160)) + ": " + numbers.element(rawNumber);
         const avogadro = rawNumber / elements.avogadro;
         const kilo = (rawNumber * element.atomic_mass) * elements.amu;
@@ -370,7 +371,7 @@ game.displayHorde = () => {
         element.stashLink.innerHTML = line;
         element.stashPanel.innerHTML =
             numbers.beautify(avogadro, 20) + " mol<br>"
-            + numbers.beautify(kilo, 20) + " kg<br>"
+            + numbers.massString(kilo, game.options.weight) + "<br>"
             + numbers.zeroPad(rawNumber, 22) + " Atoms<br>"
             + numbers.zeroPad(total, 22) + " Total Atoms created";
         element.stashPanel.dataset.oldValue = g.resources.owned[element.name];

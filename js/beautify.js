@@ -16,6 +16,18 @@ numbers.beautify = function beautify(x, n) {
         return numbers.numberWithCommas(x.toFixed(n));
     }
 };
+numbers.massString = (mass, targetUnit, places = 22, pad = 20) => {
+    return numbers.zeroPad(numbers.beautify(numbers.mass(mass, targetUnit, pad)), places) + ' ' + targetUnit;
+};
+numbers.temperature = (celsius, target) => {
+    if (target === 'C') return celsius;
+    if (target === 'F') return (9.0 / 5.0) * celsius + 32;
+    if (target === 'K') return celsius + 273;
+};
+numbers.mass = (kg, target) => {
+    if (target === 'kg') return kg;
+    if (target === 'lbs') return 2.204622622 * kg;
+};
 numbers.zeroPad = (num, places) => {
     return String(num).padStart(places, '0');
 };
