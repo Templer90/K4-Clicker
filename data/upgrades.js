@@ -1,25 +1,35 @@
 g.u.list = [
-    new Upgrade("Hydrogen Isotopes", "You sometimes get an additional Hydrogen Isotope when collecting Hydrogen", 'Hydrogen,Output,Isotopes', {'Hydrogen': 10}, () => {
+    new Upgrade("Hydrogen Isotopes", "You sometimes get an additional Hydrogen Isotope when collecting Hydrogen", 'Hydrogen,Output,Isotopes', {'Hydrogen': 10},
+        () => {
             game.resources.perClick.Hydrogen.amount *= 2;
             game.collider.options.usableElements.push('D');
             game.collider.updateAllowedElements();
         },
-        undefined,
-        () => {
-            return g.u.owned["Hydrogen_II"] === true;
-        }
-    ),
+        {
+            visible: () => {
+                return g.u.owned["Hydrogen_I"] === true;
+            }
+        }),
     new Upgrade("Hydrogen I", "Hydrogen/click x2", 'Hydrogen,Output', {'Hydrogen': 10}, () => {
         game.resources.perClick.Hydrogen.amount *= 2;
     }),
     new Upgrade("Hydrogen II", "Hydrogen/click x2", 'Hydrogen,Output', {'Hydrogen': 75}, () => {
         game.resources.perClick.Hydrogen.amount *= 2;
+    }, {
+        visible: 'Hydrogen_Isotopes'
     }),
     new Upgrade("Hydrogen III", "Hydrogen/click x1.5", 'Hydrogen,Output', {'Hydrogen': 1000, 'Oxygen': 10}, () => {
         game.resources.perClick.Hydrogen.amount *= 1.5;
     }),
 
-    new Upgrade("Building Test", "Building_Test", 'Building,Debug', {'Hydrogen': 1}),
+    new Upgrade("Building Test", "Building_Test", 'Building,Debug', {'Hydrogen': 1}, undefined, {
+        visible: {
+            list: ['Hydrogen_II', 'Hydrogen_Isotopes'],
+            func: () => {
+                return true
+            }
+        }
+    }),
 
     new MultiUpgrade("MultiUpgrade", "Hydrogen/click x2", 'Building', {'Hydrogen': 10}, 4, () => {
         game.resources.perClick.Hydrogen.amount *= 2;
@@ -31,19 +41,27 @@ g.u.list = [
         return g.u.owned["MultiUpgrade"] === true || g.u.owned["MultiUpgrade"] !== false;
     }),
     new Upgrade("Depends on MultiUpgrade >=2", "Depends", 'Building', {'Hydrogen': 100}, () => {
-        game.resources.perClick.Hydrogen.amount *= 2;
-    }, () => {
-        return g.u.owned["MultiUpgrade"] === true || g.u.owned["MultiUpgrade"] >= 2;
-    }),
+            game.resources.perClick.Hydrogen.amount *= 2;
+        },
+        {
+            depends: () => {
+                return g.u.owned["MultiUpgrade"] === true || g.u.owned["MultiUpgrade"] >= 2;
+            }
+        }
+    ),
     new Upgrade("Depends on MultiUpgrade >=1", "Depends", 'Building', {'Hydrogen': 100}, () => {
         game.resources.perClick.Hydrogen.amount *= 2;
-    }, () => {
-        return g.u.owned["MultiUpgrade"] === true || g.u.owned["MultiUpgrade"] >= 1;
+    }, {
+        depends: () => {
+            return g.u.owned["MultiUpgrade"] === true || g.u.owned["MultiUpgrade"] >= 1;
+        }
     }),
     new MultiUpgrade("Depends on MultiUpgrade finished", "Depends", 'Building', {'Hydrogen': 100}, 8, () => {
         game.resources.perClick.Hydrogen.amount *= 2;
-    }, () => {
-        return g.u.owned["MultiUpgrade"] === true;
+    }, {
+        depends: () => {
+            return g.u.owned["MultiUpgrade"] === true;
+        }
     }),
 
     new Upgrade("Deuterium I", "Deuterium++", 'Deuterium', {'Hydrogen': 10}, () => {

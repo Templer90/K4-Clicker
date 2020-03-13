@@ -1,5 +1,5 @@
 class Upgrade {
-    constructor(name, desc, tags, price, boughtFunction, dependsOn = undefined, visibleFunction = undefined) {
+    constructor(name, desc, tags, price, boughtFunction, additions = {depends: undefined, visible: undefined}) {
         this.name = name.replace(/ /g, "_");
         this.displayName = name;
         this.desc = desc;
@@ -7,19 +7,30 @@ class Upgrade {
         this.index = -1;
         this.buylink = undefined;
         this.mainDiv = undefined;
+        this.recursiveVisability = false;
         
         this.boughtFunction = boughtFunction;
         if (boughtFunction === undefined) {
             this.boughtFunction = () => {
             };
         }
-        
-        this.depends = dependsOn;
 
-        if (visibleFunction === undefined) {
+        this.depends = additions.depends;
+
+        if (additions.visible === undefined) {
             this.visibleFunction = () => true;
+        } else if (typeof additions.visible === 'string') {
+            this.visibleFunction = () => {
+                return g.u.owned[additions.visible] === true;
+            }
+        } else if (typeof additions.visible === 'object') {
+            this.recursiveVisability = true;
+            this.visibleFunction = {
+                func: additions.visible.func,
+                list: additions.visible.list
+            };
         } else {
-            this.visibleFunction = visibleFunction;
+            this.visibleFunction = additions.visible;
         }
 
         this.price = price;
@@ -44,13 +55,21 @@ class Upgrade {
 
         return dependency && this.checkResources() && g.u.owned[this.name] === false;
     }
-    
-    visible(){
-        return this.visibleFunction();
+
+    visible() {
+        if (this.recursiveVisability) {
+            const thisFunc = this.visibleFunction.func();
+            const list = this.visibleFunction.list.find((upgradeName) => {
+                return g.u.list[upgradeName].visible() === false
+            });
+            return list === undefined && thisFunc;
+        } else {
+            return this.visibleFunction();
+        }
     }
     
     setVisibility(visibility){
-        if(visibility && this.visibleFunction()){
+        if(visibility && this.visible()){
             this.mainDiv.style.display = '';
         }else{
             this.mainDiv.style.display = 'none';
@@ -100,8 +119,8 @@ class Upgrade {
 }
 
 class MultiUpgrade extends Upgrade {
-    constructor(name, desc, tags, price, max, boughtFunction, dependsOn, buyCheckFunction, visibleFunction) {
-        super(name, desc, tags, price, boughtFunction, dependsOn, buyCheckFunction, visibleFunction);
+    constructor(name, desc, tags, price, max, boughtFunction, additions) {
+        super(name, desc, tags, price, boughtFunction, additions);
         this.max = max;
     }
 
