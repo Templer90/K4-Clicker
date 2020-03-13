@@ -13,6 +13,7 @@ g.options.now = new Date().getTime();
 g.options.weight = "kg";
 g.options.length = "m";
 g.options.temperature = "C";
+g.options.elemental = "name";
 g.options.version = "0.002 Alpha";
 
 g.resources = {};
@@ -126,6 +127,7 @@ game.setHTMLElements = () => {
     
     document.temperature['temperatureRadio_' + g.options.temperature].checked = true;
     document.weight['weightRadio_' + g.options.weight].checked = true;
+    document.elemental['elementalRadio_' + g.options.elemental].checked = true;
 };
 game.changeOption = (element, type) => {
     g.options[type] = element.value;
@@ -365,11 +367,27 @@ game.displayHorde = (force = false) => {
         const rawNumber = Math.round(g.resources.owned[element.name]);
 
         const total = Math.round(g.resources.total[element.name]);
-        const line = element.name.padEnd(13, String.fromCharCode(160)) + ": " + numbers.element(rawNumber);
+
+        switch (game.options.elemental.toLowerCase()) {
+            case 'short':
+            case 'name':
+            case 'long':
+                element.stashLink.innerHTML = elements.getHTML(element.name).padEnd(17, String.fromCharCode(160)) + ": " + numbers.element(rawNumber);
+                break;
+            case 'aze-short':
+            case 'aze':
+                element.stashLink.innerHTML = '';
+                const elementHTML = elements.getHTML(element.name);
+                elementHTML.style.width= "8em";
+                elementHTML.style.display="inline-block";
+                element.stashLink.append(elementHTML);
+                element.stashLink.append( ": " + numbers.element(rawNumber));
+                break;
+        }
+        
         const avogadro = rawNumber / elements.avogadro;
         const kilo = (rawNumber * element.atomic_mass) * elements.amu;
-
-        element.stashLink.innerHTML = line;
+        
         element.stashPanel.innerHTML =
             numbers.beautify(avogadro, 20) + " mol<br>"
             + numbers.massString(kilo, game.options.weight) + "<br>"
@@ -403,5 +421,7 @@ g.statusLoop = window.setInterval(() => {
     g.achievements.checkLoop();
 }, 500);
 g.saveInterval = window.setInterval(() => {
-    save.saveData();
+    if (g.options.devMode === false) {
+        save.saveData();
+    }
 }, g.options.saveIntervalTime);
