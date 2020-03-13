@@ -39,10 +39,10 @@
         </div>
         
         <div class="row mb-3 mt-3">
-            <div class="col-md-2">
+            <div class="col-md-4">
                 Temperature
             </div>
-            <form name="temperature" class="col-md-10">
+            <form name="temperature" class="col-md-8">
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="temperatureRadios" id="temperatureRadio_C"
                            value="C" onchange="game.changeOption(this, 'temperature');"
@@ -68,10 +68,10 @@
             </form>
         </div>
         <div class="row mb-3 mt-3">
-            <div class="col-md-2">
+            <div class="col-md-4">
                 Weights
             </div>
-            <form name="weight" class="col-md-10">
+            <form name="weight" class="col-md-8">
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="weightRadios" id="weightRadio_kg"
                            value="kg"
@@ -88,6 +88,49 @@
                     </label>
                 </div>
             </form>
+        </div>
+        <div class="row mb-3 mt-3">
+            <div class="col-md-4">
+                Prefered Elemetal naming scheme
+            </div>
+            <form name="elemental" class="col-md-4">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="elementalRadios" id="elementalRadio_name"
+                           value="name" onchange="game.changeOption(this, 'elemental');">
+                    <label class="form-check-label" for="elementalRadio_name">
+                        Name
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="elementalRadios" id="elementalRadio_long"
+                           value="long" onchange="game.changeOption(this, 'elemental');">
+                    <label class="form-check-label" for="elementalRadio_long">
+                        Long Name
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="elementalRadios" id="elementalRadio_aze"
+                           value="aze"
+                           checked onchange="game.changeOption(this, 'elemental');">
+                    <label class="form-check-label" for="elementalRadio_aze">
+                        AZE
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="elementalRadios" id="elementalRadio_aze-short"
+                           value="aze-short"
+                           checked onchange="game.changeOption(this, 'elemental');">
+                    <label class="form-check-label" for="elementalRadio_aze-short">
+                        Short AZE
+                    </label>
+                </div>
+            </form>
+            <div class="col-md-4">
+                <div class="row">Uranium</div>
+                <div class="row">Uranium-235</div>
+                <div class="row"><span class="aze-main"><span class="aze-span"><sup class="aze">235</sup><br><sub class="aze">92</sub></span>U</span></div>
+                <div class="row"><span class="aze-main"><span class="aze-span"><sup class="aze">235</sup><br><sub class="aze">&nbsp;</sub></span>U</span></div>
+            </div>
         </div>
     </div>
 </div>

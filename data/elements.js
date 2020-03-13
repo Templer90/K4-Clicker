@@ -1357,7 +1357,7 @@ elements.init = () => {
         elements.map.set(value.symbol, value);
     });
 };
-elements.combine = (a, b)  => {
+elements.combine = (a, b) => {
     if ((a === undefined) || (b === undefined)) return undefined;
 
     let elementA = a;
@@ -1381,6 +1381,56 @@ elements.combine = (a, b)  => {
         return Math.floor(value.atomic_mass) === mass;
     });
 };
+elements.getHTML = (element, style= undefined) => {
+    if (style === undefined) {
+        style = game.options.elemental.toLowerCase();
+    } else {
+        style = style.toLowerCase();
+    }
+    element = elements.map.get(element);
+    if (element === undefined) return '';
+
+    switch (style) {
+        case 'short':
+            return element.symbol;
+        case 'name':
+            return element.name;
+        case 'long':
+            return element.name + '-' + Math.floor(element.atomic_mass);
+        case 'aze-short':
+        case 'aze':
+            const main = document.createElement('span');
+            main.classList.add('aze-main');
+            const spanAZ = document.createElement('span');
+            spanAZ.classList.add('aze-span');
+            main.append(spanAZ);
+
+            const mass = document.createElement('sup');//total number of nucleons
+            mass.innerText = Math.floor(element.atomic_mass);
+            mass.classList.add('aze');
+
+            const number = document.createElement('sub'); //Index-number
+            if (style === 'aze') {
+                number.innerText = element.number;
+            } else {
+                number.innerHTML = '&nbsp;';
+            }
+            number.classList.add('aze');
+
+            spanAZ.append(mass);
+            spanAZ.append(document.createElement('br'));
+            spanAZ.append(number);
+
+            //A budge because I treat Deuterium and Tritium as separate Elements from Hydrogen
+            if (element.symbol === 'D' || element.symbol === 'T') {
+                main.append('H');
+            } else {
+                main.append(element.symbol);
+            }
+
+            return main;
+    }
+};
 elements.find = (a) => {
     if (a === undefined) return undefined;
     if (typeof a === 'string') return elements.map.get(a);
@@ -1388,8 +1438,4 @@ elements.find = (a) => {
     if (a.symbol !== undefined) return elements.map.get(a.symbol);
 
     return undefined;
-};
-
-elements.contains = (haystack, needle) => {
-
 };

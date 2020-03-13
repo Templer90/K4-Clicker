@@ -122,4 +122,25 @@ header {
 
 #changeCollider {
     margin-bottom: 1em;
-}  
+}
+
+.aze-main {
+    white-space: nowrap;;
+}
+
+.aze-span {
+    display: inline-block;
+    margin-bottom: -0.3em;
+    vertical-align: -0.4em;
+    line-height: 1.0em;
+    font-size: 80%;
+    text-align: right
+}
+
+sub.aze {
+    bottom: 0;
+}
+
+sup.aze {
+    top: 0;
+}
