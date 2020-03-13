@@ -3,7 +3,7 @@ g.u.owned = {};
 
 game.upgrades.buy = (thing) => {
     let obj = thing;
-    if (typeof (thing) === "string") {
+    if (typeof (thing) === 'string') {
         obj = g.u.list[thing];
     }
 
@@ -29,7 +29,7 @@ game.upgrades.buy = (thing) => {
         g.status();
 
         if (g.u.owned[obj.name] === true) {
-            let upgradeBTN = document.getElementById("upgrades-btn-" + obj.name);
+            let upgradeBTN = document.getElementById('upgrades-btn-' + obj.name);
             upgradeBTN.remove();
             g.u.hide();
             game.builds.update();
@@ -39,63 +39,23 @@ game.upgrades.buy = (thing) => {
 
 game.upgrades.init = () => {
     let panel = document.getElementById('upgrades-panelbody');
-    g.u.list.forEach((obj, i) => {
-        g.u.list[obj.name] = obj;
-        g.u.owned[obj.name] = false;
+    g.u.list.forEach((upgrade, i) => {
+        upgrade.index = i;
+        g.u.list[upgrade.name] = upgrade;
+        g.u.owned[upgrade.name] = false;
 
-
-        let main = document.createElement("div");
-        main.setAttribute('id', 'upgrades-row-' + i);
-        main.setAttribute('class', 'row bottom-spacer outlined');
-
-        let infoBox = document.createElement("div");
-        infoBox.setAttribute('class', 'col-md-8');
-
-        let paragraph = document.createElement("p");
-        paragraph.setAttribute('class', 'no-margin');
-
-        let dots = "";
-        if (obj instanceof MultiUpgrade) {
-            dots = " " + "<span class='dot dot-off'></span>".repeat(obj.max);
-        }
-
-        let nameParagraph = document.createElement("p");
-        nameParagraph.setAttribute('class', 'no-margin text-center upgrades-title');
-        nameParagraph.innerHTML = obj.displayName + dots;
-        infoBox.append(nameParagraph);
-
-        paragraph.innerHTML = obj.desc + "<br>" + obj.costString;
-        infoBox.append(paragraph);
-
-        let buyButton = document.createElement("div");
-        buyButton.setAttribute('class', 'col-md-4');
-        buyButton.setAttribute('style', ' margin: auto;');
-
-        let buyLink = document.createElement("a");
-        buyLink.id = 'upgrades-btn-' + obj.name;
-        buyLink.setAttribute('class', 'btn btn-primary btn-block');
-        buyLink.setAttribute('type', 'button');
-        buyLink.onclick = () => {
-            g.u.buy(obj);
-        };
-        buyLink.innerHTML = 'Buy upgrade';
-        obj.buylink = buyLink;
-        obj.mainDiv = main;
-
-        buyButton.append(buyLink);
-        main.append(infoBox);
-        main.append(buyButton);
-        panel.append(main);
+        panel.append(upgrade.getHTML());
+        upgrade.setVisibility(true);
     });
 };
 game.upgrades.checkBuyStatus = () => {
-    g.u.list.forEach((obj, i) => {
-        if (obj.buyable()) {
-            obj.buylink.removeAttribute('disabled');
-            obj.buylink.classList.remove('disabled');
+    g.u.list.forEach((upgrade, i) => {
+        if (upgrade.buyable()) {
+            upgrade.buylink.removeAttribute('disabled');
+            upgrade.buylink.classList.remove('disabled');
         } else {
-            obj.buylink.setAttribute('disabled', 'disabled');
-            obj.buylink.classList.add('disabled');
+            upgrade.buylink.setAttribute('disabled', 'disabled');
+            upgrade.buylink.classList.add('disabled');
         }
     });
 };
@@ -103,36 +63,40 @@ game.upgrades.search = (searchBox) => {
     const input = searchBox.value.trim().toUpperCase();
 
     if (input === '') {
-        g.u.list.forEach((obj) => {
-            obj.mainDiv.style.display = '';
+        g.u.list.forEach((upgrade) => {
+            upgrade.setVisibility(true);
         });
         game.upgrades.hide();
     } else {
-        const regex = new RegExp(`.*${input}.*`, "g");
+        const regex = new RegExp(`.*${input}.*`, 'g');
 
-        g.u.list.forEach((obj) => {
-            const infoString = obj.name + "," + obj.tags + "," + Object.keys(obj.price).toString();
+        g.u.list.forEach((upgrade) => {
+            const infoString = upgrade.name + ',' + upgrade.tags + ',' + Object.keys(upgrade.price).toString();
             if (regex.exec(infoString.toUpperCase())) {
-                obj.mainDiv.style.display = '';
+                upgrade.setVisibility(true);
             } else {
-                obj.mainDiv.style.display = 'none';
+                upgrade.setVisibility(false);
             }
         });
     }
 };
 game.upgrades.hide = () => {
-    let funcHide = (obj, i) => {
-        obj.mainDiv.style.display = 'none';
+    let funcHide = (upgrade) => {
+        upgrade.setVisibility(false);
     };
-    let funcShow = (obj, i) => {
-        obj.mainDiv.style.display = '';
+    let funcShow = (upgrade) => {
+        upgrade.setVisibility(true);
     };
     let func = funcHide;
     if (document.getElementById('upgrades-checkbox').checked === true) {
         func = funcShow;
     }
 
-    g.u.list.filter((obj) => g.u.owned[obj.name] === true).forEach(func);
+    g.u.list.forEach((upgrade) => {
+        upgrade.setVisibility(true);
+    });
+    g.u.list.filter((upgrade) => g.u.owned[upgrade.name] === true ).forEach(func);
+    //g.u.list.forEach(func);
 };
 game.upgrades.onlyBuyable = () => {
     //g.u.list.forEach((obj, i) => {
@@ -147,7 +111,7 @@ game.upgrades.check = () => {
     g.u.onlyBuyable();
     g.u.list.forEach((obj, i) => {
         if (g.u.owned[obj.name] === true) {
-            let upgradeBTN = document.getElementById("upgrades-btn-" + obj.name);
+            let upgradeBTN = document.getElementById('upgrades-btn-' + obj.name);
             upgradeBTN.remove();
         }
     });
@@ -167,8 +131,8 @@ game.upgrades.save = () => {
 game.upgrades.load = (saveObj) => {
     g.u.owned = saveObj.owned;
     g.u.list
-        .filter((obj) => (obj instanceof MultiUpgrade) && (typeof g.u.owned[obj.name] === 'number'))
-        .forEach((obj) => {
-            obj.updateDots()
+        .filter((upgrade) => (upgrade instanceof MultiUpgrade) && (typeof g.u.owned[upgrade.name] === 'number'))
+        .forEach((upgrade) => {
+            upgrade.updateDots()
         });
 };

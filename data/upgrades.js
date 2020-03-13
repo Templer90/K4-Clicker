@@ -1,9 +1,14 @@
 g.u.list = [
     new Upgrade("Hydrogen Isotopes", "You sometimes get an additional Hydrogen Isotope when collecting Hydrogen", 'Hydrogen,Output,Isotopes', {'Hydrogen': 10}, () => {
-        game.resources.perClick.Hydrogen.amount *= 2;
-        game.collider.options.usableElements.push('D');
-        game.collider.updateAllowedElements();
-    }),
+            game.resources.perClick.Hydrogen.amount *= 2;
+            game.collider.options.usableElements.push('D');
+            game.collider.updateAllowedElements();
+        },
+        undefined,
+        () => {
+            return g.u.owned["Hydrogen_II"] === true;
+        }
+    ),
     new Upgrade("Hydrogen I", "Hydrogen/click x2", 'Hydrogen,Output', {'Hydrogen': 10}, () => {
         game.resources.perClick.Hydrogen.amount *= 2;
     }),
@@ -94,7 +99,7 @@ g.u.list = [
         self.price.Hydrogen *= 2;
         g.collider.options.maxEmitter += 1;
     }),
-    new MultiUpgrade("More Collider", "Collider++", 'Collider', {'Hydrogen': 1}, 8, (self) => {
+    new MultiUpgrade("More Collider", "Collider++", 'Collider', {'Hydrogen': 1}, 8, () => {
         g.collider.options.collider += 1;
         game.collider.update();
     }),

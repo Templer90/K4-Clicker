@@ -80,7 +80,7 @@ game.init = () => {
     g.c.compileStatistics();
     
     g.upgrades.check();
-    g.upgrades.hide();
+
     
     g.collider.update();
     g.builds.update();
@@ -103,6 +103,7 @@ game.init = () => {
     }));
 
     g.options.init = true;
+    g.upgrades.hide();
 };
 game.setHTMLElements = () => {
     if (g.options.hold !== 100) {
