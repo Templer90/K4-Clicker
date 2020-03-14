@@ -7,6 +7,7 @@ class Upgrade {
         this.index = -1;
         this.buylink = undefined;
         this.mainDiv = undefined;
+        this.costParagraph = undefined;
         this.recursiveVisability = false;
         
         this.boughtFunction = boughtFunction;
@@ -34,7 +35,37 @@ class Upgrade {
         }
 
         this.price = price;
-        this.costString = 'Cost: ' + Object.entries(this.price).map(([a, b]) => a + ": " + b).join(" & ");
+    }
+    
+    updateCostStyle(style){
+        this.costParagraph.innerHTML = '';
+        this.costParagraph.append(this.desc);
+        this.costParagraph.append(document.createElement('br'));
+        
+        if (style === undefined) {
+            style = game.options.elemental.toLowerCase();
+        } else {
+            style = style.toLowerCase();
+        }
+
+        switch (style) {
+            case 'short':
+                this.costParagraph.append(Object.entries(this.price).map(([a, b]) => b + elements.getHTML(a, style)).join(' & '));
+                break;
+            case 'name':
+            case 'long':
+                this.costParagraph.append(Object.entries(this.price).map(([a, b]) => elements.getHTML(a, style) + ": " + b).join(' & '));
+                break;
+            case 'aze-short':
+            case 'aze':
+                Object.entries(this.price).map(([a, b]) => {
+                    const e = document.createElement('div');
+                    e.innerHTML = b + ' ';
+                    e.append(elements.getHTML(a, style));
+                    this.costParagraph.append(e);
+                });
+                break;
+        }
     }
 
     checkResources() {
@@ -86,13 +117,14 @@ class Upgrade {
 
         let paragraph = document.createElement("p");
         paragraph.setAttribute('class', 'no-margin');
+        this.costParagraph = paragraph;
         
         let nameParagraph = document.createElement("p");
         nameParagraph.setAttribute('class', 'no-margin text-center upgrades-title');
         nameParagraph.innerHTML = this.displayName;
         infoBox.append(nameParagraph);
 
-        paragraph.innerHTML = this.desc + "<br>" + this.costString;
+        this.updateCostStyle(game.options.elemental);
         infoBox.append(paragraph);
 
         let buyButton = document.createElement("div");

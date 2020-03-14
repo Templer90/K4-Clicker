@@ -132,6 +132,7 @@ game.setHTMLElements = () => {
 game.changeOption = (element, type) => {
     g.options[type] = element.value;
     game.displayHorde(true);
+    game.upgrades.updateCost();
 };
 game.clearHolding = () => {
     game.holding.forEach((i) =>
@@ -164,9 +165,7 @@ game.display = () => {
         "Energy : " + numbers.fix(g.resources.owned.Energy, 0) + "<br>" +
         "Hydrogen : " + numbers.fix(g.resources.owned.Hydrogen, 0) + "<br>" +
         "<br>" +
-        "Water : " + numbers.fix(g.resources.owned.Water, 0) + " mL<br>" +
-        "Meat : " + numbers.fix(g.resources.owned.Meat, 2) + "<br>" +
-        "Cells : " + numbers.fix(g.resources.owned.Cells, 0) + "/" + numbers.fix(h.maxCells(), 0);
+        "";
 
     g.displayHorde();
 };

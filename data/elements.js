@@ -1381,14 +1381,48 @@ elements.combine = (a, b) => {
         return Math.floor(value.atomic_mass) === mass;
     });
 };
-elements.getHTML = (element, style= undefined) => {
+elements.getHTML = (elementInput, style= undefined) => {
     if (style === undefined) {
         style = game.options.elemental.toLowerCase();
     } else {
         style = style.toLowerCase();
     }
-    element = elements.map.get(element);
-    if (element === undefined) return '';
+    const element = elements.map.get(elementInput);
+    if (element === undefined) {
+        if (elementInput === 'Energy') {
+            switch (style) {
+                case 'short':
+                    return 'eV';
+                case 'name':
+                case 'long':
+                    return 'Energy';
+                case 'aze-short':
+                case 'aze':
+                    const main = document.createElement('span');
+                    main.classList.add('aze-main');
+                    const spanAZ = document.createElement('span');
+                    spanAZ.classList.add('aze-span');
+                    main.append(spanAZ);
+
+                    const mass = document.createElement('sup');
+                    mass.innerHTML = '&nbsp;';
+                    mass.classList.add('aze');
+
+                    const number = document.createElement('sub');
+                    number.innerHTML = '&nbsp;';
+                    number.classList.add('aze');
+
+                    spanAZ.append(mass);
+                    spanAZ.append(document.createElement('br'));
+                    spanAZ.append(number);
+
+                    main.append('eV');
+                    return main;
+            }
+        }else{
+            return '';
+        }
+    }
 
     switch (style) {
         case 'short':

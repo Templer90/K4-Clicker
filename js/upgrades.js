@@ -98,6 +98,11 @@ game.upgrades.hide = () => {
     g.u.list.filter((upgrade) => g.u.owned[upgrade.name] === true ).forEach(func);
     //g.u.list.forEach(func);
 };
+game.upgrades.updateCost = () => {
+    g.u.list.forEach((upgrade) => {
+        upgrade.updateCostStyle();
+    });
+};
 game.upgrades.onlyBuyable = () => {
     //g.u.list.forEach((obj, i) => {
     //    if (obj.buyable()) {
@@ -109,11 +114,12 @@ game.upgrades.onlyBuyable = () => {
 };
 game.upgrades.check = () => {
     g.u.onlyBuyable();
-    g.u.list.forEach((obj, i) => {
-        if (g.u.owned[obj.name] === true) {
-            let upgradeBTN = document.getElementById('upgrades-btn-' + obj.name);
+    g.u.list.forEach((upgrade, i) => {
+        if (g.u.owned[upgrade.name] === true) {
+            let upgradeBTN = document.getElementById('upgrades-btn-' + upgrade.name);
             upgradeBTN.remove();
         }
+        upgrade.updateCostStyle();
     });
 };
 game.upgrades.checkSave = () => {
