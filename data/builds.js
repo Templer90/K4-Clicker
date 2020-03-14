@@ -1,7 +1,7 @@
 g.b.list = [
     new Building("Hydrogen build", "Create some hydrogen", {
-            startCost: {'Hydrogen': 10,'Energy': 25},
-            inflation: 1.5
+            startCost: {'Hydrogen': 1,'Energy': 1},
+            inflation: {'Hydrogen': 2,'Energy': 3},
         },
         {perSec: 1, type: "Hydrogen"},
         {

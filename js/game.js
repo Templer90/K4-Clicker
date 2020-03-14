@@ -40,33 +40,7 @@ game.init = () => {
     g.upgrades.init();
     g.collider.init();
     g.builds.init();
-    
-    const stashWell = document.getElementById("stash-well");
-    elements.list.forEach((element) => {
-        const div = document.createElement("div");
-
-        const h = document.createElement("h6");
-        h.className = 'panel-heading';
-        div.append(h);
-
-        const a = document.createElement("a");
-        a.id = "link-" + element.name;
-        a.className = 'collapsed';
-        a.dataset.toggle = "collapse";
-        a.dataset.target = "#element-" + element.name;
-        $(a).collapse();
-        element.stashLink = a;
-        h.append(a);
-
-        const divPanel = document.createElement("div");
-        divPanel.id = "element-" + element.name;
-        divPanel.className = 'panel-collapse collapse stash-panel';
-        divPanel.dataset.oldValue = -1;
-        element.stashPanel = divPanel;
-        div.append(divPanel);
-
-        stashWell.append(div);
-    });
+    game.initStash();
 
     save.loadData();
     save.checkSave();
@@ -108,6 +82,34 @@ game.init = () => {
 
     g.options.init = true;
     g.upgrades.hide();
+};
+game.initStash = () => {
+    const stashWell = document.getElementById('stash-well');
+    elements.list.forEach((element) => {
+        const div = document.createElement('div');
+
+        const h = document.createElement('h6');
+        h.className = 'panel-heading';
+        div.append(h);
+
+        const a = document.createElement('a');
+        a.id = 'link-' + element.name;
+        a.className = 'collapsed';
+        a.dataset.toggle = 'collapse';
+        a.dataset.target = '#element-' + element.name;
+        $(a).collapse();
+        element.stashLink = a;
+        h.append(a);
+
+        const divPanel = document.createElement('div');
+        divPanel.id = 'element-' + element.name;
+        divPanel.className = 'panel-collapse collapse stash-panel';
+        divPanel.dataset.oldValue = -1;
+        element.stashPanel = divPanel;
+        div.append(divPanel);
+
+        stashWell.append(div);
+    });
 };
 game.setHTMLElements = () => {
     if (g.options.hold !== 100) {
@@ -359,11 +361,7 @@ game.changeHoldInterval = () => {
 };
 game.displayHorde = (force = false) => {
     if ((game.currentTab !== 'stash') && !force) return;
-    // let text = "Energy".padEnd(13, String.fromCharCode(160)) + ": " + numbers.fix(g.resources.owned.Energy, 0) + "<br>";
-
-    let list = elements.list;
-
-    list.forEach((element) => {
+    elements.list.forEach((element) => {
         if (element.symbol === 'n') return;
         //This is correct, because I want to type coerce
         if ((element.stashPanel.dataset.oldValue.toString() === g.resources.owned[element.name].toString()) && !force) return;
@@ -390,12 +388,17 @@ game.displayHorde = (force = false) => {
         
         const avogadro = rawNumber / elements.avogadro;
         const kilo = (rawNumber * element.atomic_mass) * elements.amu;
-        
-        element.stashPanel.innerHTML =
-            numbers.beautify(avogadro, 20) + " mol<br>"
-            + numbers.massString(kilo, game.options.weight) + "<br>"
-            + numbers.zeroPad(rawNumber, 22) + " Atoms<br>"
-            + numbers.zeroPad(total, 22) + " Total Atoms created";
+
+        if (element.symbol === 'eV'){
+            element.stashPanel.innerHTML = numbers.zeroPad(rawNumber, 22) + " eV";
+        }else{
+            element.stashPanel.innerHTML =
+                numbers.beautify(avogadro, 20) + " mol<br>"
+                + numbers.massString(kilo, game.options.weight) + "<br>"
+                + numbers.zeroPad(rawNumber, 22) + " Atoms<br>"
+                + numbers.zeroPad(total, 22) + " Total Atoms created";    
+        }
+
         element.stashPanel.dataset.oldValue = g.resources.owned[element.name];
     });
 };

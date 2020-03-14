@@ -4,7 +4,25 @@ class Building {
         this.displayName = name;
         this.desc = desc;
         this.visible = visible;
-        this.price = price;
+        this.price = {
+            startCost: price.startCost,
+            inflation: undefined
+        };
+
+        if (price.inflation === undefined) {
+            console.error(this.displayName + ' has a price without inflation');
+        } else if (typeof (price.inflation) === 'number') {
+            this.price.inflation = {};
+            Object.entries(this.price.startCost).forEach(([element, value]) => {
+                this.price.inflation[element] = price.inflation;
+            });
+        } else if (typeof price.inflation === 'object') {
+            this.price.inflation  = {};
+            Object.entries(price.inflation).forEach(([element, value]) => {
+                this.price.inflation[element] = value;
+            });
+        }
+        
         this.index = -1;
         this.enabled = true;
         
@@ -60,12 +78,12 @@ class Building {
     }
 
     buildPrice(element) {
-        return this.price.startCost[element] * Math.pow(this.price.inflation, g.b.owned[this.index]);
+        return this.price.startCost[element] * Math.pow( this.price.inflation[element], g.b.owned[this.index]);
     };
 
     buyable() {
         let flag = true;
-        Object.entries(this.price.startCost).forEach((entry) => {
+        Object.entries(this.price.startCost).forEach(([entry, value]) => {
             if (this.buildPrice(entry) > g.resources.owned[entry]) {
                 flag = false;
             }
@@ -74,7 +92,7 @@ class Building {
     };
 
     buy() {
-        Object.entries(this.price.startCost).forEach((entry)=>{
+        Object.entries(this.price.startCost).forEach(([entry, value]) => {
             g.resources.owned[entry] -= this.buildPrice(entry);
         });
       

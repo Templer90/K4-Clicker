@@ -3,6 +3,19 @@ const elements = e = {};
 elements.avogadro = 6.02214076e+23;
 elements.amu = 1.66054e-27; // Atomic Mass Unit per kg
 elements.list = [
+    //FAKE Elements VVVVVVVVV
+    {
+        "name": "Energy",
+        "atomic_mass": '&nbsp;',
+        "stashLink": undefined,
+        "stashPanel": undefined,
+        "molar_heat": 0,
+        "number": '&nbsp;',
+        "period": '&nbsp;',
+        "symbol": "eV",
+        "xpos": -1,
+        "ypos": -1
+    },
     {
         "name": "Neutron",
         "atomic_mass": 1.008,
@@ -15,6 +28,7 @@ elements.list = [
         "xpos": 0,
         "ypos": 0
     },
+    //REAL Elements VVVVVVVVV
     {
         "name": "Hydrogen",
         "atomic_mass": 1.008,
@@ -1430,7 +1444,11 @@ elements.getHTML = (elementInput, style= undefined) => {
         case 'name':
             return element.name;
         case 'long':
-            return element.name + '-' + Math.floor(element.atomic_mass);
+            if (element.symbol === 'eV') {
+                return element.name;
+            } else {
+                return element.name + '-' + Math.floor(element.atomic_mass);
+            }
         case 'aze-short':
         case 'aze':
             const main = document.createElement('span');
@@ -1440,12 +1458,16 @@ elements.getHTML = (elementInput, style= undefined) => {
             main.append(spanAZ);
 
             const mass = document.createElement('sup');//total number of nucleons
-            mass.innerText = Math.floor(element.atomic_mass);
+            if (element.symbol === 'eV') {
+                mass.innerHTML = '&nbsp;';
+            } else {
+                mass.innerHTML = Math.floor(element.atomic_mass);
+            }
             mass.classList.add('aze');
 
             const number = document.createElement('sub'); //Index-number
             if (style === 'aze') {
-                number.innerText = element.number;
+                number.innerHTML = element.number;
             } else {
                 number.innerHTML = '&nbsp;';
             }
