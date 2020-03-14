@@ -51,6 +51,11 @@ game.builds.checkSave = () => {
             g.b.owned.push(0);
     }
 };
+game.builds.updateCost = () => {
+    g.b.list.forEach((build) => {
+        build.updateCostStyle();
+    });
+};
 game.builds.update = () => {
     g.b.list.forEach((build, i) => {
         const row = document.getElementById("builds-row-" + i);
@@ -60,10 +65,7 @@ game.builds.update = () => {
             row.style.display = 'none';
         }
 
-        const constElement = document.getElementById("builds-infos-" + i);
-        build.titleElement.innerHTML = build.name + " : " + numbers.fix(build.valuePerSec.perSec, 2) + " " + build.valuePerSec.type.toLowerCase() + "/sec";
-        build.ownedElement.innerHTML = numbers.fix(g.b.owned[i], 0) + " owned : " + build.reward.rewardPerSecondString(g.b.owned[i], constElement);
-        build.upgradeCostElement.innerHTML = "Cost " + numbers.fix(build.buildPrice(), 0) + " " + build.price.type.toLowerCase();
+        build.update();
     });
 };
 

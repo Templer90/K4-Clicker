@@ -7,7 +7,7 @@ class Building {
         this.price = price;
         this.index = -1;
         this.enabled = true;
-
+        
         //if (!Array.isArray(price)) {
         //    this.price = [price];
         //}
@@ -20,7 +20,7 @@ class Building {
 
                 this.reward.func(owned, this.valuePerSec.perSec, this.reward, tmpRef);
 
-                return numbers.fix(tmpRef[this.reward.type], 2) + " " + this.price.type.toLowerCase() + "/sec";
+                return numbers.fix(tmpRef[this.reward.type], 2) + " " +this.reward.type.toLowerCase() + "/sec";
             }
         }
         this.valuePerSec = valuePerSec;
@@ -30,19 +30,65 @@ class Building {
         this.upgradeCostElement = undefined;
     }
 
-    buildPrice() {
-        return this.price.amount * Math.pow(this.price.inflation, g.b.owned[this.index]);
+    updateCostStyle(style = undefined) {
+        this.upgradeCostElement.innerHTML = '';
+
+        if (style === undefined) {
+            style = game.options.elemental.toLowerCase();
+        } else {
+            style = style.toLowerCase();
+        }
+
+        switch (style) {
+            case 'short':
+                this.upgradeCostElement.append(Object.entries(this.price.startCost).map(([element, cost]) => numbers.fix(this.buildPrice(element), 0) + elements.getHTML(element, style)).join(' & '));
+                break;
+            case 'name':
+            case 'long':
+                this.upgradeCostElement.append(Object.entries(this.price.startCost).map(([element, cost]) => elements.getHTML(element, style) + ": " + numbers.fix(this.buildPrice(element), 0)).join(' & '));
+                break;
+            case 'aze-short':
+            case 'aze':
+                Object.entries(this.price.startCost).map(([element, cost]) => {
+                    const e = document.createElement('div');
+                    e.innerHTML = numbers.fix(this.buildPrice(element), 0) + ' ';
+                    e.append(elements.getHTML(element, style));
+                    this.upgradeCostElement.append(e);
+                });
+                break;
+        }
+    }
+
+    buildPrice(element) {
+        return this.price.startCost[element] * Math.pow(this.price.inflation, g.b.owned[this.index]);
     };
 
     buyable() {
-        const cost = g.b.list[this.index].buildPrice(this.index);
-        return g.resources.owned[g.b.list[this.index].price.type] >= cost;
+        let flag = true;
+        Object.entries(this.price.startCost).forEach((entry) => {
+            if (this.buildPrice(entry) > g.resources.owned[entry]) {
+                flag = false;
+            }
+        });
+        return flag;
     };
 
     buy() {
-        g.resources.owned[this.price.type] -= this.buildPrice(this.index);
-        this.costString = numbers.fix(this.buildPrice(), 0) + " " + this.price.type.toLowerCase();
+        Object.entries(this.price.startCost).forEach((entry)=>{
+            g.resources.owned[entry] -= this.buildPrice(entry);
+        });
+      
+        this.updateCostStyle();
+        //this.costString = numbers.fix(this.buildPrice(), 0) + " " + this.price.type.toLowerCase();
     };
+    
+    update(){
+        const constElement = document.getElementById("builds-infos-" + this.index);
+        this.titleElement.innerHTML = this.name + " : " + numbers.fix(this.valuePerSec.perSec, 2) + " " + this.valuePerSec.type.toLowerCase() + "/sec";
+        this.ownedElement.innerHTML = numbers.fix(g.b.owned[this.index], 0) + " owned : " + this.reward.rewardPerSecondString(g.b.owned[this.index], constElement);
+        this.updateCostStyle();
+        //this.upgradeCostElement.innerHTML = "Cost " + numbers.fix(this.buildPrice(), 0) + " " + this.price.type.toLowerCase();
+    }
 
     genHTML(index) {
         const main = document.createElement("div");
@@ -64,7 +110,8 @@ class Building {
         this.ownedElement.innerHTML= numbers.fix(g.b.owned[index], 0) + " owned : " + this.reward.rewardPerSecondString(g.b.owned[index], paragraph);
         
         this.upgradeCostElement = document.createElement("div");
-        this.upgradeCostElement.innerHTML = "Cost " + this.costString;
+        this.updateCostStyle();
+        //this.upgradeCostElement.innerHTML = "Cost " + this.costString;
 
         paragraph.append(this.titleElement);
         paragraph.append(this.ownedElement);

@@ -96,6 +96,9 @@ game.init = () => {
     //Workaround because bootstrap has a bug
     $('#menu a').click((function (e) {
         e.preventDefault();
+        $('[role="presentation"]').each((i, e) => {
+            $(this).removeClass('active');
+        });
         $(this).tab('show');
     }));
 
@@ -133,6 +136,7 @@ game.changeOption = (element, type) => {
     g.options[type] = element.value;
     game.displayHorde(true);
     game.upgrades.updateCost();
+    game.builds.updateCost();
 };
 game.clearHolding = () => {
     game.holding.forEach((i) =>

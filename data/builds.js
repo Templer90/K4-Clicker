@@ -1,7 +1,6 @@
 g.b.list = [
     new Building("Hydrogen build", "Create some hydrogen", {
-            amount: 10,
-            type: 'Hydrogen',
+            startCost: {'Hydrogen': 10,'Energy': 25},
             inflation: 1.5
         },
         {perSec: 1, type: "Hydrogen"},
@@ -12,8 +11,7 @@ g.b.list = [
             }
         }),
     new Building("Energy build", "Create some Energy", {
-            amount: 25,
-            type: 'Energy',
+            startCost: {'Energy': 25},
             inflation: 1.15
         },
         {perSec: 1, type: "Energy"},
@@ -24,8 +22,7 @@ g.b.list = [
             }
         }),
     new ColliderBuilding("Autonomous Collider", "Run the Collider", {
-            amount: 1,
-            type: 'Hydrogen',
+            startCost: {'Hydrogen': 1},
             inflation: 1.23
         },
         {perSec: 1, type: "Collider.click"},
@@ -69,8 +66,7 @@ g.b.list = [
         }, true),
     
     new Building("AutoUpgrade Hydrogen build", "Takes 134 Atoms of Hydrogen and makes Helium, Carbon, Neon, Oxygen, Silicon and Iron", {
-            amount: 25,
-            type: 'Hydrogen',
+            startCost: {'Hydrogen': 25},
             inflation: 1.09
         },
         {perSec: 1.0/7.0, type: "Hydrogen"},
@@ -80,15 +76,15 @@ g.b.list = [
                 return 'Around ' + (owned/7 * 6) + ' Atoms/sec';
             },
             func: (value, delta, reward, destination) => {
-                if (destination.Hydrogen <= 134 * value * delta) return;
-                
-                destination.Hydrogen -= 134 * value * delta;
-                destination.Helium += value * delta;
-                destination.Carbon += value * delta;
-                destination.Neon += value * delta;
-                destination.Oxygen += value * delta;
-                destination.Silicon += value * delta;
-                destination.Iron += value * delta;
+                if (destination.Hydrogen <= 134 ) return;
+
+                destination.Hydrogen -= 134;
+                destination.Helium += 1;
+                destination.Carbon += 1;
+                destination.Neon += 1;
+                destination.Oxygen += 1;
+                destination.Silicon += 1;
+                destination.Iron += 1;
             }
         }, false)
 ];

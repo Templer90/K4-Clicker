@@ -37,12 +37,12 @@ class Upgrade {
 
         this.price = price;
     }
-    
-    updateCostStyle(style=undefined){
+
+    updateCostStyle(style = undefined) {
         this.costParagraph.innerHTML = '';
         this.costParagraph.append(this.desc);
         this.costParagraph.append(document.createElement('br'));
-        
+
         if (style === undefined) {
             style = game.options.elemental.toLowerCase();
         } else {
@@ -51,18 +51,18 @@ class Upgrade {
 
         switch (style) {
             case 'short':
-                this.costParagraph.append(Object.entries(this.price).map(([a, b]) => b + elements.getHTML(a, style)).join(' & '));
+                this.costParagraph.append(Object.entries(this.price).map(([element, cost]) => cost + elements.getHTML(element, style)).join(' & '));
                 break;
             case 'name':
             case 'long':
-                this.costParagraph.append(Object.entries(this.price).map(([a, b]) => elements.getHTML(a, style) + ": " + b).join(' & '));
+                this.costParagraph.append(Object.entries(this.price).map(([element, cost]) => elements.getHTML(element, style) + ": " + cost).join(' & '));
                 break;
             case 'aze-short':
             case 'aze':
-                Object.entries(this.price).map(([a, b]) => {
+                Object.entries(this.price).map(([element, cost]) => {
                     const e = document.createElement('div');
-                    e.innerHTML = b + ' ';
-                    e.append(elements.getHTML(a, style));
+                    e.innerHTML = cost + ' ';
+                    e.append(elements.getHTML(element, style));
                     this.costParagraph.append(e);
                 });
                 break;

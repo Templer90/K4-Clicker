@@ -66,7 +66,7 @@ g.u.list = [
         }
     }),
 
-    new Upgrade("Deuterium I", "Deuterium++", 'Deuterium', {'Hydrogen': 10}, () => {
+    new Upgrade("Deuterium I", "Deuterium++", 'Deuterium', {'Hydrogen': 10, 'Energy':100000}, () => {
         game.resources.perClick.Deuterium.amount *= 2;
     }),
 
