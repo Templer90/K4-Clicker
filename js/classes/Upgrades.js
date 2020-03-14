@@ -1,5 +1,6 @@
 class Upgrade {
-    constructor(name, desc, tags, price, boughtFunction, additions = {depends: undefined, visible: undefined}) {
+    constructor(name, desc, tags, price, boughtFunction, additions) {
+        additions = Object.assign({depends: undefined, visible: undefined}, additions);
         this.name = name.replace(/ /g, "_");
         this.displayName = name;
         this.desc = desc;
@@ -37,7 +38,7 @@ class Upgrade {
         this.price = price;
     }
     
-    updateCostStyle(style){
+    updateCostStyle(style=undefined){
         this.costParagraph.innerHTML = '';
         this.costParagraph.append(this.desc);
         this.costParagraph.append(document.createElement('br'));
@@ -99,6 +100,10 @@ class Upgrade {
         }
     }
     
+    finishBuy(){
+        g.u.owned[this.name] = true;
+    }
+    
     setVisibility(visibility){
         if(visibility && this.visible()){
             this.mainDiv.style.display = '';
@@ -108,18 +113,18 @@ class Upgrade {
     }
     
     getHTML(){
-        let main = document.createElement("div");
+        let main = document.createElement('div');
         main.setAttribute('id', 'upgrades-row-' + this.index);
         main.setAttribute('class', 'row bottom-spacer outlined');
 
-        let infoBox = document.createElement("div");
+        let infoBox = document.createElement('div');
         infoBox.setAttribute('class', 'col-md-8');
 
-        let paragraph = document.createElement("p");
+        let paragraph = document.createElement('p');
         paragraph.setAttribute('class', 'no-margin');
         this.costParagraph = paragraph;
         
-        let nameParagraph = document.createElement("p");
+        let nameParagraph = document.createElement('p');
         nameParagraph.setAttribute('class', 'no-margin text-center upgrades-title');
         nameParagraph.innerHTML = this.displayName;
         infoBox.append(nameParagraph);
@@ -127,11 +132,11 @@ class Upgrade {
         this.updateCostStyle(game.options.elemental);
         infoBox.append(paragraph);
 
-        let buyButton = document.createElement("div");
+        let buyButton = document.createElement('div');
         buyButton.setAttribute('class', 'col-md-4');
         buyButton.setAttribute('style', ' margin: auto;');
 
-        let buyLink = document.createElement("a");
+        let buyLink = document.createElement('a');
         buyLink.id = 'upgrades-btn-' + this.name;
         buyLink.setAttribute('class', 'btn btn-primary btn-block');
         buyLink.setAttribute('type', 'button');
@@ -150,16 +155,55 @@ class Upgrade {
     }
 }
 
+class InfiniteUpgrade extends Upgrade {
+    constructor(name, desc, tags, price, boughtFunction, additions) {
+        super(name, desc, tags, price, boughtFunction, additions);
+    }
+
+    buyable() {
+        let dependency = true;
+        if (this.depends !== undefined) {
+            dependency = this.depends();
+        }
+
+        return dependency && this.checkResources() && g.u.owned[this.name] !== true;
+    }
+
+    finishBuy() {
+        if (g.u.owned[this.name] === false) {
+            g.u.owned[this.name] = 0;
+        }
+
+        g.u.owned[this.name]++;
+    }
+}
+
 class MultiUpgrade extends Upgrade {
     constructor(name, desc, tags, price, max, boughtFunction, additions) {
         super(name, desc, tags, price, boughtFunction, additions);
+        additions = Object.assign({showDots: true}, additions);
         this.max = max;
+        this.showDots = additions.showDots;
     }
 
     updateDots() {
+        if (this.showDots === false) return;
         const dots = document.getElementById("upgrades-btn-" + this.name).parentElement.parentElement.getElementsByClassName("dot");
         for (let i = 0; i < g.u.owned[this.name]; i++) {
             dots[i].classList.replace("dot-off", "dot-on");
+        }
+    }
+    
+    finishBuy() {
+        if (g.u.owned[this.name] === false) {
+            g.u.owned[this.name] = 0;
+        }
+
+        g.u.owned[this.name]++;
+        this.updateDots();
+
+        if (g.u.owned[this.name] === this.max) {
+            g.u.owned[this.name] = true;
         }
     }
 
@@ -174,10 +218,10 @@ class MultiUpgrade extends Upgrade {
 
     getHTML() {
         let main = super.getHTML();
-
-        let dots = " " + "<span class='dot dot-off'></span>".repeat(this.max);
-        main.firstElementChild.firstElementChild.innerHTML = this.displayName + dots;
-
+        if (this.showDots) {
+            let dots = " " + "<span class='dot dot-off'></span>".repeat(this.max);
+            main.firstElementChild.firstElementChild.innerHTML = this.displayName + dots;
+        }
         return main;
     }
 }

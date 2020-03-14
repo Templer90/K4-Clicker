@@ -1,5 +1,5 @@
 g.u.list = [
-    new Upgrade("Hydrogen Isotopes", "You sometimes get an additional Hydrogen Isotope when collecting Hydrogen", 'Hydrogen,Output,Isotopes', {'Hydrogen': 10},
+    new Upgrade("Hydrogen Isotopes", "You sometimes get an additional Hydrogen Isotope when creating Hydrogen", 'Hydrogen,Output,Isotopes', {'Hydrogen': 10},
         () => {
             game.resources.perClick.Hydrogen.amount *= 2;
             game.collider.options.usableElements.push('D');
@@ -18,11 +18,13 @@ g.u.list = [
     }, {
         visible: 'Hydrogen_Isotopes'
     }),
-    new Upgrade("Hydrogen III", "Hydrogen/click x1.5", 'Hydrogen,Output', {'Hydrogen': 1000, 'Oxygen': 10}, () => {
+    new InfiniteUpgrade("Hydrogen III", "Hydrogen/click x1.5", 'Hydrogen,Output', {'Hydrogen': 1}, (upgrade) => {
+        upgrade.price.Hydrogen++;
+        upgrade.updateCostStyle();
         game.resources.perClick.Hydrogen.amount *= 1.5;
     }),
 
-    new Upgrade("Building Test", "Building_Test", 'Building,Debug', {'Hydrogen': 1}, undefined, {
+    new Upgrade("Building Test", "Building_Test", 'Building,Debug', {'Hydrogen': 1}, () => {}, {
         visible: {
             list: ['Hydrogen_II', 'Hydrogen_Isotopes'],
             func: () => {

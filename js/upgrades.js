@@ -2,34 +2,21 @@ g.upgrades = g.u = {};
 g.u.owned = {};
 
 game.upgrades.buy = (thing) => {
-    let obj = thing;
+    let upgrade = thing;
     if (typeof (thing) === 'string') {
-        obj = g.u.list[thing];
+        upgrade = g.u.list[thing];
     }
 
-    if (obj.buyable()) {
-        obj.pay();
-        obj.boughtFunction(obj);
-        if (obj instanceof MultiUpgrade) {
-            if (g.u.owned[obj.name] === false) {
-                g.u.owned[obj.name] = 0;
-            }
-
-            g.u.owned[obj.name]++;
-            obj.updateDots();
-
-            if (g.u.owned[obj.name] === obj.max) {
-                g.u.owned[obj.name] = true;
-            }
-        } else {
-            g.u.owned[obj.name] = true;
-        }
-
+    if (upgrade.buyable()) {
+        upgrade.pay();
+        upgrade.boughtFunction(upgrade);
+        upgrade.finishBuy();
+        
         g.buttons();
         g.status();
 
-        if (g.u.owned[obj.name] === true) {
-            let upgradeBTN = document.getElementById('upgrades-btn-' + obj.name);
+        if (g.u.owned[upgrade.name] === true) {
+            let upgradeBTN = document.getElementById('upgrades-btn-' + upgrade.name);
             upgradeBTN.remove();
             g.u.hide();
             game.builds.update();
