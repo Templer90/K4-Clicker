@@ -1,6 +1,6 @@
 class Building {
     constructor(name, desc, price, valuePerSec, reward, visible = true) {
-        this.name = name.replace(/ /g, "_");
+        this.name = name.replace(/ /g, '_');
         this.displayName = name;
         this.desc = desc;
         this.visible = visible;
@@ -38,7 +38,7 @@ class Building {
 
                 this.reward.func(owned, this.valuePerSec.perSec, this.reward, tmpRef);
 
-                return numbers.fix(tmpRef[this.reward.type], 2) + " " +this.reward.type.toLowerCase() + "/sec";
+                return numbers.fix(tmpRef[this.reward.type], 2) + ' ' +this.reward.type.toLowerCase() + '/sec';
             }
         }
         this.valuePerSec = valuePerSec;
@@ -63,7 +63,7 @@ class Building {
                 break;
             case 'name':
             case 'long':
-                this.upgradeCostElement.append(Object.entries(this.price.startCost).map(([element, cost]) => elements.getHTML(element, style) + ": " + numbers.fix(this.buildPrice(element), 0)).join(' & '));
+                this.upgradeCostElement.append(Object.entries(this.price.startCost).map(([element, cost]) => elements.getHTML(element, style) + ': ' + numbers.fix(this.buildPrice(element), 0)).join(' & '));
                 break;
             case 'aze-short':
             case 'aze':
@@ -97,60 +97,60 @@ class Building {
         });
       
         this.updateCostStyle();
-        //this.costString = numbers.fix(this.buildPrice(), 0) + " " + this.price.type.toLowerCase();
+        //this.costString = numbers.fix(this.buildPrice(), 0) + ' ' + this.price.type.toLowerCase();
     };
     
     update(){
-        const constElement = document.getElementById("builds-infos-" + this.index);
-        this.titleElement.innerHTML = this.name + " : " + numbers.fix(this.valuePerSec.perSec, 2) + " " + this.valuePerSec.type.toLowerCase() + "/sec";
-        this.ownedElement.innerHTML = numbers.fix(g.b.owned[this.index], 0) + " owned : " + this.reward.rewardPerSecondString(g.b.owned[this.index], constElement);
+        const constElement = document.getElementById('builds-infos-' + this.index);
+        this.titleElement.innerHTML = this.name + ' : ' + numbers.fix(this.valuePerSec.perSec, 2) + ' ' + this.valuePerSec.type.toLowerCase() + '/sec';
+        this.ownedElement.innerHTML = numbers.fix(g.b.owned[this.index], 0) + ' owned : ' + this.reward.rewardPerSecondString(g.b.owned[this.index], constElement);
         this.updateCostStyle();
-        //this.upgradeCostElement.innerHTML = "Cost " + numbers.fix(this.buildPrice(), 0) + " " + this.price.type.toLowerCase();
+        //this.upgradeCostElement.innerHTML = 'Cost ' + numbers.fix(this.buildPrice(), 0) + ' ' + this.price.type.toLowerCase();
     }
 
     genHTML(index) {
-        const main = document.createElement("div");
+        const main = document.createElement('div');
         main.setAttribute('id', 'builds-row-' + index);
         main.setAttribute('class', 'row bottom-spacer');
 
-        const infoBox = document.createElement("div");
+        const infoBox = document.createElement('div');
         infoBox.setAttribute('class', 'col-md-8');
 
-        const paragraph = document.createElement("p");
-        paragraph.id = "builds-infos-" + index;
+        const paragraph = document.createElement('p');
+        paragraph.id = 'builds-infos-' + index;
         paragraph.setAttribute('class', 'no-margin');
 
 
-        this.titleElement = document.createElement("div");
-        this.titleElement.innerHTML = this.displayName + " : " + this.valuePerSec.type + " " + this.valuePerSec.perSec + "/sec";
+        this.titleElement = document.createElement('div');
+        this.titleElement.innerHTML = this.displayName + ' : ' + this.valuePerSec.type + ' ' + this.valuePerSec.perSec + '/sec';
        
-        this.ownedElement = document.createElement("div");
-        this.ownedElement.innerHTML= numbers.fix(g.b.owned[index], 0) + " owned : " + this.reward.rewardPerSecondString(g.b.owned[index], paragraph);
+        this.ownedElement = document.createElement('div');
+        this.ownedElement.innerHTML= numbers.fix(g.b.owned[index], 0) + ' owned : ' + this.reward.rewardPerSecondString(g.b.owned[index], paragraph);
         
-        this.upgradeCostElement = document.createElement("div");
+        this.upgradeCostElement = document.createElement('div');
         this.updateCostStyle();
-        //this.upgradeCostElement.innerHTML = "Cost " + this.costString;
+        //this.upgradeCostElement.innerHTML = 'Cost ' + this.costString;
 
         paragraph.append(this.titleElement);
         paragraph.append(this.ownedElement);
         paragraph.append(this.upgradeCostElement);
         infoBox.append(paragraph);
 
-        const buyButton = document.createElement("div");
+        const buyButton = document.createElement('div');
         buyButton.setAttribute('class', 'col-md-4');
 
-        const inputGroup = document.createElement("div");
+        const inputGroup = document.createElement('div');
         inputGroup.className = 'input-group mb-3';
 
-        const inputPrepend = document.createElement("div");
+        const inputPrepend = document.createElement('div');
         inputPrepend.className = 'input-group-prepend';
         inputGroup.append(inputPrepend);
 
-        const inputBackground = document.createElement("div");
+        const inputBackground = document.createElement('div');
         inputBackground.className = 'btn building-checkbox input-group-text';
         inputPrepend.append(inputBackground);
 
-        const inputCheckbox = document.createElement("input");
+        const inputCheckbox = document.createElement('input');
         inputCheckbox.className = 'btn-primary';
         inputCheckbox.setAttribute('aria-label', 'Checkbox for following text input');
         inputCheckbox.type = 'checkbox';
@@ -188,23 +188,42 @@ class ColliderBuilding extends Building {
 
     genHTML(index) {
         const main = super.genHTML(index);
-        const div = document.createElement("div");
+        const div = document.createElement('div');
         div.className = 'col-md-12';
 
-        const a = document.createElement("a");
+        const a = document.createElement('a');
         a.innerHTML = this.titleElement.innerHTML;
         a.className = 'collapsed';
-        a.dataset.toggle = "collapse";
-        a.dataset.target = "#build-" + this.name;
+        a.dataset.toggle = 'collapse';
+        a.dataset.target = '#build-' + this.name;
         $(a).collapse();
 
-        this.titleElement.parentNode.replaceChild(a,this.titleElement);
+        this.titleElement.parentNode.replaceChild(a, this.titleElement);
         this.titleElement = a;
 
-        const divPanel = document.createElement("div");
-        divPanel.id = "build-" + this.name;
+        const divPanel = document.createElement('div');
+        divPanel.id = 'build-' + this.name;
         divPanel.className = 'panel-collapse collapse';
-        divPanel.innerHTML = "TestTrings";
+
+        const sliderDiv = document.createElement('div');
+        sliderDiv.className = 'col-md-12';
+        const sliderLabel = document.createElement('label');
+        sliderLabel.setAttribute('for', 'testLabel');
+        sliderLabel.className = 'col-md-4';
+        sliderLabel.innerText = '50';
+        sliderDiv.append(sliderLabel);
+        const sliderInput = document.createElement('input');
+        sliderInput.className = 'custom-range col-md-8';
+        sliderInput.setAttribute('type', 'range');
+        sliderInput.setAttribute('min', '10');
+        sliderInput.setAttribute('max', '100');
+        sliderInput.setAttribute('id', 'testLabel');
+        sliderInput.oninput = (ev) => {
+            sliderLabel.innerText = sliderInput.value;
+        };
+        sliderDiv.append(sliderInput);
+
+        divPanel.append(sliderDiv);
         div.append(divPanel);
 
         main.append(div);

@@ -41,6 +41,7 @@ game.upgrades.checkBuyStatus = () => {
             upgrade.buylink.removeAttribute('disabled');
             upgrade.buylink.classList.remove('disabled');
         } else {
+            if( upgrade.buylink===undefined)debugger;
             upgrade.buylink.setAttribute('disabled', 'disabled');
             upgrade.buylink.classList.add('disabled');
         }
