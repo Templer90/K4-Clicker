@@ -12,7 +12,10 @@ g.u.list = [
         }),
     new Upgrade("Hydrogen I", "Hydrogen/click x2", 'Hydrogen,Output', {'Hydrogen': 10}, () => {
         game.resources.perClick.Hydrogen.amount *= 2;
-    }),
+        },
+        {
+            visible: () => true
+        }),
     new Upgrade("Hydrogen II", "Hydrogen/click x2", 'Hydrogen,Output', {'Hydrogen': 75}, () => {
         game.resources.perClick.Hydrogen.amount *= 2;
     }, {
@@ -22,7 +25,10 @@ g.u.list = [
         upgrade.price.Hydrogen++;
         upgrade.updateCostStyle();
         game.resources.perClick.Hydrogen.amount *= 1.5;
-    }),
+        },
+        {
+            visible: 'Building_Test'
+        }),
 
     new Upgrade("Building Test", "Building_Test", 'Building,Debug', {'Hydrogen': 1}, () => {}, {
         visible: {

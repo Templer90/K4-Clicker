@@ -1,6 +1,6 @@
 class Upgrade {
     constructor(name, desc, tags, price, boughtFunction, additions) {
-        additions = Object.assign({depends: undefined, visible: undefined}, additions);
+        additions = Object.assign({depends: undefined, visible: () => false}, additions);
         this.name = name.replace(/ /g, "_");
         this.displayName = name;
         this.desc = desc;
@@ -9,7 +9,8 @@ class Upgrade {
         this.buylink = undefined;
         this.mainDiv = undefined;
         this.costParagraph = undefined;
-        this.recursiveVisability = false;
+        this.recursiveVisability = true;
+        this.visibleFunctionList=[];
         
         this.boughtFunction = boughtFunction;
         if (boughtFunction === undefined) {
@@ -18,19 +19,17 @@ class Upgrade {
         }
 
         this.depends = additions.depends;
-
-        if (additions.visible === undefined) {
-            this.visibleFunction = () => true;
-        } else if (typeof additions.visible === 'string') {
+        
+        if (typeof additions.visible === 'string') {
             this.visibleFunction = () => {
                 return g.u.owned[additions.visible] === true;
             }
         } else if (typeof additions.visible === 'object') {
             this.recursiveVisability = true;
-            this.visibleFunction = {
-                func: additions.visible.func,
-                list: additions.visible.list
-            };
+
+            this.visibleFunction = additions.visible.func;
+            this.visibleFunctionList = additions.visible.list
+           
         } else {
             this.visibleFunction = additions.visible;
         }
@@ -90,8 +89,8 @@ class Upgrade {
 
     visible() {
         if (this.recursiveVisability) {
-            const thisFunc = this.visibleFunction.func();
-            const list = this.visibleFunction.list.find((upgradeName) => {
+            const thisFunc = this.visibleFunction();
+            const list = this.visibleFunctionList.find((upgradeName) => {
                 return g.u.list[upgradeName].visible() === false
             });
             return list === undefined && thisFunc;
@@ -136,18 +135,17 @@ class Upgrade {
         buyButton.setAttribute('class', 'col-md-4');
         buyButton.setAttribute('style', ' margin: auto;');
 
-        let buyLink = document.createElement('a');
-        buyLink.id = 'upgrades-btn-' + this.name;
-        buyLink.setAttribute('class', 'btn btn-primary btn-block');
-        buyLink.setAttribute('type', 'button');
-        buyLink.onclick = () => {
+        this.buylink = document.createElement('a');
+        this.buylink.id = 'upgrades-btn-' + this.name;
+        this.buylink.setAttribute('class', 'btn btn-primary btn-block');
+        this.buylink.setAttribute('type', 'button');
+        this.buylink.onclick = () => {
             g.u.buy(this);
         };
-        buyLink.innerHTML = 'Buy upgrade';
-        this.buylink = buyLink;
+        this.buylink.innerHTML = 'Buy upgrade';
         this.mainDiv = main;
 
-        buyButton.append(buyLink);
+        buyButton.append(this.buylink);
         main.append(infoBox);
         main.append(buyButton);
         

@@ -35,13 +35,12 @@ game.upgrades.init = () => {
         upgrade.setVisibility(true);
     });
 };
-game.upgrades.checkBuyStatus = () => {
+game.upgrades.checkBuyStatus = function(){
     g.u.list.forEach((upgrade, i) => {
         if (upgrade.buyable()) {
             upgrade.buylink.removeAttribute('disabled');
             upgrade.buylink.classList.remove('disabled');
         } else {
-            if( upgrade.buylink===undefined)debugger;
             upgrade.buylink.setAttribute('disabled', 'disabled');
             upgrade.buylink.classList.add('disabled');
         }
