@@ -35,11 +35,11 @@ g.holding = [];
 // CORE FUNCTIONS
 game.init = () => {
     elements.init();
-    g.achievements.init();
-    g.resources.init();
-    g.upgrades.init();
-    g.collider.init();
-    g.builds.init();
+    game.achievements.init();
+    game.resources.init();
+    game.upgrades.init();
+    game.collider.init();
+    game.builds.init();
     game.initStash();
 
     save.loadData();
@@ -389,7 +389,9 @@ game.displayHorde = (force = false) => {
         const avogadro = rawNumber / elements.avogadro;
         const kilo = (rawNumber * element.atomic_mass) * elements.amu;
 
+        //TODO This is dumb
         if (element.symbol === 'eV'){
+            element.stashLink.innerHTML = elements.getHTML(element.name).padEnd(17, String.fromCharCode(160)) + ": " +numbers.zeroPad(rawNumber, 22) + " eV";
             element.stashPanel.innerHTML = numbers.zeroPad(rawNumber, 22) + " eV";
         }else{
             element.stashPanel.innerHTML =

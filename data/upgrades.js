@@ -14,7 +14,13 @@ g.u.list = [
         game.resources.perClick.Hydrogen.amount *= 2;
         },
         {
-            visible: () => true
+            visible: true
+        }),
+    new Upgrade("Hydrogen I", "Hydrogen/click x2", 'Hydrogen,Output', {'Hydrogen': 10}, () => {
+            game.resources.perClick.Hydrogen.amount *= 2;
+        },
+        {
+            visible: true
         }),
     new Upgrade("Hydrogen II", "Hydrogen/click x2", 'Hydrogen,Output', {'Hydrogen': 75}, () => {
         game.resources.perClick.Hydrogen.amount *= 2;
@@ -85,6 +91,14 @@ g.u.list = [
     new Upgrade("Better Collider III", "Collider Output/click x1.5", 'Collider', {'Hydrogen': 1000}, () => {
         game.resources.perClick.Collider.amount *= 1.5;
     }),
+    new Upgrade("A Sun", "A Sun. Produces Energy and Helium", 'Building,Sun', {
+        'Hydrogen': 1.8313164e+30,
+        'Helium': 1.550952e+29
+    }, () => {
+        game.builds.find('Suns').visible = true;
+    }, {visible: true}),
+
+   
 
     new MultiUpgrade("Energy I", "Energy/click x2", 'Energy', {'Energy': 10}, 5, () => {
         game.resources.perClick.Energy.amount *= 2;
@@ -118,7 +132,7 @@ g.u.list = [
     }),
     new Upgrade("Add Iron to Collider", "Add Iron", 'Collider,Iron', {'Silicon': 1000}, () => {
         g.collider.options.usableElements.push('Fe');
-        g.b.list.find((b) => b.name === "AutoUpgrade_Hydrogen_build").visible = true;
+        game.builds.find("AutoUpgrade_Hydrogen_build").visible = true;
         game.collider.updateAllowedElements();
     }),
     new MultiUpgrade("More Emitters", "Emitter++", 'Collider,Emitter', {'Hydrogen': 1}, 8, (self) => {

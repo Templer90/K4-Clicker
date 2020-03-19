@@ -1,7 +1,7 @@
 class Upgrade {
     constructor(name, desc, tags, price, boughtFunction, additions) {
         additions = Object.assign({depends: undefined, visible: () => false}, additions);
-        this.name = name.replace(/ /g, "_");
+        this.name = helpers.formatName(name);
         this.displayName = name;
         this.desc = desc;
         this.tags = tags;
@@ -19,8 +19,12 @@ class Upgrade {
         }
 
         this.depends = additions.depends;
-        
-        if (typeof additions.visible === 'string') {
+
+        if (typeof additions.visible === 'boolean') {
+            this.visibleFunction = () => {
+                return additions.visible;
+            }
+        } else if (typeof additions.visible === 'string') {
             this.visibleFunction = () => {
                 return g.u.owned[additions.visible] === true;
             }
@@ -29,7 +33,6 @@ class Upgrade {
 
             this.visibleFunction = additions.visible.func;
             this.visibleFunctionList = additions.visible.list
-           
         } else {
             this.visibleFunction = additions.visible;
         }

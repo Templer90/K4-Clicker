@@ -1,9 +1,11 @@
 class Building {
-    constructor(name, desc, price, valuePerSec, reward, visible = true) {
-        this.name = name.replace(/ /g, '_');
+    constructor(name, desc, price, valuePerSec, reward, additions) {
+        additions = Object.assign({visible: false}, additions);
+        this.name = helpers.formatName(name);
+        this.additions = {};
         this.displayName = name;
         this.desc = desc;
-        this.visible = visible;
+        this.visible = additions.visible;
         this.price = {
             startCost: price.startCost,
             inflation: undefined
@@ -182,8 +184,9 @@ class Building {
 
 
 class ColliderBuilding extends Building {
-    constructor(name, desc, price, valuePerSec, reward, visible = true) {
-        super(name, desc, price, valuePerSec, reward, visible);
+    constructor(name, desc, price, valuePerSec, reward, additions) {
+        additions = Object.assign({visible: false}, additions);
+        super(name, desc, price, valuePerSec, reward, additions);
     }
 
     genHTML(index) {

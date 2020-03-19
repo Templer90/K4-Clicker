@@ -2,6 +2,7 @@ g.collider = g.c = {};
 g.collider.borders = [];
 g.collider.selectedEmitter = undefined;
 g.collider.changed = true;
+game.collider.saveButton = undefined;
 g.collider.intersect = function (x1, y1, x2, y2,
                                  x3, y3, x4, y4) {
     const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
@@ -76,7 +77,7 @@ g.collider.emitters = {
         //2) pick intersection that is the closest to both    
         //3) remove them from list and add pseudo emitter
         //4) repeat
-        const statistic=g.collider.newStatistic();
+        const statistic = g.collider.newStatistic();
         statistic.inputEmitters = this.emitter;
         statistic.outputEmitters = [];
         statistic.pseudo = [];
@@ -115,7 +116,7 @@ g.collider.emitters = {
                         const pot = a.calcTrajectory(b);
                         if (pot !== undefined) {
                             const info = {a: a, b: b, pos: pot};
-                            
+
                             if ((visited[i][j] === false) && (visited[j][i] === false)) {
                                 visited[j][i] = true;
                                 visited[i][j] = true;
@@ -164,7 +165,7 @@ g.collider.emitters = {
                 statistic.unstable = true;
             }
 
-            pseudo.getEmitters().forEach((obj)=>{
+            pseudo.getEmitters().forEach((obj) => {
                 allEmitter.push(obj);
                 this.pseudo.push(obj);
                 statistic.pseudo.push(obj);
@@ -234,10 +235,19 @@ g.collider.emitters = {
         return foundCircle;
     }
 };
+game.collider.markDirty = (text = 'Save?') => {
+    game.collider.saveButton.classList.replace('btn-outline-primary','btn-outline-secondary');
+    game.collider.saveButton.textContent = text;
+};
+game.collider.unMarkDirty = (text = 'Save') => {
+    game.collider.saveButton.classList.replace('btn-outline-secondary','btn-outline-primary');
+    game.collider.saveButton.textContent = text;
+};
 game.collider.init = () => {
-    let canvas = document.getElementById('canvas');
+    game.collider.saveButton = document.getElementById('use-collider');
+    const canvas = document.getElementById('canvas');
     canvas.style.border = "1px black solid";
-    let ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d");
 
     game.collider.borders = [
         {x1: 0, y1: 0, x2: 0, y2: ctx.canvas.height},
@@ -268,6 +278,7 @@ game.collider.init = () => {
             m.x = event.pageX - bounds.left + scrollX;
             m.y = event.pageY - bounds.top + scrollY;
             if (event.type === "mousedown") {
+                game.collider.markDirty();
                 m.button = true;
             } else if (event.type === "mouseup") {
                 m.button = false;
@@ -513,7 +524,6 @@ game.collider.changeCollider = (selector) => {
     g.collider.currentCollider.inputEmitters.forEach((obj) => {
         g.collider.emitters.load(obj.x, obj.y, obj.dirIndicator.x, obj.dirIndicator.y, obj.element);
     });
-
     game.collider.changed = true;
 };
 game.collider.useCollider = () => {
@@ -522,6 +532,8 @@ game.collider.useCollider = () => {
     g.collider.statistic[g.collider.currentColliderID] = g.collider.currentCollider;
     game.collider.compileStatistics();
     game.builds.update();
+
+    game.collider.unMarkDirty();
 };
 game.collider.update = () => {
     const select = document.getElementById('colliderSelector');

@@ -35,6 +35,10 @@ game.upgrades.init = () => {
         upgrade.setVisibility(true);
     });
 };
+game.upgrades.find = (name) => {
+    const formattedName = helpers.formatName(name);
+    return g.u.list.find((u) => (u.name === formattedName || u.name === name));
+};
 game.upgrades.checkBuyStatus = function(){
     g.u.list.forEach((upgrade, i) => {
         if (upgrade.buyable()) {

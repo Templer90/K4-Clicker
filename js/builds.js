@@ -51,6 +51,10 @@ game.builds.checkSave = () => {
             g.b.owned.push(0);
     }
 };
+game.builds.find = (name) => {
+    const formattedName = helpers.formatName(name);
+    return g.b.list.find((b) => (b.name === formattedName || b.name === name));
+};
 game.builds.updateCost = () => {
     g.b.list.forEach((build) => {
         build.updateCostStyle();
@@ -68,21 +72,27 @@ game.builds.update = () => {
         build.update();
     });
 };
-
 game.builds.save = () => {
     return {
         owned: g.b.owned,
         multiplier: g.b.multiplier,
-        data: g.b.list.map((obj) => {
-            return {visible: obj.visible, perSec: obj.valuePerSec.perSec}
+        data: g.b.list.map((b) => {
+            return {
+                visible: b.visible,
+                perSec: b.valuePerSec.perSec,
+                additions: b.additions
+            }
         })
     };
 };
 game.builds.load = (saveObj) => {
     g.b.owned = saveObj.owned;
     g.b.multiplier = saveObj.multiplier;
-    g.b.list.forEach((obj, i) => {
-        obj.visible = saveObj.data[i].visible;
-        obj.valuePerSec.perSec = saveObj.data[i].perSec;
+    g.b.list.forEach((b, i) => {
+        b.visible = saveObj.data[i].visible;
+        b.valuePerSec.perSec = saveObj.data[i].perSec;
+        if (saveObj.additions !== undefined) {
+            b.additions = saveObj.additions;
+        }
     });
 };

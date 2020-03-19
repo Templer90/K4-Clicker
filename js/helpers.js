@@ -18,6 +18,6 @@ helpers.maxCells = function () {
 helpers.cellsMeat = function () {
     return g.resources.owned.Cells * g.cellMeat;
 };
-helpers.buildReward = function (i) {
-    return (g.b.list[i].reward * g.b.owned[i]) * g.b.multiplier[i];
+helpers.formatName = function (name) {
+    return name.replace(/ /g, '_');
 };
