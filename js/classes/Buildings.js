@@ -187,6 +187,21 @@ class ColliderBuilding extends Building {
     constructor(name, desc, price, valuePerSec, reward, additions) {
         additions = Object.assign({visible: false}, additions);
         super(name, desc, price, valuePerSec, reward, additions);
+
+        this.selectElement = undefined;
+    }
+    
+    updateSelect(){
+        let length = this.selectElement.options.length;
+        for (let i = length - 1; i >= 0; i--) {
+            this.selectElement.options[i] = null;
+        }
+
+        g.collider.statistic.forEach((stat, i) => {
+            let option = document.createElement('option');
+            option.text = 'Collider #' + i;
+            this.selectElement.add(option, this.selectElement[i]);
+        });
     }
 
     genHTML(index) {
@@ -208,6 +223,7 @@ class ColliderBuilding extends Building {
         divPanel.id = 'build-' + this.name;
         divPanel.className = 'panel-collapse collapse';
 
+
         const sliderDiv = document.createElement('div');
         sliderDiv.className = 'col-md-12';
         const sliderLabel = document.createElement('label');
@@ -226,7 +242,15 @@ class ColliderBuilding extends Building {
         };
         sliderDiv.append(sliderInput);
 
+
+        const selectDiv = document.createElement('div');
+        selectDiv.className = 'col-md-4';
+        this.selectElement = document.createElement('select');
+        this.selectElement.className = 'custom-select';
+        selectDiv.append(this.selectElement);
+
         divPanel.append(sliderDiv);
+        divPanel.append(selectDiv);
         div.append(divPanel);
 
         main.append(div);

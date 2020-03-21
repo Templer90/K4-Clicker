@@ -36,7 +36,8 @@ game.builds.earn = (times) => {
     for (let i = 0; i < g.b.list.length; i++) {
         if (g.b.owned[i] > 0 && g.b.list[i].enabled) {
             const reward = g.b.list[i].reward;
-            g.b.list[i].reward.func(g.b.list[i].valuePerSec.perSec * g.b.owned[i] * g.b.multiplier[i],
+            const accumulatedValuePerSec = g.b.list[i].valuePerSec.perSec * g.b.owned[i] * g.b.multiplier[i];
+            g.b.list[i].reward.func(accumulatedValuePerSec,
                 delta,
                 reward,
                 game.resources.owned

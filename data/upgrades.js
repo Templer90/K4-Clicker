@@ -6,18 +6,10 @@ g.u.list = [
             game.collider.updateAllowedElements();
         },
         {
-            visible: () => {
-                return g.u.owned["Hydrogen_I"] === true;
-            }
+            visible: "Hydrogen I"
         }),
-    new Upgrade("Hydrogen I", "Hydrogen/click x2", 'Hydrogen,Output', {'Hydrogen': 10}, () => {
+    new Upgrade("Hydrogen I", "Hydrogen/click x2", 'Hydrogen,Output', {'Hydrogen': 20}, () => {
         game.resources.perClick.Hydrogen.amount *= 2;
-        },
-        {
-            visible: true
-        }),
-    new Upgrade("Hydrogen I", "Hydrogen/click x2", 'Hydrogen,Output', {'Hydrogen': 10}, () => {
-            game.resources.perClick.Hydrogen.amount *= 2;
         },
         {
             visible: true
@@ -25,7 +17,7 @@ g.u.list = [
     new Upgrade("Hydrogen II", "Hydrogen/click x2", 'Hydrogen,Output', {'Hydrogen': 75}, () => {
         game.resources.perClick.Hydrogen.amount *= 2;
     }, {
-        visible: 'Hydrogen_Isotopes'
+        visible: 'Hydrogen Isotopes'
     }),
     new InfiniteUpgrade("Hydrogen III", "Hydrogen/click x1.5", 'Hydrogen,Output', {'Hydrogen': 1}, (upgrade) => {
         upgrade.price.Hydrogen++;
@@ -33,12 +25,12 @@ g.u.list = [
         game.resources.perClick.Hydrogen.amount *= 1.5;
         },
         {
-            visible: 'Building_Test'
+            visible: 'Building Test'
         }),
 
     new Upgrade("Building Test", "Building_Test", 'Building,Debug', {'Hydrogen': 1}, () => {}, {
         visible: {
-            list: ['Hydrogen_II', 'Hydrogen_Isotopes'],
+            list: ['Hydrogen II', 'Hydrogen Isotopes'],
             func: () => {
                 return true
             }
@@ -47,6 +39,12 @@ g.u.list = [
 
     new MultiUpgrade("MultiUpgrade", "Hydrogen/click x2", 'Building', {'Hydrogen': 10}, 4, () => {
         game.resources.perClick.Hydrogen.amount *= 2;
+    }),
+
+    new MultiUpgrade("Building Efficiency", "Makes every Building more Efficiency (x2)", 'Building,Efficiency', {'Hydrogen': 1000000}, 4, () => {
+        g.b.multiplier = g.b.multiplier.map((x) => x * 2);
+    },{
+        visible: true
     }),
 
     new Upgrade("Depends on MultiUpgrade >0", "Depends", 'Building', {'Hydrogen': 100}, () => {

@@ -10,8 +10,8 @@ class Upgrade {
         this.mainDiv = undefined;
         this.costParagraph = undefined;
         this.recursiveVisability = true;
-        this.visibleFunctionList=[];
-        
+        this.visibleFunctionList = [];
+
         this.boughtFunction = boughtFunction;
         if (boughtFunction === undefined) {
             this.boughtFunction = () => {
@@ -26,13 +26,13 @@ class Upgrade {
             }
         } else if (typeof additions.visible === 'string') {
             this.visibleFunction = () => {
-                return g.u.owned[additions.visible] === true;
+                return g.u.owned[helpers.formatName(additions.visible)] === true;
             }
         } else if (typeof additions.visible === 'object') {
             this.recursiveVisability = true;
 
             this.visibleFunction = additions.visible.func;
-            this.visibleFunctionList = additions.visible.list
+            this.visibleFunctionList = additions.visible.list.map((name) => helpers.formatName(name));
         } else {
             this.visibleFunction = additions.visible;
         }

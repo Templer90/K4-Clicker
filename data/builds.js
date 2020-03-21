@@ -90,7 +90,7 @@ g.b.list = [
         }),
     
     new Building("AutoUpgrade Hydrogen build", "Takes 134 Atoms of Hydrogen and makes Helium, Carbon, Neon, Oxygen, Silicon and Iron", {
-            startCost: {'Hydrogen': 25},
+            startCost: {'Hydrogen': 100},
             inflation: 1.09
         },
         {perSec: 1.0/7.0, type: "Hydrogen"},
