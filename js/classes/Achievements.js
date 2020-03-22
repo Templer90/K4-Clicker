@@ -4,7 +4,8 @@ class Achievement {
         this.desc = desc;
         this.con = condition;
         if (reward === undefined) {
-            this.rew = () => {
+            this.rew = (obj) => {
+                game.tutorial.genText(obj.name, obj.desc);
             };
         } else {
             this.rew = reward;
@@ -16,6 +17,6 @@ class Achievement {
     };
 
     reward = () => {
-        this.rew();
+        this.rew(this);
     };
 }

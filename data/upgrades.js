@@ -1,5 +1,5 @@
 g.u.list = [
-    new Upgrade("Hydrogen Isotopes", "You sometimes get an additional Hydrogen Isotope when creating Hydrogen", 'Hydrogen,Output,Isotopes', {'Hydrogen': 10},
+    new Upgrade("Hydrogen Isotopes", "You sometimes get an additional Hydrogen Isotope when creating Hydrogen", 'Hydrogen,Output,Isotopes', {'Hydrogen': 4096},
         () => {
             game.resources.perClick.Hydrogen.amount *= 2;
             game.collider.options.usableElements.push('D');
@@ -41,9 +41,12 @@ g.u.list = [
         game.resources.perClick.Hydrogen.amount *= 2;
     }),
 
-    new MultiUpgrade("Building Efficiency", "Makes every Building more Efficient (x2)", 'Building,Efficiency', {'Hydrogen': 1000000}, 4, () => {
+    new MultiUpgrade("Building Efficiency", "Makes every Building more Efficient (x2)", 'Building,Efficiency', {
+        'Hydrogen': 1000000,
+        'Energy': 1000000
+    }, 4, () => {
         g.b.multiplier = g.b.multiplier.map((x) => x * 2);
-    },{
+    }, {
         visible: true
     }),
 
@@ -76,7 +79,7 @@ g.u.list = [
         }
     }),
 
-    new Upgrade("Deuterium I", "Deuterium++", 'Deuterium', {'Hydrogen': 10, 'Energy':100000}, () => {
+    new Upgrade("Deuterium I", "Deuterium++", 'Deuterium', {'Deuterium': 100000, 'Energy':100000}, () => {
         game.resources.perClick.Deuterium.amount *= 2;
     }),
 
@@ -96,17 +99,25 @@ g.u.list = [
         game.builds.find('Suns').visible = true;
     }, {visible: true}),
 
-   
 
     new MultiUpgrade("Energy I", "Energy/click x2", 'Energy', {'Energy': 10}, 5, () => {
-        game.resources.perClick.Energy.amount *= 2;
-    }),
-    new MultiUpgrade("Energy II", "Energy/click x2", 'Energy', {'Energy': 75}, 5, () => {
-        game.resources.perClick.Energy.amount *= 1.5;
-    }),
-    new Upgrade("Energy III", "Energy/click x1.5", 'Energy', {'Energy': 1000}, () => {
-        game.resources.perClick.Energy.amount *= 1.5;
-    }),
+            game.resources.perClick.Energy.amount *= 2;
+        },
+        {
+            visible: true
+        }),
+    new MultiUpgrade("Energy II", "Energy/click x2", 'Energy', {'Energy': 10000}, 5, () => {
+            game.resources.perClick.Energy.amount *= 2;
+        },
+        {
+            visible: "Energy II"
+        }),
+    new MultiUpgrade("Energy III", "Energy/click x1.5", 'Energy', {'Energy': 10e10}, 3, () => {
+            game.resources.perClick.Energy.amount *= 1.5;
+        },
+        {
+            visible: "Energy III"
+        }),
 
     new Upgrade("Add Tritium to Collider", "Add Tritium", 'Collider,Tritium', {'Deuterium': 1000}, () => {
         g.collider.options.usableElements.push('T');
