@@ -40,28 +40,28 @@
             <div class="spacer"></div>
             <p>
                 <a id="btn-energy" type="button" class="multiClickable genResource btn btn-warning btn-sm btn-block" 
-                   onclick="game.earn('energy')"  data-template="Create Energy (+[number])" data-element="Energy" >Create Energy (+1)</a>
+                   onclick="game.earnElement('energy')"  data-template="Create Energy (+[number])" data-element="Energy" >Create Energy (+1)</a>
                 <a id="btn-hydrogen" type="button" class="multiClickable genResource btn btn-primary btn-sm btn-block"
-                   onclick="game.earn('hydrogen')" 
+                   onclick="game.earnElement('hydrogen')" 
                      data-template="Create Hydrogen (+[number])" data-element="Hydrogen">Create hydrogen (+1)</a>
                 <a id="btn-collider" type="button" class="multiClickable genResource btn btn-primary btn-sm btn-block"
-                   onclick="game.earn('collider')"
+                   onclick="game.earnCollider(0)"
                      data-template="Run Collider" data-element="Energy">Run Collider</a>
             </p>
             <p>
                 <a id="btn-deuterium" type="button" class="multiClickable genResource btn btn-primary btn-sm btn-block"
-                   onclick="game.earn('deuterium')" style="" data-template="Create Deuterium (+[number])"
+                   onclick="game.earnElement('deuterium')" style="" data-template="Create Deuterium (+[number])"
                    data-element="Deuterium">Create Deuterium (+1)</a>
                 <a id="btn-helium" type="button" class="multiClickable genResource btn btn-primary btn-sm btn-block"
-                   onclick="game.earn('helium')" style="" data-template="Create Helium (+[number])"
+                   onclick="game.earnElement('helium')" style="" data-template="Create Helium (+[number])"
                    data-element="Helium">Create Helium (+1)</a>
             </p>
             <p>
 
             </p>
-            <p>
+            <!--<p>
                 <a id="btn-buy-multiplier" type="button" class="btn btn-success btn-block" onclick="game.changeBuy()">Buy x1</a>
-            </p>
+            </p>-->
         </div>
         <div id="menu" class="col-md-8">
             <ul class="nav nav-tabs nav-justified" role="tablist">

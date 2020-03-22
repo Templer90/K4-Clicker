@@ -269,7 +269,7 @@ game.resources.init = () => {
 };
 
 // GAME FUNCTIONS
-game.earn = function (type, multi = 1) {
+game.earnElement = function (type, multi = 1) {
     const str = h.capitalizeFirstLetter(type);
     if (g.resources.perClick[str].can(g.resources.owned, multi)) {
         g.resources.perClick[str].click(g.resources.owned, multi)
@@ -279,6 +279,11 @@ game.earn = function (type, multi = 1) {
 
     } else {
         g.t.check();
+    }
+};
+game.earnCollider = function (colliderId = 0, multi = 1) {
+    if (g.resources.perClick.Collider.can(g.resources.owned, multi, colliderId)) {
+        g.resources.perClick.Collider.click(g.resources.owned, multi, colliderId)
     }
 };
 game.cellsEarn = function (times) {
@@ -379,26 +384,25 @@ game.displayHorde = (force = false) => {
             case 'aze':
                 element.stashLink.innerHTML = '';
                 const elementHTML = elements.getHTML(element.name);
-                elementHTML.style.width= "8em";
-                elementHTML.style.display="inline-block";
+                elementHTML.style.width = "8em";
+                elementHTML.style.display = "inline-block";
                 element.stashLink.append(elementHTML);
-                element.stashLink.append( ": " + numbers.element(rawNumber));
+                element.stashLink.append(": " + numbers.element(rawNumber));
                 break;
         }
-        
+
         const avogadro = rawNumber / elements.avogadro;
         const kilo = (rawNumber * element.atomic_mass) * elements.amu;
 
         //TODO This is dumb
-        if (element.symbol === 'eV'){
-            element.stashLink.innerHTML = elements.getHTML(element.name).padEnd(17, String.fromCharCode(160)) + ": " +numbers.zeroPad(rawNumber, 22) + " eV";
+        if (element.symbol === 'eV') {
             element.stashPanel.innerHTML = numbers.zeroPad(rawNumber, 22) + " eV";
-        }else{
+        } else {
             element.stashPanel.innerHTML =
                 numbers.beautify(avogadro, 20) + " mol<br>"
                 + numbers.massString(kilo, game.options.weight) + "<br>"
                 + numbers.zeroPad(rawNumber, 22) + " Atoms<br>"
-                + numbers.zeroPad(total, 22) + " Total Atoms created";    
+                + numbers.zeroPad(total, 22) + " Total Atoms created";
         }
 
         element.stashPanel.dataset.oldValue = g.resources.owned[element.name];

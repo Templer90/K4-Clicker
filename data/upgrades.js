@@ -41,7 +41,7 @@ g.u.list = [
         game.resources.perClick.Hydrogen.amount *= 2;
     }),
 
-    new MultiUpgrade("Building Efficiency", "Makes every Building more Efficiency (x2)", 'Building,Efficiency', {'Hydrogen': 1000000}, 4, () => {
+    new MultiUpgrade("Building Efficiency", "Makes every Building more Efficient (x2)", 'Building,Efficiency', {'Hydrogen': 1000000}, 4, () => {
         g.b.multiplier = g.b.multiplier.map((x) => x * 2);
     },{
         visible: true

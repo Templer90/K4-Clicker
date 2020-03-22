@@ -46,6 +46,7 @@ class Building {
         this.valuePerSec = valuePerSec;
 
         this.titleElement = undefined;
+        this.inDivElement = undefined;
         this.ownedElement = undefined;
         this.upgradeCostElement = undefined;
     }
@@ -113,7 +114,7 @@ class Building {
     genHTML(index) {
         const main = document.createElement('div');
         main.setAttribute('id', 'builds-row-' + index);
-        main.setAttribute('class', 'row bottom-spacer');
+        main.className = 'row bottom-spacer';
 
         const infoBox = document.createElement('div');
         infoBox.setAttribute('class', 'col-md-8');
@@ -134,8 +135,11 @@ class Building {
         //this.upgradeCostElement.innerHTML = 'Cost ' + this.costString;
 
         paragraph.append(this.titleElement);
-        paragraph.append(this.ownedElement);
-        paragraph.append(this.upgradeCostElement);
+        this.inDivElement = document.createElement('div');
+        this.inDivElement.className = 'stash-panel';
+        this.inDivElement.append(this.ownedElement);
+        this.inDivElement.append(this.upgradeCostElement);
+        paragraph.append(this.inDivElement);
         infoBox.append(paragraph);
 
         const buyButton = document.createElement('div');
@@ -184,14 +188,61 @@ class Building {
 
 
 class ColliderBuilding extends Building {
-    constructor(name, desc, price, valuePerSec, reward, additions) {
+    constructor(name, desc, price, valuePerSec, additions) {
         additions = Object.assign({visible: false}, additions);
-        super(name, desc, price, valuePerSec, reward, additions);
-
+        super(name, desc, price, valuePerSec, {}, additions);
+        this.genReward();
         this.selectElement = undefined;
+        this.additions.selectedColliderIndex = 0;
     }
-    
-    updateSelect(){
+
+    genReward() {
+        this.reward = {
+            type: "Collider",
+            accumulator: 0,
+            rewardPerSecondString: (owned, element) => {
+                const statistic = g.collider.statistic[this.additions.selectedColliderIndex];
+                element.removeAttribute('title');
+                element.removeAttribute('data-original-title');
+
+                let tooltip = 'Input:\n';
+                tooltip += '\tEnergy: ' + Math.round(statistic.inputEnergy * owned) + '\n\t';
+                tooltip += statistic.inputElements.map((output) => output.element + " " + (output.value * owned)).join('\n\t');
+                tooltip += '\nOutput:\n';
+                tooltip += '\tEnergy: ' + Math.round(statistic.outputEnergy * owned) + '\n\t';
+                tooltip += statistic.outputElements.map((output) => output.element + ": " + (output.value * owned)).join('\n\t');
+
+                element.setAttribute('data-original-title', tooltip);
+                $(element).tooltip('update');
+                element.dataset.toggle = 'tooltip';
+                element.dataset.placement = 'top';
+
+                return statistic.outputElements.map((output) => elements.find(output.element).symbol + (output.value * owned)).join(" & ") + ' /sec';
+            },
+            func: (value, delta, reward) => {
+                reward.accumulator += value * delta;
+
+                if (reward.accumulator < 1) return;
+
+                if (g.resources.perClick.Collider.can(g.resources.owned, Math.floor(reward.accumulator), this.additions.selectedColliderIndex)) {
+                    g.resources.perClick.Collider.click(g.resources.owned, Math.floor(reward.accumulator), this.additions.selectedColliderIndex);
+                    reward.accumulator -= Math.floor(reward.accumulator);
+                } else {
+                    while (reward.accumulator > 1) {
+                        reward.accumulator -= 1;
+                        game.earnCollider(this.additions.selectedColliderIndex);
+                    }
+                }
+            }
+        };
+    }
+
+    update() {
+        this.updateSelect();
+        super.update();
+    }
+
+    updateSelect() {
         let length = this.selectElement.options.length;
         for (let i = length - 1; i >= 0; i--) {
             this.selectElement.options[i] = null;
@@ -199,9 +250,16 @@ class ColliderBuilding extends Building {
 
         g.collider.statistic.forEach((stat, i) => {
             let option = document.createElement('option');
-            option.text = 'Collider #' + i;
+            if (i === 0) {
+                option.text = 'Main';
+            } else {
+                option.text = 'Collider #' + i;
+            }
+            option.value = i;
             this.selectElement.add(option, this.selectElement[i]);
         });
+
+        this.selectElement.selectedIndex = this.additions.selectedColliderIndex;
     }
 
     genHTML(index) {
@@ -244,16 +302,21 @@ class ColliderBuilding extends Building {
 
 
         const selectDiv = document.createElement('div');
-        selectDiv.className = 'col-md-4';
+        selectDiv.className = 'col-md-8';
         this.selectElement = document.createElement('select');
         this.selectElement.className = 'custom-select';
+        this.selectElement.oninput = () => {
+            this.additions.selectedColliderIndex = this.selectElement.value;
+            this.update();
+        };
         selectDiv.append(this.selectElement);
+        this.updateSelect();
 
         divPanel.append(sliderDiv);
         divPanel.append(selectDiv);
         div.append(divPanel);
 
-        main.append(div);
+        this.inDivElement.append(div);
         return main;
     }
 }

@@ -49,45 +49,7 @@ g.b.list = [
             startCost: {'Hydrogen': 1},
             inflation: 1.23
         },
-        {perSec: 1, type: "Collider.click"},
-        {
-            type: "Collider",
-            accumulator: 0,
-            rewardPerSecondString: (owned, element) => {
-                const statistic = g.collider.statistic[0];
-                element.removeAttribute('title');
-                element.removeAttribute('data-original-title');
-               
-                let tooltip = 'Input:\n';
-                tooltip += '\tEnergy: ' + Math.round(statistic.inputEnergy * owned) + '\n\t';
-                tooltip += statistic.inputElements.map((output) => output.element + " " + (output.value * owned)).join('\n\t');
-                tooltip += '\nOutput:\n';
-                tooltip += '\tEnergy: ' + Math.round(statistic.outputEnergy * owned) + '\n\t';
-                tooltip += statistic.outputElements.map((output) => output.element + ": " + (output.value * owned)).join('\n\t');
-
-                element.setAttribute('data-original-title', tooltip);
-                $(element).tooltip('update');
-                element.dataset.toggle = 'tooltip';
-                element.dataset.placement = 'top';
-
-                return statistic.outputElements.map((output) => elements.find(output.element).symbol + (output.value * owned)).join(" & ") + ' /sec';
-            },
-            func: (value, delta, reward) => {
-                reward.accumulator += value * delta;
-
-                if (reward.accumulator < 1) return;
-
-                if (g.resources.perClick.Collider.can(g.resources.owned, Math.floor(reward.accumulator))) {
-                    g.resources.perClick.Collider.click(g.resources.owned, Math.floor(reward.accumulator));
-                    reward.accumulator -= Math.floor(reward.accumulator);
-                } else {
-                    while (reward.accumulator > 1) {
-                        reward.accumulator -= 1;
-                        game.earn('collider');
-                    }
-                }
-            }
-        }),
+        {perSec: 1, type: "Collider.click"}),
     
     new Building("AutoUpgrade Hydrogen build", "Takes 134 Atoms of Hydrogen and makes Helium, Carbon, Neon, Oxygen, Silicon and Iron", {
             startCost: {'Hydrogen': 100},

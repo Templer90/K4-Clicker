@@ -7,8 +7,8 @@ game.resources.specialInit = () => {
 
     g.resources.perClick.Collider = {
         amount: 1,
-        can: function (owned, multi) {
-            const statistic = g.collider.statistic[0];
+        can: function (owned, multi, colliderIndex= 0) {
+            const statistic = g.collider.statistic[colliderIndex];
             const perClick = this.amount * multi;
 
             if (statistic.unstable) return false;
@@ -19,8 +19,8 @@ game.resources.specialInit = () => {
 
             return found === undefined;
         },
-        click: function (owned, multi) {
-            const statistic = g.collider.statistic[0];
+        click: function (owned, multi, colliderIndex= 0) {
+            const statistic = g.collider.statistic[colliderIndex];
             const perClick = this.amount * multi;
 
             owned.Energy -= statistic.inputEnergy * multi;

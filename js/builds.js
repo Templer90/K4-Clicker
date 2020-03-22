@@ -90,10 +90,11 @@ game.builds.load = (saveObj) => {
     g.b.owned = saveObj.owned;
     g.b.multiplier = saveObj.multiplier;
     g.b.list.forEach((b, i) => {
-        b.visible = saveObj.data[i].visible;
-        b.valuePerSec.perSec = saveObj.data[i].perSec;
-        if (saveObj.additions !== undefined) {
-            b.additions = saveObj.additions;
+        const data = saveObj.data[i];
+        b.visible = data.visible;
+        b.valuePerSec.perSec = data.perSec;
+        if (data.additions !== undefined) {
+            b.additions = data.additions;
         }
     });
 };
