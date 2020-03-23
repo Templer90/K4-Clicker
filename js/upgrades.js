@@ -18,6 +18,12 @@ game.upgrades.buy = (thing) => {
         if (g.u.owned[upgrade.name] === true) {
             let upgradeBTN = document.getElementById('upgrades-btn-' + upgrade.name);
             upgradeBTN.remove();
+            
+            if (document.getElementById('upgrades-checkbox').checked === true) {
+                $(upgrade.mainDiv).fadeOut("fast");
+            }
+            
+            g.u.fade();
             g.u.hide();
             game.builds.update();
         }
@@ -71,6 +77,11 @@ game.upgrades.search = (searchBox) => {
         });
     }
 };
+game.upgrades.fade = () => {
+    g.u.list.filter((upgrade) => upgrade.visible() === true ).forEach((upgrade)=>{
+        $(upgrade.mainDiv).fadeIn("slow");
+    }); 
+};
 game.upgrades.hide = () => {
     let funcHide = (upgrade) => {
         upgrade.setVisibility(false);
@@ -87,7 +98,6 @@ game.upgrades.hide = () => {
         upgrade.setVisibility(true);
     });
     g.u.list.filter((upgrade) => g.u.owned[upgrade.name] === true ).forEach(func);
-    //g.u.list.forEach(func);
 };
 game.upgrades.updateCost = () => {
     g.u.list.forEach((upgrade) => {
