@@ -54,7 +54,7 @@ game.builds.checkSave = () => {
 };
 game.builds.find = (name) => {
     const formattedName = helpers.formatName(name);
-    return g.b.list.find((b) => (b.name === formattedName || b.name === name));
+    return g.b.list.find((b) => (b.name === formattedName || b.name === name) || (b.displayName === formattedName || b.displayName === name));
 };
 game.builds.updateCost = () => {
     g.b.list.forEach((build) => {

@@ -184,6 +184,8 @@ game.buttons = () => {
 
     document.getElementById("btn-collider").html = "Run Collider";
 
+    document.getElementById("btn-deuterium").style.display = g.u.owned['Hydrogen_Isotopes'] ? '' : 'none';
+
     //const waterButton = $("#btn-2-1");
     //waterButton.html("Generate water (+" + numbers.fix(g.resources.perClick.Water.amount * g.buyMultiplier, 0) + " mL)");
     //waterButton.attr('data-original-title', 'Cost ' + numbers.fix((20 * g.buyMultiplier), 0) + ' hydrogen, ' + numbers.fix((10 * g.buyMultiplier), 0) + ' oxygen');

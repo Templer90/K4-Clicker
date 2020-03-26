@@ -105,7 +105,7 @@ class Building {
     
     update(){
         const constElement = document.getElementById('builds-infos-' + this.index);
-        this.titleElement.innerHTML = this.name + ' : ' + numbers.fix(this.valuePerSec.perSec, 2) + ' ' + this.valuePerSec.type.toLowerCase() + '/sec';
+        this.titleElement.innerHTML = this.displayName + ' : ' + numbers.fix(this.valuePerSec.perSec, 2) + ' ' + this.valuePerSec.type.toLowerCase() + '/sec';
         this.ownedElement.innerHTML = numbers.fix(g.b.owned[this.index], 0) + ' owned : ' + this.reward.rewardPerSecondString(g.b.owned[this.index], constElement);
         this.updateCostStyle();
         //this.upgradeCostElement.innerHTML = 'Cost ' + numbers.fix(this.buildPrice(), 0) + ' ' + this.price.type.toLowerCase();

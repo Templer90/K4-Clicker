@@ -7,7 +7,7 @@ g.b.list = [
         {
             type: "Hydrogen",
             func: (value, delta, reward, destination) => {
-                destination[reward.type] += value * delta * (g.u.owned["Building_Test"] ? g.resources.perClick.Hydrogen.amount : 1);
+                destination[reward.type] += value * delta * (g.u.owned["Buildings_can_use_Clicks"] ? g.resources.perClick.Hydrogen.amount : 1);
             }
         }),
     new Building("Energy build", "Create some Energy", {
@@ -18,7 +18,7 @@ g.b.list = [
         {
             type: "Energy",
             func: (value, delta, reward, destination) => {
-                destination[reward.type] += value * delta * (g.u.owned["Building_Test"] ? g.resources.perClick.Energy.amount : 1)
+                destination[reward.type] += value * delta * (g.u.owned["Buildings_can_use_Clicks"] ? g.resources.perClick.Energy.amount : 1)
             }
         }),
     new Building("Suns", "Create some Energy", {
@@ -42,7 +42,7 @@ g.b.list = [
         {
             type: "Helium",
             func: (value, delta, reward, destination) => {
-                destination[reward.type] += value * delta * (g.u.owned["Building_Test"] ? g.resources.perClick.Helium.amount : 1);
+                destination[reward.type] += value * delta * (g.u.owned["Buildings_can_use_Clicks"] ? g.resources.perClick.Helium.amount : 1);
             }
         }),
     new ColliderBuilding("Autonomous Collider", "Run the Collider", {
