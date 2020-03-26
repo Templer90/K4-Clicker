@@ -371,7 +371,7 @@ game.displayHorde = (force = false) => {
         //This is correct, because I want to type coerce
         if ((element.stashPanel.dataset.oldValue.toString() === g.resources.owned[element.name].toString()) && !force) return;
         const rawNumber = Math.round(g.resources.owned[element.name]);
-
+        const perClick = g.resources.perClick[element.name].amount;
         const total = Math.round(g.resources.total[element.name]);
 
         switch (game.options.elemental.toLowerCase()) {
@@ -396,13 +396,16 @@ game.displayHorde = (force = false) => {
 
         //TODO This is dumb
         if (element.symbol === 'eV') {
-            element.stashPanel.innerHTML = numbers.zeroPad(rawNumber, 22) + " eV";
+            element.stashPanel.innerHTML = 
+                numbers.zeroPad(rawNumber, 22) + " eV<br>"
+                + numbers.zeroPad(perClick, 22) + " perClick";
         } else {
             element.stashPanel.innerHTML =
                 numbers.beautify(avogadro, 20) + " mol<br>"
                 + numbers.massString(kilo, game.options.weight) + "<br>"
                 + numbers.zeroPad(rawNumber, 22) + " Atoms<br>"
-                + numbers.zeroPad(total, 22) + " Total Atoms created";
+                + numbers.zeroPad(total, 22) + " Total Atoms created<br>"
+                + numbers.zeroPad(perClick, 22) + " perClick";
         }
 
         element.stashPanel.dataset.oldValue = g.resources.owned[element.name];

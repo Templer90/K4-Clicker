@@ -77,6 +77,17 @@ game.upgrades.search = (searchBox) => {
         });
     }
 };
+game.upgrades.d = {
+    finished(other) {
+        return g.u.owned[other] === true && g.u.owned[other] !== false;
+    },
+    unfinished(other) {
+        return g.u.owned[other] === false;
+    },
+    multi(other, value) {
+        return g.u.owned[other] === true || g.u.owned[other] >= value;
+    }
+};
 game.upgrades.fade = () => {
     g.u.list.filter((upgrade) => upgrade.visible() === true ).forEach((upgrade)=>{
         $(upgrade.mainDiv).fadeIn("slow");
