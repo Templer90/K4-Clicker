@@ -12,6 +12,7 @@ g.u.list = [
     }),
     new MultiUpgrade('Hydrogen III', 'Hydrogen/click x1.5', 'Hydrogen,Output', {'Hydrogen': 128}, 4, () => {
         game.resources.perClick.Hydrogen.amount *= 1.5;
+        game.builds.find('Helium_build').visible = true;
     }, {
         visible: 'Hydrogen II'
     }),
@@ -78,8 +79,8 @@ g.u.list = [
     }),
 
     new MultiUpgrade('Building Efficiency', 'Makes every Building more Efficient (x2)', 'Building,Efficiency', {
-        'Hydrogen': 1000000,
-        'Energy': 1000000
+        'Hydrogen': 1.1e6,
+        'Energy': 1.1e6,
     }, 4, () => {
         g.b.multiplier = g.b.multiplier.map((x) => x * 2);
     }, {

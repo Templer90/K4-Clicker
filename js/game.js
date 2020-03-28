@@ -2,7 +2,7 @@ const game = g = {};
 
 g.gameName = 'Element Clicker';
 g.options = {};
-g.options.devMode = true;
+g.options.devMode = false;
 g.options.fps = 60;
 g.options.hold = 100;
 g.options.saveIntervalTime = 10000;
@@ -34,6 +34,8 @@ g.holding = [];
 
 // CORE FUNCTIONS
 game.init = () => {
+    g.devMode();
+    
     elements.init();
     game.achievements.init();
     game.resources.init();
@@ -44,8 +46,7 @@ game.init = () => {
 
     save.loadData();
     save.checkSave();
-
-    g.devMode();
+    
     g.builds.checkSave();
     g.upgrades.checkSave();
     g.tutorial.checkSave();
@@ -306,7 +307,12 @@ game.changeBuy = () => {
     game.buttons();
 };
 game.devMode = () => {
-    if (g.options.devMode === true) {
+    const dev = localStorage.getItem(save.devKey);
+    if ((g.options.devMode === true) || (dev !== null)) {
+        if (dev !== null) {
+            eval(dev);
+        }
+
         console.warn("Dev mode enabled!");
         g.t.done = true;
     }

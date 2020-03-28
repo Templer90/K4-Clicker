@@ -1,5 +1,6 @@
 const save = {};
 save.key = "K4Clicker_Save";
+save.devKey = "K4Clicker_Save_Dev";
 
 save.saveData = function () {
     console.info("Game saved. (Auto-save every " + (g.options.saveIntervalTime / 1000) + " seconds)");
