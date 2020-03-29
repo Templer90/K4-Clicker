@@ -2,6 +2,10 @@ g.upgrades = g.u = {};
 g.u.owned = {};
 
 game.upgrades.buy = (thing) => {
+    if (thing === undefined) {
+        console.log('somehow thing is undefined');
+        return;
+    }
     let upgrade = thing;
     if (typeof (thing) === 'string') {
         upgrade = g.u.list[thing];
@@ -14,15 +18,15 @@ game.upgrades.buy = (thing) => {
         
         g.buttons();
         g.status();
-
+        
         if (g.u.owned[upgrade.name] === true) {
             let upgradeBTN = document.getElementById('upgrades-btn-' + upgrade.name);
             upgradeBTN.remove();
-            
+
             if (document.getElementById('upgrades-checkbox').checked === true) {
                 $(upgrade.mainDiv).fadeOut("fast");
             }
-            
+
             g.u.fade();
             g.u.hide();
             game.builds.update();
@@ -45,8 +49,8 @@ game.upgrades.find = (name) => {
     const formattedName = helpers.formatName(name);
     return g.u.list.find((u) => (u.name === formattedName || u.name === name));
 };
-game.upgrades.checkBuyStatus = function(){
-    g.u.list.forEach((upgrade, i) => {
+game.upgrades.checkBuyStatus = function () {
+    g.u.list.forEach((upgrade) => {
         if (upgrade.buyable()) {
             upgrade.buylink.removeAttribute('disabled');
             upgrade.buylink.classList.remove('disabled');
@@ -56,8 +60,33 @@ game.upgrades.checkBuyStatus = function(){
         }
     });
 };
-game.upgrades.search = (searchBox) => {
-    const input = searchBox.value.trim().toUpperCase();
+game.upgrades.depends = {
+    finished(other) {
+        return g.u.owned[other] === true && g.u.owned[other] !== false;
+    },
+    unfinished(other) {
+        return g.u.owned[other] === false;
+    },
+    multi(other, value) {
+        return g.u.owned[other] === true || g.u.owned[other] >= value;
+    }
+};
+game.upgrades.alreadyHideing = false;
+game.upgrades.alreadyFading = false;
+game.upgrades.fade = () => {
+    if (game.upgrades.alreadyFading) {
+        return;
+    }
+    game.upgrades.alreadyFading = true;
+    
+    g.u.list.filter((upgrade) => g.u.owned[upgrade.name] === false && upgrade.visible()).forEach((upgrade) => {
+        $(upgrade.mainDiv).fadeIn("slow");
+    });
+    
+    game.upgrades.alreadyFading = false;
+};
+game.upgrades.search = (searchBoxElement) => {
+    const input = searchBoxElement.value.trim().toUpperCase();
 
     if (input === '') {
         g.u.list.forEach((upgrade) => {
@@ -77,27 +106,16 @@ game.upgrades.search = (searchBox) => {
         });
     }
 };
-game.upgrades.d = {
-    finished(other) {
-        return g.u.owned[other] === true && g.u.owned[other] !== false;
-    },
-    unfinished(other) {
-        return g.u.owned[other] === false;
-    },
-    multi(other, value) {
-        return g.u.owned[other] === true || g.u.owned[other] >= value;
-    }
-};
-game.upgrades.fade = () => {
-    g.u.list.filter((upgrade) => upgrade.visible() === true ).forEach((upgrade)=>{
-        $(upgrade.mainDiv).fadeIn("slow");
-    }); 
-};
 game.upgrades.hide = () => {
-    let funcHide = (upgrade) => {
+    if (game.upgrades.alreadyHideing) {
+        return;
+    }
+    game.upgrades.alreadyHideing = true;
+
+    const funcHide = (upgrade) => {
         upgrade.setVisibility(false);
     };
-    let funcShow = (upgrade) => {
+    const funcShow = (upgrade) => {
         upgrade.setVisibility(true);
     };
     let func = funcHide;
@@ -109,6 +127,8 @@ game.upgrades.hide = () => {
         upgrade.setVisibility(true);
     });
     g.u.list.filter((upgrade) => g.u.owned[upgrade.name] === true ).forEach(func);
+
+    game.upgrades.alreadyHideing = false;
 };
 game.upgrades.updateCost = () => {
     g.u.list.forEach((upgrade) => {
@@ -116,13 +136,7 @@ game.upgrades.updateCost = () => {
     });
 };
 game.upgrades.onlyBuyable = () => {
-    //g.u.list.forEach((obj, i) => {
-    //    if (obj.buyable()) {
-    //        obj.mainDiv.style.display = '';
-    //    }else{
-    //        obj.mainDiv.style.display = 'none';
-    //    }
-    //});
+    //TODO implement this
 };
 game.upgrades.check = () => {
     g.u.onlyBuyable();

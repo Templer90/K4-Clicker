@@ -6,7 +6,7 @@ debug.builds = () => {
     });
     game.builds.update();
 };
-debug.money = (value = 1000000) => {
+debug.money = (value = 10e12) => {
     Object.keys(game.resources.owned).forEach((r) => {
         game.resources.owned[r] += value;
     });

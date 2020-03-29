@@ -315,6 +315,7 @@ game.devMode = () => {
 
         console.warn("Dev mode enabled!");
         g.t.done = true;
+        g.options.devMode = true;
     }
 };
 game.changeSaveInterval = () => {

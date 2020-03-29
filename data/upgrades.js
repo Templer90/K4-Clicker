@@ -102,6 +102,25 @@ g.u.list = [
     new Upgrade('Better Collider III', 'Collider Output/click x1.5', 'Collider', {'Hydrogen': 1000}, () => {
         game.resources.perClick.Collider.amount *= 1.5;
     }),
+
+    new Upgrade('Another Autocollider I', 'Another Autocollider', 'Collider', {
+        'Hydrogen': 1.23e4,
+        'Energy': 1.23e4,
+        'Carbon': 1.23e4
+    }, () => {
+        game.builds.find('Autonomous Collider II').visible = true;
+    }, {
+        visible: 'Buildings can be used'
+    }),
+    new Upgrade('Another Autocollider II', 'Another Autocollider', 'Collider', {
+        'Hydrogen': 1.23e6,
+        'Energy': 1.23e6,
+        'Carbon': 1.23e6
+    }, () => {
+        game.builds.find('Autonomous Collider III').visible = true;
+    }, {
+        visible: 'Another Autocollider I'
+    }),
     
     new Upgrade('A Sun', 'A Sun. Produces Energy and Helium', 'Building,Sun', {
         'Hydrogen': 1.8313164e+30,
@@ -156,7 +175,20 @@ g.u.list = [
         {
             visible: 'Add Silicon to Collider'
         }),
-
+    new MultiUpgrade('AutoUpgrade Hydrogen build Efficiency I', 'AutoUpgrade Hydrogen build Efficiency (x2)', 'AutoUpgrade,Hydrogen,Efficiency', {'Iron': 15000}, 4, () => {
+            const index = game.builds.find('AutoUpgrade_Hydrogen_build').index;
+            g.b.multiplier[index] *= 2;
+        },
+        {
+            visible: 'Add Iron to Collider'
+        }),
+    new MultiUpgrade('AutoUpgrade Hydrogen build Efficiency II', 'AutoUpgrade Hydrogen build Efficiency (x2)', 'AutoUpgrade,Hydrogen,Efficiency', {'Iron': 30150}, 4, () => {
+            const index = game.builds.find('AutoUpgrade_Hydrogen_build').index;
+            g.b.multiplier[index] *= 2;
+        },
+        {
+            visible: 'AutoUpgrade Hydrogen build Efficiency I'
+        }),
 
     new MultiUpgrade('More Emitters', 'Emitter++', 'Collider,Emitter', {'Hydrogen': 1}, 8, (self) => {
         self.price.Hydrogen *= 2;

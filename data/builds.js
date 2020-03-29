@@ -69,7 +69,7 @@ g.b.list = [
         {
             type: 'Hydrogen',
             rewardPerSecondString: (owned) => {
-                return 'Around ' + (owned/7 * 6) + ' Atoms/sec';
+                return 'Around ' + (owned / 7 * 6).toFixed(2) + ' Atoms/sec';
             },
             func: (value, delta, reward, destination) => {
                 if (destination.Hydrogen <= 134 ) return;
