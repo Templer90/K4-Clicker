@@ -1,6 +1,5 @@
-{
-  "Licence": "https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl?ele=&all=all&ascii=ascii2&isotype=all",
-  "elements": [
+// "https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl?ele=&all=all&ascii=ascii2&isotype=all",
+  const isotopes= [
     {
       "Atomic Number": 1,
       "Atomic Symbol": "H",
@@ -28215,5 +28214,4 @@
       "Isotopic Composition": 0,
       "Standard Atomic Weight": 0
     }
-  ]
-}
+  ];
