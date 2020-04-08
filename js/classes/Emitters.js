@@ -199,16 +199,20 @@ class PseudoEmitter extends Emitter {
         }
 
 
-        this.element = elements.combine(emitterA.element, emitterB.element);
-        this.emitters = [this];
+        if(emitterA.element===undefined || emitterB.element===undefined ){
+            this.element = undefined;
+            this.emitters = [this];
+        }else{
+            this.element = elements.combine(emitterA.element, emitterB.element);
+            this.emitters = [this];
 
-        if (((emitterA.element.symbol === "D") && (emitterB.element.symbol === "T")) || ((emitterA.element.symbol === "T") && (emitterB.element.symbol === "D"))) {
-            this.element = elements.find("He");
-            const em = new NeutronEmitter(x, y, this);
-            this.emitters.push(em);
+            if (((emitterA.element.symbol === "D") && (emitterB.element.symbol === "T")) || ((emitterA.element.symbol === "T") && (emitterB.element.symbol === "D"))) {
+                this.element = elements.find("He");
+                const em = new NeutronEmitter(x, y, this);
+                this.emitters.push(em);
+            }  
         }
-
-
+        
         this.xEnd = this.x + Math.sin(this.angle) * this.length;
         this.yEnd = this.y + Math.cos(this.angle) * this.length;
     }

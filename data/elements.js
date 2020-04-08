@@ -1,15 +1,18 @@
-//https://github.com/Bowserinator/Periodic-Table-JSON/blob/master/PeriodicTableJSON.json
+//https://github.com/Bowserinator/#mic-Table-JSON/blob/master/#micTableJSON.json
 //https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl?ele=&all=all&ascii=ascii2&isotype=all
 const elements = e = {};
 elements.avogadro = 6.02214076e+23;
 elements.amu = 1.66054e-27; // Atomic Mass Unit per kg
+elements.MeV = 931494102.4228; // MeV/c^2
+elements.c = 299792458; // Lightspeed m/s
+elements.c2 = elements.c * elements.c; // Lightspeed Squared
 elements.list = [
     //FAKE Elements VVVVVVVVV
     {
         "name": "Energy",
         "atomic_mass": "&nbsp;",
         "number": "&nbsp;",
-        "period": "&nbsp;",
+        "#m": "&nbsp;",
         "symbol": "eV",
         "xpos": -1,
         "ypos": -1,
@@ -18,7 +21,7 @@ elements.list = [
         "name": "Neutron",
         "atomic_mass": 1.008,
         "number": 0,
-        "period": 0,
+        "#m": 0,
         "symbol": "n",
         "xpos": 0,
         "ypos": 0,
@@ -27,8 +30,8 @@ elements.list = [
     //REAL Elements VVVVVVVVV 
     {
         "name": "Hydrogen",
-        "atomic_mass": 1.008,
-        "period": 1,
+        "atomic_mass": 1.0078,
+        "#m": 1,
         "symbol": "H",
         "xpos": 1,
         "ypos": 1,
@@ -38,7 +41,7 @@ elements.list = [
     }, {
         "name": "Deuterium",
         "atomic_mass": 2.014,
-        "period": 1,
+        "#m": 1,
         "symbol": "D",
         "xpos": 1,
         "ypos": 1,
@@ -48,7 +51,7 @@ elements.list = [
     }, {
         "name": "Tritium",
         "atomic_mass": 3.016,
-        "period": 1,
+        "#m": 1,
         "symbol": "T",
         "xpos": 1,
         "ypos": 1,
@@ -58,7 +61,7 @@ elements.list = [
     }, {
         "name": "Helium",
         "atomic_mass": 4.0026022,
-        "period": 1,
+        "#m": 2,
         "symbol": "He",
         "xpos": 18,
         "ypos": 1,
@@ -75,7 +78,7 @@ elements.list = [
     }, {
         "name": "Lithium",
         "atomic_mass": 6.94,
-        "period": 2,
+        "#m": 3,
         "symbol": "Li",
         "xpos": 1,
         "ypos": 2,
@@ -95,7 +98,7 @@ elements.list = [
     }, {
         "name": "Beryllium",
         "atomic_mass": 9.01218315,
-        "period": 2,
+        "#m": 4,
         "symbol": "Be",
         "xpos": 2,
         "ypos": 2,
@@ -116,7 +119,7 @@ elements.list = [
     }, {
         "name": "Boron",
         "atomic_mass": 10.81,
-        "period": 2,
+        "#m": 5,
         "symbol": "B",
         "xpos": 13,
         "ypos": 2,
@@ -140,8 +143,8 @@ elements.list = [
         ]
     }, {
         "name": "Carbon",
-        "atomic_mass": 12.011,
-        "period": 2,
+        "atomic_mass": 12,
+        "#m": 6,
         "symbol": "C",
         "xpos": 14,
         "ypos": 2,
@@ -166,7 +169,7 @@ elements.list = [
     }, {
         "name": "Nitrogen",
         "atomic_mass": 14.007,
-        "period": 2,
+        "#m": 7,
         "symbol": "N",
         "xpos": 15,
         "ypos": 2,
@@ -191,7 +194,7 @@ elements.list = [
     }, {
         "name": "Oxygen",
         "atomic_mass": 15.999,
-        "period": 2,
+        "#m": 8,
         "symbol": "O",
         "xpos": 16,
         "ypos": 2,
@@ -217,7 +220,7 @@ elements.list = [
     }, {
         "name": "Fluorine",
         "atomic_mass": 18.9984031636,
-        "period": 2,
+        "#m": 9,
         "symbol": "F",
         "xpos": 17,
         "ypos": 2,
@@ -244,7 +247,7 @@ elements.list = [
     }, {
         "name": "Neon",
         "atomic_mass": 20.17976,
-        "period": 2,
+        "#m": 10,
         "symbol": "Ne",
         "xpos": 18,
         "ypos": 2,
@@ -272,7 +275,7 @@ elements.list = [
     }, {
         "name": "Sodium",
         "atomic_mass": 22.989769282,
-        "period": 3,
+        "#m": 11,
         "symbol": "Na",
         "xpos": 1,
         "ypos": 3,
@@ -301,7 +304,7 @@ elements.list = [
     }, {
         "name": "Magnesium",
         "atomic_mass": 24.305,
-        "period": 3,
+        "#m": 12,
         "symbol": "Mg",
         "xpos": 2,
         "ypos": 3,
@@ -332,7 +335,7 @@ elements.list = [
     }, {
         "name": "Aluminium",
         "atomic_mass": 26.98153857,
-        "period": 3,
+        "#m": 13,
         "symbol": "Al",
         "xpos": 13,
         "ypos": 3,
@@ -364,7 +367,7 @@ elements.list = [
     }, {
         "name": "Silicon",
         "atomic_mass": 28.085,
-        "period": 3,
+        "#m": 14,
         "symbol": "Si",
         "xpos": 14,
         "ypos": 3,
@@ -397,7 +400,7 @@ elements.list = [
     }, {
         "name": "Phosphorus",
         "atomic_mass": 30.9737619985,
-        "period": 3,
+        "#m": 15,
         "symbol": "P",
         "xpos": 15,
         "ypos": 3,
@@ -430,7 +433,7 @@ elements.list = [
     }, {
         "name": "Sulfur",
         "atomic_mass": 32.06,
-        "period": 3,
+        "#m": 16,
         "symbol": "S",
         "xpos": 16,
         "ypos": 3,
@@ -463,7 +466,7 @@ elements.list = [
     }, {
         "name": "Chlorine",
         "atomic_mass": 35.45,
-        "period": 3,
+        "#m": 17,
         "symbol": "Cl",
         "xpos": 17,
         "ypos": 3,
@@ -496,7 +499,7 @@ elements.list = [
     }, {
         "name": "Argon",
         "atomic_mass": 39.9481,
-        "period": 3,
+        "#m": 18,
         "symbol": "Ar",
         "xpos": 18,
         "ypos": 3,
@@ -529,7 +532,7 @@ elements.list = [
     }, {
         "name": "Potassium",
         "atomic_mass": 39.09831,
-        "period": 4,
+        "#m": 19,
         "symbol": "K",
         "xpos": 1,
         "ypos": 4,
@@ -563,7 +566,7 @@ elements.list = [
     }, {
         "name": "Calcium",
         "atomic_mass": 40.0784,
-        "period": 4,
+        "#m": 20,
         "symbol": "Ca",
         "xpos": 2,
         "ypos": 4,
@@ -597,7 +600,7 @@ elements.list = [
     }, {
         "name": "Scandium",
         "atomic_mass": 44.9559085,
-        "period": 4,
+        "#m": 21,
         "symbol": "Sc",
         "xpos": 3,
         "ypos": 4,
@@ -632,7 +635,7 @@ elements.list = [
     }, {
         "name": "Titanium",
         "atomic_mass": 47.8671,
-        "period": 4,
+        "#m": 22,
         "symbol": "Ti",
         "xpos": 4,
         "ypos": 4,
@@ -667,7 +670,7 @@ elements.list = [
     }, {
         "name": "Vanadium",
         "atomic_mass": 50.94151,
-        "period": 4,
+        "#m": 23,
         "symbol": "V",
         "xpos": 5,
         "ypos": 4,
@@ -703,7 +706,7 @@ elements.list = [
     }, {
         "name": "Chromium",
         "atomic_mass": 51.99616,
-        "period": 4,
+        "#m": 24,
         "symbol": "Cr",
         "xpos": 6,
         "ypos": 4,
@@ -739,7 +742,7 @@ elements.list = [
     }, {
         "name": "Manganese",
         "atomic_mass": 54.9380443,
-        "period": 4,
+        "#m": 25,
         "symbol": "Mn",
         "xpos": 7,
         "ypos": 4,
@@ -776,7 +779,7 @@ elements.list = [
     }, {
         "name": "Iron",
         "atomic_mass": 55.8452,
-        "period": 4,
+        "#m": 26,
         "symbol": "Fe",
         "xpos": 8,
         "ypos": 4,
@@ -815,7 +818,7 @@ elements.list = [
     }, {
         "name": "Cobalt",
         "atomic_mass": 58.9331944,
-        "period": 4,
+        "#m": 27,
         "symbol": "Co",
         "xpos": 9,
         "ypos": 4,
@@ -854,7 +857,7 @@ elements.list = [
     }, {
         "name": "Nickel",
         "atomic_mass": 58.69344,
-        "period": 4,
+        "#m": 28,
         "symbol": "Ni",
         "xpos": 10,
         "ypos": 4,
@@ -895,7 +898,7 @@ elements.list = [
     }, {
         "name": "Copper",
         "atomic_mass": 63.5463,
-        "period": 4,
+        "#m": 29,
         "symbol": "Cu",
         "xpos": 11,
         "ypos": 4,
@@ -935,7 +938,7 @@ elements.list = [
     }, {
         "name": "Zinc",
         "atomic_mass": 65.382,
-        "period": 4,
+        "#m": 30,
         "symbol": "Zn",
         "xpos": 12,
         "ypos": 4,
@@ -976,7 +979,7 @@ elements.list = [
     }, {
         "name": "Gallium",
         "atomic_mass": 69.7231,
-        "period": 4,
+        "#m": 31,
         "symbol": "Ga",
         "xpos": 13,
         "ypos": 4,
@@ -1017,7 +1020,7 @@ elements.list = [
     }, {
         "name": "Germanium",
         "atomic_mass": 72.6308,
-        "period": 4,
+        "#m": 32,
         "symbol": "Ge",
         "xpos": 14,
         "ypos": 4,
@@ -1059,7 +1062,7 @@ elements.list = [
     }, {
         "name": "Arsenic",
         "atomic_mass": 74.9215956,
-        "period": 4,
+        "#m": 33,
         "symbol": "As",
         "xpos": 15,
         "ypos": 4,
@@ -1101,7 +1104,7 @@ elements.list = [
     }, {
         "name": "Selenium",
         "atomic_mass": 78.9718,
-        "period": 4,
+        "#m": 34,
         "symbol": "Se",
         "xpos": 16,
         "ypos": 4,
@@ -1142,7 +1145,7 @@ elements.list = [
     }, {
         "name": "Bromine",
         "atomic_mass": 79.904,
-        "period": 4,
+        "#m": 35,
         "symbol": "Br",
         "xpos": 17,
         "ypos": 4,
@@ -1183,7 +1186,7 @@ elements.list = [
     }, {
         "name": "Krypton",
         "atomic_mass": 83.7982,
-        "period": 4,
+        "#m": 36,
         "symbol": "Kr",
         "xpos": 18,
         "ypos": 4,
@@ -1225,7 +1228,7 @@ elements.list = [
     }, {
         "name": "Rubidium",
         "atomic_mass": 85.46783,
-        "period": 5,
+        "#m": 37,
         "symbol": "Rb",
         "xpos": 1,
         "ypos": 5,
@@ -1267,7 +1270,7 @@ elements.list = [
     }, {
         "name": "Strontium",
         "atomic_mass": 87.621,
-        "period": 5,
+        "#m": 38,
         "symbol": "Sr",
         "xpos": 2,
         "ypos": 5,
@@ -1311,7 +1314,7 @@ elements.list = [
     }, {
         "name": "Yttrium",
         "atomic_mass": 88.905842,
-        "period": 5,
+        "#m": 39,
         "symbol": "Y",
         "xpos": 3,
         "ypos": 5,
@@ -1354,7 +1357,7 @@ elements.list = [
     }, {
         "name": "Zirconium",
         "atomic_mass": 91.2242,
-        "period": 5,
+        "#m": 40,
         "symbol": "Zr",
         "xpos": 4,
         "ypos": 5,
@@ -1398,7 +1401,7 @@ elements.list = [
     }, {
         "name": "Niobium",
         "atomic_mass": 92.906372,
-        "period": 5,
+        "#m": 41,
         "symbol": "Nb",
         "xpos": 5,
         "ypos": 5,
@@ -1442,7 +1445,7 @@ elements.list = [
     }, {
         "name": "Molybdenum",
         "atomic_mass": 95.951,
-        "period": 5,
+        "#m": 42,
         "symbol": "Mo",
         "xpos": 6,
         "ypos": 5,
@@ -1486,7 +1489,7 @@ elements.list = [
     }, {
         "name": "Technetium",
         "atomic_mass": 98,
-        "period": 5,
+        "#m": 43,
         "symbol": "Tc",
         "xpos": 7,
         "ypos": 5,
@@ -1531,7 +1534,7 @@ elements.list = [
     }, {
         "name": "Ruthenium",
         "atomic_mass": 101.072,
-        "period": 5,
+        "#m": 44,
         "symbol": "Ru",
         "xpos": 8,
         "ypos": 5,
@@ -1578,7 +1581,7 @@ elements.list = [
     }, {
         "name": "Rhodium",
         "atomic_mass": 102.905502,
-        "period": 5,
+        "#m": 45,
         "symbol": "Rh",
         "xpos": 9,
         "ypos": 5,
@@ -1625,7 +1628,7 @@ elements.list = [
     }, {
         "name": "Palladium",
         "atomic_mass": 106.421,
-        "period": 5,
+        "#m": 46,
         "symbol": "Pd",
         "xpos": 10,
         "ypos": 5,
@@ -1672,7 +1675,7 @@ elements.list = [
     }, {
         "name": "Silver",
         "atomic_mass": 107.86822,
-        "period": 5,
+        "#m": 47,
         "symbol": "Ag",
         "xpos": 11,
         "ypos": 5,
@@ -1719,7 +1722,7 @@ elements.list = [
     }, {
         "name": "Cadmium",
         "atomic_mass": 112.4144,
-        "period": 5,
+        "#m": 48,
         "symbol": "Cd",
         "xpos": 12,
         "ypos": 5,
@@ -1767,7 +1770,7 @@ elements.list = [
     }, {
         "name": "Indium",
         "atomic_mass": 114.8181,
-        "period": 5,
+        "#m": 49,
         "symbol": "In",
         "xpos": 13,
         "ypos": 5,
@@ -1815,7 +1818,7 @@ elements.list = [
     }, {
         "name": "Tin",
         "atomic_mass": 118.7107,
-        "period": 5,
+        "#m": 50,
         "symbol": "Sn",
         "xpos": 14,
         "ypos": 5,
@@ -1864,7 +1867,7 @@ elements.list = [
     }, {
         "name": "Antimony",
         "atomic_mass": 121.7601,
-        "period": 5,
+        "#m": 51,
         "symbol": "Sb",
         "xpos": 15,
         "ypos": 5,
@@ -1911,7 +1914,7 @@ elements.list = [
     }, {
         "name": "Tellurium",
         "atomic_mass": 127.603,
-        "period": 5,
+        "#m": 52,
         "symbol": "Te",
         "xpos": 16,
         "ypos": 5,
@@ -1959,7 +1962,7 @@ elements.list = [
     }, {
         "name": "Iodine",
         "atomic_mass": 126.904473,
-        "period": 5,
+        "#m": 53,
         "symbol": "I",
         "xpos": 17,
         "ypos": 5,
@@ -2007,7 +2010,7 @@ elements.list = [
     }, {
         "name": "Xenon",
         "atomic_mass": 131.2936,
-        "period": 5,
+        "#m": 54,
         "symbol": "Xe",
         "xpos": 18,
         "ypos": 5,
@@ -2056,7 +2059,7 @@ elements.list = [
     }, {
         "name": "Cesium",
         "atomic_mass": 132.905451966,
-        "period": 6,
+        "#m": 55,
         "symbol": "Cs",
         "xpos": 1,
         "ypos": 6,
@@ -2105,7 +2108,7 @@ elements.list = [
     }, {
         "name": "Barium",
         "atomic_mass": 137.3277,
-        "period": 6,
+        "#m": 56,
         "symbol": "Ba",
         "xpos": 2,
         "ypos": 6,
@@ -2154,7 +2157,7 @@ elements.list = [
     }, {
         "name": "Lanthanum",
         "atomic_mass": 138.905477,
-        "period": 6,
+        "#m": 57,
         "symbol": "La",
         "xpos": 3,
         "ypos": 9,
@@ -2203,7 +2206,7 @@ elements.list = [
     }, {
         "name": "Cerium",
         "atomic_mass": 140.1161,
-        "period": 6,
+        "#m": 58,
         "symbol": "Ce",
         "xpos": 4,
         "ypos": 9,
@@ -2251,7 +2254,7 @@ elements.list = [
     }, {
         "name": "Praseodymium",
         "atomic_mass": 140.907662,
-        "period": 6,
+        "#m": 59,
         "symbol": "Pr",
         "xpos": 5,
         "ypos": 9,
@@ -2299,7 +2302,7 @@ elements.list = [
     }, {
         "name": "Neodymium",
         "atomic_mass": 144.2423,
-        "period": 6,
+        "#m": 60,
         "symbol": "Nd",
         "xpos": 6,
         "ypos": 9,
@@ -2346,7 +2349,7 @@ elements.list = [
     }, {
         "name": "Promethium",
         "atomic_mass": 145,
-        "period": 6,
+        "#m": 61,
         "symbol": "Pm",
         "xpos": 7,
         "ypos": 9,
@@ -2393,7 +2396,7 @@ elements.list = [
     }, {
         "name": "Samarium",
         "atomic_mass": 150.362,
-        "period": 6,
+        "#m": 62,
         "symbol": "Sm",
         "xpos": 8,
         "ypos": 9,
@@ -2440,7 +2443,7 @@ elements.list = [
     }, {
         "name": "Europium",
         "atomic_mass": 151.9641,
-        "period": 6,
+        "#m": 63,
         "symbol": "Eu",
         "xpos": 9,
         "ypos": 9,
@@ -2487,7 +2490,7 @@ elements.list = [
     }, {
         "name": "Gadolinium",
         "atomic_mass": 157.253,
-        "period": 6,
+        "#m": 64,
         "symbol": "Gd",
         "xpos": 10,
         "ypos": 9,
@@ -2533,7 +2536,7 @@ elements.list = [
     }, {
         "name": "Terbium",
         "atomic_mass": 158.925352,
-        "period": 6,
+        "#m": 65,
         "symbol": "Tb",
         "xpos": 11,
         "ypos": 9,
@@ -2579,7 +2582,7 @@ elements.list = [
     }, {
         "name": "Dysprosium",
         "atomic_mass": 162.5001,
-        "period": 6,
+        "#m": 66,
         "symbol": "Dy",
         "xpos": 12,
         "ypos": 9,
@@ -2624,7 +2627,7 @@ elements.list = [
     }, {
         "name": "Holmium",
         "atomic_mass": 164.930332,
-        "period": 6,
+        "#m": 67,
         "symbol": "Ho",
         "xpos": 13,
         "ypos": 9,
@@ -2669,7 +2672,7 @@ elements.list = [
     }, {
         "name": "Erbium",
         "atomic_mass": 167.2593,
-        "period": 6,
+        "#m": 68,
         "symbol": "Er",
         "xpos": 14,
         "ypos": 9,
@@ -2714,7 +2717,7 @@ elements.list = [
     }, {
         "name": "Thulium",
         "atomic_mass": 168.934222,
-        "period": 6,
+        "#m": 69,
         "symbol": "Tm",
         "xpos": 15,
         "ypos": 9,
@@ -2759,7 +2762,7 @@ elements.list = [
     }, {
         "name": "Ytterbium",
         "atomic_mass": 173.0451,
-        "period": 6,
+        "#m": 70,
         "symbol": "Yb",
         "xpos": 16,
         "ypos": 9,
@@ -2802,7 +2805,7 @@ elements.list = [
     }, {
         "name": "Lutetium",
         "atomic_mass": 174.96681,
-        "period": 6,
+        "#m": 71,
         "symbol": "Lu",
         "xpos": 17,
         "ypos": 9,
@@ -2847,7 +2850,7 @@ elements.list = [
     }, {
         "name": "Hafnium",
         "atomic_mass": 178.492,
-        "period": 6,
+        "#m": 72,
         "symbol": "Hf",
         "xpos": 4,
         "ypos": 6,
@@ -2893,7 +2896,7 @@ elements.list = [
     }, {
         "name": "Tantalum",
         "atomic_mass": 180.947882,
-        "period": 6,
+        "#m": 73,
         "symbol": "Ta",
         "xpos": 5,
         "ypos": 6,
@@ -2940,7 +2943,7 @@ elements.list = [
     }, {
         "name": "Tungsten",
         "atomic_mass": 183.841,
-        "period": 6,
+        "#m": 74,
         "symbol": "W",
         "xpos": 6,
         "ypos": 6,
@@ -2987,7 +2990,7 @@ elements.list = [
     }, {
         "name": "Rhenium",
         "atomic_mass": 186.2071,
-        "period": 6,
+        "#m": 75,
         "symbol": "Re",
         "xpos": 7,
         "ypos": 6,
@@ -3036,7 +3039,7 @@ elements.list = [
     }, {
         "name": "Osmium",
         "atomic_mass": 190.233,
-        "period": 6,
+        "#m": 76,
         "symbol": "Os",
         "xpos": 8,
         "ypos": 6,
@@ -3087,7 +3090,7 @@ elements.list = [
     }, {
         "name": "Iridium",
         "atomic_mass": 192.2173,
-        "period": 6,
+        "#m": 77,
         "symbol": "Ir",
         "xpos": 9,
         "ypos": 6,
@@ -3137,7 +3140,7 @@ elements.list = [
     }, {
         "name": "Platinum",
         "atomic_mass": 195.0849,
-        "period": 6,
+        "#m": 78,
         "symbol": "Pt",
         "xpos": 10,
         "ypos": 6,
@@ -3187,7 +3190,7 @@ elements.list = [
     }, {
         "name": "Gold",
         "atomic_mass": 196.9665695,
-        "period": 6,
+        "#m": 79,
         "symbol": "Au",
         "xpos": 11,
         "ypos": 6,
@@ -3238,7 +3241,7 @@ elements.list = [
     }, {
         "name": "Mercury",
         "atomic_mass": 200.5923,
-        "period": 6,
+        "#m": 80,
         "symbol": "Hg",
         "xpos": 12,
         "ypos": 6,
@@ -3293,7 +3296,7 @@ elements.list = [
     }, {
         "name": "Thallium",
         "atomic_mass": 204.38,
-        "period": 6,
+        "#m": 81,
         "symbol": "Tl",
         "xpos": 13,
         "ypos": 6,
@@ -3345,7 +3348,7 @@ elements.list = [
     }, {
         "name": "Lead",
         "atomic_mass": 207.21,
-        "period": 6,
+        "#m": 82,
         "symbol": "Pb",
         "xpos": 14,
         "ypos": 6,
@@ -3397,7 +3400,7 @@ elements.list = [
     }, {
         "name": "Bismuth",
         "atomic_mass": 208.980401,
-        "period": 6,
+        "#m": 83,
         "symbol": "Bi",
         "xpos": 15,
         "ypos": 6,
@@ -3447,7 +3450,7 @@ elements.list = [
     }, {
         "name": "Polonium",
         "atomic_mass": 209,
-        "period": 6,
+        "#m": 84,
         "symbol": "Po",
         "xpos": 16,
         "ypos": 6,
@@ -3498,7 +3501,7 @@ elements.list = [
     }, {
         "name": "Astatine",
         "atomic_mass": 210,
-        "period": 6,
+        "#m": 85,
         "symbol": "At",
         "xpos": 17,
         "ypos": 6,
@@ -3546,7 +3549,7 @@ elements.list = [
     }, {
         "name": "Radon",
         "atomic_mass": 222,
-        "period": 6,
+        "#m": 86,
         "symbol": "Rn",
         "xpos": 18,
         "ypos": 6,
@@ -3594,7 +3597,7 @@ elements.list = [
     }, {
         "name": "Francium",
         "atomic_mass": 223,
-        "period": 7,
+        "#m": 87,
         "symbol": "Fr",
         "xpos": 1,
         "ypos": 7,
@@ -3638,7 +3641,7 @@ elements.list = [
     }, {
         "name": "Radium",
         "atomic_mass": 226,
-        "period": 7,
+        "#m": 88,
         "symbol": "Ra",
         "xpos": 2,
         "ypos": 7,
@@ -3682,7 +3685,7 @@ elements.list = [
     }, {
         "name": "Actinium",
         "atomic_mass": 227,
-        "period": 7,
+        "#m": 89,
         "symbol": "Ac",
         "xpos": 3,
         "ypos": 10,
@@ -3723,7 +3726,7 @@ elements.list = [
     }, {
         "name": "Thorium",
         "atomic_mass": 232.03774,
-        "period": 7,
+        "#m": 90,
         "symbol": "Th",
         "xpos": 4,
         "ypos": 10,
@@ -3764,7 +3767,7 @@ elements.list = [
     }, {
         "name": "Protactinium",
         "atomic_mass": 231.035882,
-        "period": 7,
+        "#m": 91,
         "symbol": "Pa",
         "xpos": 5,
         "ypos": 10,
@@ -3803,7 +3806,7 @@ elements.list = [
     }, {
         "name": "Uranium",
         "atomic_mass": 238.028913,
-        "period": 7,
+        "#m": 92,
         "symbol": "U",
         "xpos": 6,
         "ypos": 10,
@@ -3839,7 +3842,7 @@ elements.list = [
     }, {
         "name": "Neptunium",
         "atomic_mass": 237,
-        "period": 7,
+        "#m": 93,
         "symbol": "Np",
         "xpos": 7,
         "ypos": 10,
@@ -3875,7 +3878,7 @@ elements.list = [
     }, {
         "name": "Plutonium",
         "atomic_mass": 244,
-        "period": 7,
+        "#m": 94,
         "symbol": "Pu",
         "xpos": 8,
         "ypos": 10,
@@ -3904,7 +3907,7 @@ elements.list = [
     }, {
         "name": "Americium",
         "atomic_mass": 243,
-        "period": 7,
+        "#m": 95,
         "symbol": "Am",
         "xpos": 9,
         "ypos": 10,
@@ -3933,7 +3936,7 @@ elements.list = [
     }, {
         "name": "Curium",
         "atomic_mass": 247,
-        "period": 7,
+        "#m": 96,
         "symbol": "Cm",
         "xpos": 10,
         "ypos": 10,
@@ -3963,7 +3966,7 @@ elements.list = [
     }, {
         "name": "Berkelium",
         "atomic_mass": 247,
-        "period": 7,
+        "#m": 97,
         "symbol": "Bk",
         "xpos": 11,
         "ypos": 10,
@@ -3993,7 +3996,7 @@ elements.list = [
     }, {
         "name": "Californium",
         "atomic_mass": 251,
-        "period": 7,
+        "#m": 98,
         "symbol": "Cf",
         "xpos": 12,
         "ypos": 10,
@@ -4022,7 +4025,7 @@ elements.list = [
     }, {
         "name": "Einsteinium",
         "atomic_mass": 252,
-        "period": 7,
+        "#m": 99,
         "symbol": "Es",
         "xpos": 13,
         "ypos": 10,
@@ -4051,7 +4054,7 @@ elements.list = [
     }, {
         "name": "Fermium",
         "atomic_mass": 257,
-        "period": 7,
+        "#m": 100,
         "symbol": "Fm",
         "xpos": 14,
         "ypos": 10,
@@ -4080,7 +4083,7 @@ elements.list = [
     }, {
         "name": "Mendelevium",
         "atomic_mass": 258,
-        "period": 7,
+        "#m": 101,
         "symbol": "Md",
         "xpos": 15,
         "ypos": 10,
@@ -4107,7 +4110,7 @@ elements.list = [
     }, {
         "name": "Nobelium",
         "atomic_mass": 259,
-        "period": 7,
+        "#m": 102,
         "symbol": "No",
         "xpos": 16,
         "ypos": 10,
@@ -4133,7 +4136,7 @@ elements.list = [
     }, {
         "name": "Lawrencium",
         "atomic_mass": 266,
-        "period": 7,
+        "#m": 103,
         "symbol": "Lr",
         "xpos": 17,
         "ypos": 10,
@@ -4158,7 +4161,7 @@ elements.list = [
     }, {
         "name": "Rutherfordium",
         "atomic_mass": 267,
-        "period": 7,
+        "#m": 104,
         "symbol": "Rf",
         "xpos": 4,
         "ypos": 7,
@@ -4183,7 +4186,7 @@ elements.list = [
     }, {
         "name": "Dubnium",
         "atomic_mass": 268,
-        "period": 7,
+        "#m": 105,
         "symbol": "Db",
         "xpos": 5,
         "ypos": 7,
@@ -4208,7 +4211,7 @@ elements.list = [
     }, {
         "name": "Seaborgium",
         "atomic_mass": 269,
-        "period": 7,
+        "#m": 106,
         "symbol": "Sg",
         "xpos": 6,
         "ypos": 7,
@@ -4233,7 +4236,7 @@ elements.list = [
     }, {
         "name": "Bohrium",
         "atomic_mass": 270,
-        "period": 7,
+        "#m": 107,
         "symbol": "Bh",
         "xpos": 7,
         "ypos": 7,
@@ -4258,7 +4261,7 @@ elements.list = [
     }, {
         "name": "Hassium",
         "atomic_mass": 269,
-        "period": 7,
+        "#m": 108,
         "symbol": "Hs",
         "xpos": 8,
         "ypos": 7,
@@ -4282,7 +4285,7 @@ elements.list = [
     }, {
         "name": "Meitnerium",
         "atomic_mass": 278,
-        "period": 7,
+        "#m": 109,
         "symbol": "Mt",
         "xpos": 9,
         "ypos": 7,
@@ -4306,7 +4309,7 @@ elements.list = [
     }, {
         "name": "Darmstadtium",
         "atomic_mass": 281,
-        "period": 7,
+        "#m": 110,
         "symbol": "Ds",
         "xpos": 10,
         "ypos": 7,
@@ -4330,7 +4333,7 @@ elements.list = [
     }, {
         "name": "Roentgenium",
         "atomic_mass": 282,
-        "period": 7,
+        "#m": 111,
         "symbol": "Rg",
         "xpos": 11,
         "ypos": 7,
@@ -4351,7 +4354,7 @@ elements.list = [
     }, {
         "name": "Copernicium",
         "atomic_mass": 285,
-        "period": 7,
+        "#m": 112,
         "symbol": "Cn",
         "xpos": 12,
         "ypos": 7,
@@ -4370,7 +4373,7 @@ elements.list = [
     }, {
         "name": "Nihonium",
         "atomic_mass": 286,
-        "period": 7,
+        "#m": 113,
         "symbol": "Nh",
         "xpos": 13,
         "ypos": 7,
@@ -4389,7 +4392,7 @@ elements.list = [
     }, {
         "name": "Flerovium",
         "atomic_mass": 289,
-        "period": 7,
+        "#m": 114,
         "symbol": "Fl",
         "xpos": 14,
         "ypos": 7,
@@ -4403,7 +4406,7 @@ elements.list = [
     }, {
         "name": "Moscovium",
         "atomic_mass": 289,
-        "period": 7,
+        "#m": 115,
         "symbol": "Mc",
         "xpos": 15,
         "ypos": 7,
@@ -4416,7 +4419,7 @@ elements.list = [
     }, {
         "name": "Livermorium",
         "atomic_mass": 293,
-        "period": 7,
+        "#m": 116,
         "symbol": "Lv",
         "xpos": 16,
         "ypos": 7,
@@ -4430,7 +4433,7 @@ elements.list = [
     }, {
         "name": "Tennessine",
         "atomic_mass": 294,
-        "period": 7,
+        "#m": 117,
         "symbol": "Ts",
         "xpos": 17,
         "ypos": 7,
@@ -4441,8 +4444,8 @@ elements.list = [
         ]
     }, {
         "name": "Oganesson",
-        "atomic_mass": 294,
-        "period": 7,
+        "atomic_mass": 295,
+        "#m": 118,
         "symbol": "Og",
         "xpos": 18,
         "ypos": 7,
@@ -4454,11 +4457,29 @@ elements.list = [
     }
 ];
 
+elements.getStats = (name) => {
+    const elem = elements.find(name);
+    if (elem === undefined) return undefined;
+
+    const num = elem['#m'];
+    const neu = Math.floor(elem['atomic_mass']) - num;
+
+    const realEn = (elem['atomic_mass'] ) / elements.MeV;
+    const theoEn = ((num + neu) ) / elements.MeV;
+
+    return {
+        number: num,
+        protons: num,
+        neutrons: neu,
+        combined: num + neu,
+        diff: (theoEn / realEn) * 100
+    }
+};
 elements.init = () => {
     elements.map = new Map();
     elements.list.forEach((element) => {
-        elements.map.set(element.name, value);
-        elements.map.set(element.symbol, value);
+        elements.map.set(element.name, element);
+        elements.map.set(element.symbol, element);
 
         element.stashLink = undefined;
         element.stashPanel = undefined;

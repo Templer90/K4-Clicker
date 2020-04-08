@@ -290,7 +290,7 @@ game.earnCollider = function (colliderId = 0, multi = 1) {
     }
 };
 game.cellsEarn = function (times) {
-    g.resources.owned.Meat += (h.cellsMeat() * times) / g.options.fps;
+    //g.resources.owned.Meat += (h.cellsMeat() * times) / g.options.fps;
 };
 game.changeBuy = () => {
     if (g.buyMultiplier === 1) {
