@@ -13,12 +13,13 @@ class Drawable {
 }
 
 class Emitter extends Drawable {
-    constructor(x, y, id, dirIndicator, element) {
+    constructor(x, y, id, dirIndicator, element, energy = 1) {
         super(x, y);
         this.dirIndicator = dirIndicator;
         this.radius = 10;
         //this.id = id;
         this.maxLength = 100;
+        this.energy = energy;
         this.length = 0;
         this.xEnd = -10;
         this.yEnd = -10;
@@ -41,8 +42,8 @@ class Emitter extends Drawable {
     calcTrajectoryBoundary(list) {
         this.angle = Math.atan2(this.dirIndicator.x - this.x, this.dirIndicator.y - this.y);
 
-        this.xEnd = this.x + Math.sin(this.angle) * this.maxLength;
-        this.yEnd = this.y + Math.cos(this.angle) * this.maxLength;
+        this.xEnd = this.x + Math.sin(this.angle) * this.maxLength * this.energy;
+        this.yEnd = this.y + Math.cos(this.angle) * this.maxLength * this.energy;
 
         let max = this.length;
         for (let i = 0; i < list.length; i++) {

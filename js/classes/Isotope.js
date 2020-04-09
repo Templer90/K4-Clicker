@@ -1,5 +1,5 @@
 class Isotope {
-    constructor(protons, neutrons) {
+    constructor(protons, neutrons= 0, energy= 0) {
         if (protons === 0 && neutrons === 0) {
             //Energy? Radiation?
         }
@@ -64,7 +64,11 @@ class Isotope {
         }
     }
 
+    massDifference() {
+        return (this.atomicMass - (this.protons * 1.007276466583 + this.neutrons * 1.00866491595)) * elements.meVPerU;
+    }
 
+    
     static fuseIsotopes(isotope_a, isotope_b, energy_a, energy_b) {
         // http://hyperphysics.phy-astr.gsu.edu/hbase/NucEne/coubar.html
         let coulomb_barrier = (iso1, iso2 = undefined) => {
@@ -88,12 +92,27 @@ class Isotope {
                 energy: 0
             }
         }
+
+        let initialEnergy = energy_a + energy_b;
+        let initialProtons = isotope_a.protons + isotope_b.protons;
+        let initialNeutrons = isotope_a.neutrons + isotope_b.neutrons;
+        
+        const transmutationEnergy = 1.29;
+        while (initialProtons > 1 && initialEnergy >= transmutationEnergy) {
+            initialProtons -= 1;
+            initialNeutrons += 1;
+            initialEnergy -= transmutationEnergy;
+        }
+
+
+
+        const theorecticalFusion = new Isotope(initialProtons, initialNeutrons);
         
         //fusion
 
         return {
-            type: '',
-            resultIsotopes: [],
+            type: 'debug',
+            resultIsotopes: [theorecticalFusion],
             energy: 0
         }
     }

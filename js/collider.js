@@ -174,10 +174,10 @@ g.collider.emitters = {
             g.collider.currentCollider = statistic;
         }
     },
-    addEmitter(x, y, element) {
+    addEmitter(x, y, element, energy = 1) {
         if (this.emitter.length >= g.collider.options.maxEmitter) return;
         let holder = new Holder(x + 13, y + 13);
-        let emitter = new Emitter(x, y, this.emitter.length, holder, element);
+        let emitter = new Emitter(x, y, this.emitter.length, holder, element, energy);
 
         emitter.addDirIndicator(holder);
         holder.addEmitter(emitter);
@@ -236,14 +236,37 @@ g.collider.emitters = {
     }
 };
 game.collider.markDirty = (text = 'Save?') => {
-    game.collider.saveButton.classList.replace('btn-outline-primary','btn-outline-secondary');
+    game.collider.saveButton.classList.replace('btn-outline-primary', 'btn-outline-secondary');
     game.collider.saveButton.textContent = text;
 };
 game.collider.unMarkDirty = (text = 'Save') => {
-    game.collider.saveButton.classList.replace('btn-outline-secondary','btn-outline-primary');
+    game.collider.saveButton.classList.replace('btn-outline-secondary', 'btn-outline-primary');
     game.collider.saveButton.textContent = text;
 };
+game.collider.sliderInit = () => {
+    const EmitterEnergySlider = document.getElementById('EmitterEnergySlider');
+    EmitterEnergySlider.label = document.getElementById('EmitterEnergySliderLabel');
+    EmitterEnergySlider.getNormalizedEnergy = function () {
+        return EmitterEnergySlider.value / EmitterEnergySlider.max;
+    };
+    EmitterEnergySlider.setNormalizedEnergy = function (value) {
+        EmitterEnergySlider.label.innerHTML = value + ' MeV';
+        EmitterEnergySlider.value = value * EmitterEnergySlider.max;
+    };
+    EmitterEnergySlider.disable = function () {
+        EmitterEnergySlider.setAttribute('disabled', 'disabled');
+        EmitterEnergySlider.classList.add('disabled');
+    };
+    EmitterEnergySlider.enable = function () {
+        EmitterEnergySlider.removeAttribute('disabled');
+        EmitterEnergySlider.classList.remove('disabled');
+    };
+
+    EmitterEnergySlider.setNormalizedEnergy(1);
+};
 game.collider.init = () => {
+    game.collider.sliderInit();
+
     game.collider.saveButton = document.getElementById('use-collider');
     const canvas = document.getElementById('canvas');
     canvas.style.border = "1px black solid";
@@ -332,7 +355,8 @@ game.collider.init = () => {
                     overCircle = null;
                 } else {
                     let element = document.getElementById('emitterSelect').value;
-                    let newEmitter = g.collider.emitters.addEmitter(mouse.x, mouse.y, elements.find(element));
+                    let energy = document.getElementById('EmitterEnergySlider').getNormalizedEnergy();
+                    let newEmitter = g.collider.emitters.addEmitter(mouse.x, mouse.y, elements.find(element), energy);
                     if (newEmitter !== undefined) {
                         dragging.start("create", newEmitter);
                     } else {
@@ -389,6 +413,12 @@ game.collider.changeEmitterType = (selector) => {
         game.collider.changed = true
     }
 };
+game.collider.changeEmitterEnergy = (selector) => {
+    if (game.collider.selectedEmitter !== undefined) {
+        game.collider.selectedEmitter.energy = selector.getNormalizedEnergy();
+        game.collider.changed = true
+    }
+};
 game.collider.removeSelectedEmitter = () => {
     if (game.collider.selectedEmitter !== undefined) {
         game.collider.emitters.removeEmitter(game.collider.selectedEmitter);
@@ -441,12 +471,16 @@ game.collider.compileStatistics = () => {
         outputText += "<br>\t" + key + " :" + value;
         statistic.outputElements.push({element: key, value: value});
     });
-    
+
     g.c.selectedEmitter = g.c.emitters.emitter.find((obj) => (obj.selected));
     if (g.c.selectedEmitter !== undefined) {
         document.getElementById('emitterId').innerText = g.c.selectedEmitter.id;
         document.getElementById('emitterLength').innerText = (g.c.selectedEmitter.length / g.c.selectedEmitter.maxLength);
         document.getElementById('emitterSelect').value = g.c.selectedEmitter.element.symbol;
+        document.getElementById('EmitterEnergySlider').enable();
+        document.getElementById('EmitterEnergySlider').setNormalizedEnergy(g.c.selectedEmitter.energy);
+    } else {
+        document.getElementById('EmitterEnergySlider').disable();
     }
 
     document.getElementById('colliderInput').innerHTML = inputText;
@@ -486,7 +520,7 @@ game.collider.save = () => {
             });
         });
     });
-    
+
     saveObj.options = g.collider.options;
     return saveObj;
 };
@@ -503,14 +537,14 @@ game.collider.load = (saveObj) => {
             g.collider.statistic[i] = g.collider.currentCollider;
         });
     });
-    
+
     g.collider.currentColliderID = 0;
     g.collider.emitters.reset();
     g.collider.currentCollider = g.collider.statistic[g.collider.currentColliderID];
     g.collider.currentCollider.inputEmitters.forEach((obj) => {
         g.collider.emitters.load(obj.x, obj.y, obj.dirIndicator.x, obj.dirIndicator.y, obj.element);
     });
-    
+
     g.collider.options = saveObj.options;
 
     game.collider.updateAllowedElements();
@@ -537,21 +571,21 @@ game.collider.useCollider = () => {
 };
 game.collider.update = () => {
     const select = document.getElementById('colliderSelector');
-    select.innerHTML='';
-    
+    select.innerHTML = '';
+
     const option = document.createElement('option');
     option.value = 0;
     option.innerHTML = 'Main';
-    option.selected='selected';
+    option.selected = 'selected';
     select.add(option);
-    
+
     for (let i = 1; i < g.collider.options.collider; i++) {
         let option = document.createElement('option');
         option.value = i;
-        option.innerHTML = 'Collider #'+i;
+        option.innerHTML = 'Collider #' + i;
 
         select.add(option);
-  
+
         if (g.collider.statistic[i] === undefined) {
             g.collider.statistic.push(g.collider.newStatistic());
         }

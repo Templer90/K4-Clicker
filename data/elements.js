@@ -3,6 +3,7 @@
 const elements = e = {};
 elements.avogadro = 6.02214076e+23;
 elements.amu = 1.66054e-27; // Atomic Mass Unit per kg
+elements.meVPerU = 931.494; // MeV/c^2
 elements.MeV = 931494102.4228; // MeV/c^2
 elements.c = 299792458; // Lightspeed m/s
 elements.c2 = elements.c * elements.c; // Lightspeed Squared
@@ -19,24 +20,26 @@ elements.list = [
         "isotopes": []
     }, {
         "name": "Neutron",
-        "atomic_mass": 1.008,
+        "atomic_mass": 1.00866491595,
         "number": 0,
         "#m": 0,
         "symbol": "n",
         "xpos": 0,
         "ypos": 0,
-        "isotopes": []
+        "isotopes": [
+            {"#m": 0, "relAM": 1.00866491595}
+        ]
     },
     //REAL Elements VVVVVVVVV 
     {
         "name": "Hydrogen",
-        "atomic_mass": 1.0078,
+        "atomic_mass": 1.007276466583,
         "#m": 1,
         "symbol": "H",
         "xpos": 1,
         "ypos": 1,
         "isotopes": [
-            {"#m": 1, "relAM": 1.00782503223}
+            {"#m": 1, "relAM": 1.007276466583}
         ]
     }, {
         "name": "Deuterium",
@@ -60,14 +63,14 @@ elements.list = [
         ]
     }, {
         "name": "Helium",
-        "atomic_mass": 4.0026022,
+        "atomic_mass":4.001506179,
         "#m": 2,
         "symbol": "He",
         "xpos": 18,
         "ypos": 1,
         "isotopes": [
             {"#m": 3, "relAM": 3.0160293201},
-            {"#m": 4, "relAM": 4.00260325413},
+            {"#m": 4, "relAM": 4.001506179},
             {"#m": 5, "relAM": 5.012057},
             {"#m": 6, "relAM": 6.018885891},
             {"#m": 7, "relAM": 7.0279907},
