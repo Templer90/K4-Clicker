@@ -39,7 +39,7 @@ class Isotope {
             });
 
             if (element === undefined) {
-                console.log('could NOT find Element', protons, neutrons);
+                //console.log('could NOT find Element', protons, neutrons);
                 return;
             }
 
@@ -52,7 +52,7 @@ class Isotope {
                     return is["#m"] === (neutrons + protons);
                 });
                 if (iso === undefined) {
-                    console.log('could NOT find Isotope', protons, neutrons);
+                    //console.log('could NOT find Isotope', protons, neutrons);
                     return;
                 }
 
@@ -66,6 +66,19 @@ class Isotope {
         }
     }
 
+    hasValidNucleide() {
+        return Isotope.hasValidNucleide(this.protons, this.neutrons);
+    }
+
+    isStable() {
+        const list = [
+            {p: 4, n: 2, t: 10e-21},
+            {p: 3, n: 2, t: 10e-24},
+            {p: 4, n: 4, t: 10e-18}
+            ];
+        return list.find((entry) => entry.p === this.protons && entry.n === this.neutrons) === undefined;
+    }
+
     massDifferenceEnergy() {
         return this.massDeficit() * elements.meVPerU;
     }
@@ -77,7 +90,7 @@ class Isotope {
     nuclearBindingEnergy() {
         return this.massDifferenceEnergy();
     }
-    
+
     static Hydrogen() {
         return new Isotope(1, 0);
     }
@@ -89,7 +102,7 @@ class Isotope {
     static Tritium() {
         return new Isotope(1, 2);
     }
-    
+
     static BetaRadiation() {
         return new Isotope(2, 2);
     }
@@ -109,6 +122,16 @@ class Isotope {
         const outMass = output.reduce((acc, cur) => acc + cur.massNumber, 0);
 
         return (inputP === outputP) && ((inputMass === outMass));
+    }
+
+    static hasValidNucleide(protons, neutrons) {
+        if (protons === 1 && neutrons === 0) return true;//Hydrogen
+        if (protons === 1 && neutrons === 1) return true;//Deuterium
+        if (protons === 1 && neutrons === 2) return true;//Tritium
+        if (protons === 0 && neutrons === 1) return true;//Neutron
+        if (protons <= 0) return false;
+        if (neutrons <= 0) return false;
+        return true;
     }
 
     static fuseIsotopes(isotope_a, isotope_b, energy_a = 0, energy_b = 0) {
@@ -140,49 +163,63 @@ class Isotope {
         let initialNeutrons = isotope_a.neutrons + isotope_b.neutrons;
 
         let decayProducts = [];
-
-        // beta-plus-decay
-        const transmutationEnergy = 1.29;
-        while (initialProtons > 1 && initialEnergy >= transmutationEnergy) {
-            initialProtons -= 1;
-            initialNeutrons += 1;
-            initialEnergy -= transmutationEnergy;
-            decayProducts.push(new Positron());
-        }
+        let debugdecayList = [];
+        let noDecayCounter = 0;
 
         //fusion
         let intermediateFusionProduct = new Isotope(initialProtons, initialNeutrons);
         let fusionEnergy = intermediateFusionProduct.massDifferenceEnergy() + initialEnergy;
 
         //Decay
+        const potentialDecays = [new Neutron(), Isotope.Hydrogen(), Isotope.AlphaRadiation(), new Isotope(2, 0)];
         let chosenDecay;
-
+        let decays;
+        let energyLostByConversions = 0;
         for (let i = 0; (i < 10) && Isotope.isBalanced([isotope_a, isotope_b], decayProducts) === false; i++) {
-            const potentialDecays = [new Neutron(), Isotope.Hydrogen(), Isotope.AlphaRadiation()];
-            let decays = potentialDecays.map((eject) => {
+            decays = potentialDecays.map((eject) => {
                 const protonDiff = intermediateFusionProduct.protons - eject.protons;
                 const neutronDiff = intermediateFusionProduct.neutrons - eject.neutrons;
 
-                if (protonDiff === 0 && neutronDiff !== 1) {
-                    return undefined;
+                if (Isotope.hasValidNucleide(protonDiff, neutronDiff) === false) {
+                    return undefined
                 }
-                if (protonDiff < -1 || neutronDiff < 0) {
-                    return undefined;
-                }
-                if (protonDiff > 1 && neutronDiff <= 0) {
-                    return undefined;
-                }
-
 
                 let product = new Isotope(protonDiff, neutronDiff);
-                let E = (intermediateFusionProduct.atomicMass - product.atomicMass - eject.atomicMass) * elements.meVPerU;
+                let E = (intermediateFusionProduct.atomicMass - product.atomicMass - eject.atomicMass) * elements.meVPerU; //energy is negative IE you gain energy by doing this
 
                 return {
-                    energy: E,
+                    energy: -E,
                     eject: eject,
-                    product: product
+                    product: product,
+                    name: eject.name
                 };
             });
+
+            //beta-plus-decay
+            let newProtons = intermediateFusionProduct.protons - 1;
+            let newNeutrons = intermediateFusionProduct.neutrons + 1;
+            if (newProtons > 0 && newNeutrons >= 0) {
+                let transmutation = new Isotope(newProtons, newNeutrons);
+                const positron = new Positron();
+                decays.push({
+                    energy: -((intermediateFusionProduct.atomicMass - transmutation.atomicMass - positron.atomicMass) * elements.meVPerU),
+                    eject: positron,
+                    product: transmutation
+                });
+            }
+
+            //beta-minus-decay
+            newProtons = intermediateFusionProduct.protons + 1;
+            newNeutrons = intermediateFusionProduct.neutrons - 1;
+            if (newProtons > 0 && newNeutrons >= 0) {
+                let transmutation = new Isotope(newProtons, newNeutrons);
+                const electron = new Electron();
+                decays.push({
+                    energy: -((intermediateFusionProduct.atomicMass - transmutation.atomicMass - electron.atomicMass) * elements.meVPerU),
+                    eject: electron,
+                    product: transmutation
+                });
+            }
 
             //remove invalid entries
             decays = decays.filter((a) => {
@@ -194,32 +231,62 @@ class Isotope {
             });
 
             //add the "no Decay" aka the isotope stays as is
-            decays.push({
-                energy: 0,
-                eject: undefined,
-                product: intermediateFusionProduct
-            });
+            if (intermediateFusionProduct.hasValidNucleide()
+                && intermediateFusionProduct.isStable()) {
+                decays.push({
+                    energy: 0,
+                    eject: undefined,
+                    product: intermediateFusionProduct
+                });
+            }
+
 
             //remove invalid entries
             decays = decays.sort((a, b) => {
                 return (a.energy - b.energy) - fusionEnergy;
-            });
+            });//.filter((a) => {return a.energy >= 0;});
+
+            debugdecayList.push({d: decays});
 
             chosenDecay = decays[0];
+            energyLostByConversions += chosenDecay.energy;
 
             if (chosenDecay.eject === undefined) {
-                decayProducts.push(chosenDecay.product);
-                break;
+                if (noDecayCounter === 1) {
+                    decayProducts.push(chosenDecay.product);
+                    break;
+                }
+                noDecayCounter++;
             } else {
                 decayProducts.push(chosenDecay.eject);
+                intermediateFusionProduct = chosenDecay.product;
+
+                fusionEnergy = fusionEnergy * ((chosenDecay.eject.atomicMass + chosenDecay.product.atomicMass) / chosenDecay.product.atomicMass);
             }
         }
 
+        if (
+            (Isotope.isBalanced([isotope_a, isotope_b], decayProducts) === false)
+            || (decayProducts.find((iso) => iso.name === 'Unknown') !== undefined)
+        ) {
+            return {
+                type: 'error',
+                input: [isotope_a, isotope_b],
+                chosenDecay: chosenDecay,
+                decays: decays,
+                decayProducts: decayProducts,
+                test: Isotope.isBalanced([isotope_a, isotope_b], decayProducts),
+                resultIsotopes: [],
+                debugdecayList: debugdecayList,
+            };
+        }
+
         return {
-            type: 'debug',
+            debugdecayList: debugdecayList,
             resultIsotopes: decayProducts,
-            energy: fusionEnergy + chosenDecay.energy,
-            deltaEnergy: (fusionEnergy + chosenDecay.energy) - (energy_a + energy_b),
+            energy: fusionEnergy - chosenDecay.energy - ((fusionEnergy + chosenDecay.energy) - (energy_a + energy_b)),
+            deltaEnergy: fusionEnergy - (energy_a + energy_b) - energyLostByConversions,
+            energyLostByConversions: energyLostByConversions,
             test: Isotope.isBalanced([isotope_a, isotope_b], decayProducts)
         };
     }
@@ -245,6 +312,10 @@ class Neutron extends Isotope {
     constructor() {
         super(0, 1);
     }
+
+    hasValidNucleide() {
+        return true;
+    }
 }
 
 class Electron extends Isotope {
@@ -254,9 +325,13 @@ class Electron extends Isotope {
         this.name = 'Electron';
         this.symbol = 'e';
         this.protons = -1;
-        this.neutrons = 0;
-        this.atomicMass = 0;
+        this.neutrons = 1;
+        this.atomicMass = 0.51099895;
         this.massNumber = 0;
+    }
+
+    hasValidNucleide() {
+        return true;
     }
 }
 
@@ -267,8 +342,12 @@ class Positron extends Isotope {
         this.name = 'Positron';
         this.symbol = 'e+';
         this.protons = 1;
-        this.neutrons = 0;
-        this.atomicMass = 0;
+        this.neutrons = -1;
+        this.atomicMass = 0.5109989461;
         this.massNumber = 0;
+    }
+
+    hasValidNucleide() {
+        return true;
     }
 }

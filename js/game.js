@@ -83,6 +83,12 @@ game.init = () => {
 
     g.options.init = true;
     g.upgrades.hide();
+
+
+
+
+    debug.protonChain(1,1);
+    
 };
 game.initStash = () => {
     const stashWell = document.getElementById('stash-well');
