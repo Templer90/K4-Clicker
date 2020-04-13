@@ -22,7 +22,7 @@ elements.list = [
         "name": "Neutron",
         "atomic_mass": 1.00866491595,
         "number": 0,
-        "#m": 0,
+        "#m": 1,
         "symbol": "n",
         "xpos": 0,
         "ypos": 0,
