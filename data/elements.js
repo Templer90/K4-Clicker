@@ -1,6 +1,8 @@
 //https://github.com/Bowserinator/#mic-Table-JSON/blob/master/#micTableJSON.json
 //https://physics.nist.gov/cgi-bin/Compositions/stand_alone.pl?ele=&all=all&ascii=ascii2&isotype=all
 const elements = e = {};
+elements.ProtonMass = 1.007825;
+elements.NeutronMass = 1.00866491595;
 elements.avogadro = 6.02214076e+23;
 elements.amu = 1.66054e-27; // Atomic Mass Unit per kg
 elements.meVPerU = 931.494; // MeV/c^2
@@ -30,6 +32,17 @@ elements.list = [
             {"#m": 0, "relAM": 1.00866491595}
         ]
     },
+    //{
+    //    "name": "Dihydrogen",
+    //    "atomic_mass":   2.02410177812,
+    //    "#m": 2,
+    //    "symbol": "Di",
+    //    "xpos": 1,
+    //    "ypos": 1,
+    //    "isotopes": [
+    //        {"#m": 2, "relAM":  2.02410177812}
+    //    ]
+    //},
     //REAL Elements VVVVVVVVV 
     {
         "name": "Hydrogen",
@@ -43,7 +56,7 @@ elements.list = [
         ]
     }, {
         "name": "Deuterium",
-        "atomic_mass": 2.014,
+        "atomic_mass": 2.01410177812,
         "#m": 1,
         "symbol": "D",
         "xpos": 1,

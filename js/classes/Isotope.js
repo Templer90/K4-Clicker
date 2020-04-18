@@ -15,6 +15,7 @@ class Isotope {
             let element;
             if (neutrons === 0) {
                 element = elements.find("Hydrogen");
+                //element["atomic_mass"] = elements.ProtonMass;
             } else if (neutrons === 1) {
                 element = elements.find("Deuterium");
             } else if (neutrons === 2) {
@@ -74,7 +75,8 @@ class Isotope {
     isStableForFusion() {
         const list = [
             {p: 5, n: 1, t: 0},
-            
+            {p: 2, n: 0, t: 0},
+
             {p: 1, n: 6, t: 23e-24},
             {p: 1, n: 4, t: 80e-24},
             {p: 1, n: 3, t: 139e-24},
@@ -120,11 +122,15 @@ class Isotope {
     }
 
     massDeficit() {
-        return (this.protons * 1.007276466583 + this.neutrons * 1.00866491595) - this.atomicMass;
+        return (this.protons * elements.ProtonMass + this.neutrons * elements.NeutronMass) - this.atomicMass;
+    }
+
+    theoreticalMass() {
+        return this.protons * elements.ProtonMass + this.neutrons * elements.NeutronMass;
     }
 
     nuclearEnergy() {
-        return (this.protons * 1.007276466583 + this.neutrons * 1.00866491595) * elements.meVPerU - this.massDifferenceEnergy();
+        return (this.protons * elements.ProtonMass + this.neutrons * elements.NeutronMass) * elements.meVPerU - this.massDifferenceEnergy();
     }
 
     nuclearBindingEnergy() {
@@ -174,7 +180,15 @@ class Isotope {
         return true;
     }
 
-    static fuseIsotopes(isotope_a, isotope_b, energy_a = 0, energy_b = 0) {
+    /**
+     * 
+     * @param isotope_a Isotope
+     * @param isotope_b Isotope
+     * @param energy_a
+     * @param energy_b
+     * @returns {{Q: number, Q2: number, resultIsotopes: [], debugdecayList: [], energy: number}|{resultIsotopes: [Isotope, Isotope], type: string, energy: number}|{input: [Isotope, Isotope], resultIsotopes: [], debugdecayList: [], test: *, decayProducts: [], chosenDecay: *, decays: *, type: string}}
+     */
+    static fuseIsotopes(isotope_a , isotope_b, energy_a = 0, energy_b = 0) {
         // http://hyperphysics.phy-astr.gsu.edu/hbase/NucEne/coubar.html
         let coulomb_barrier = (iso1, iso2 = undefined) => {
             const mul = 1.43997218e-15; //1.43997218e-9;  e²/(4*pi*permeability of vacuum); because I want MeV i divide by a million 
@@ -239,10 +253,17 @@ class Isotope {
             let newNeutrons = intermediateFusionProduct.neutrons + 1;
             if (newProtons > 0 && newNeutrons >= 0) {
                 let transmutation = new Isotope(newProtons, newNeutrons);
-                if (intermediateFusionProduct.atomicMass - transmutation.atomicMass) {
-                    const positron = new Positron();
+                const positron = new Positron();
+                let internalEnergy = -((intermediateFusionProduct.atomicMass - transmutation.atomicMass - positron.atomicMass) * elements.meVPerU);
+                if (
+                    (
+                        (intermediateFusionProduct.atomicMass - transmutation.atomicMass >= (2 * positron.atomicMass)) ||
+                        (intermediateFusionProduct.protons === 2 && intermediateFusionProduct.neutrons === 0)
+                    )
+                    && (internalEnergy >= 0)
+                ) {
                     decays.push({
-                        energy: -((intermediateFusionProduct.atomicMass - transmutation.atomicMass) * elements.meVPerU),
+                        energy: internalEnergy,
                         eject: positron,
                         product: transmutation
                     });
@@ -255,7 +276,11 @@ class Isotope {
             if (newProtons > 0 && newNeutrons >= 0) {
                 let transmutation = new Isotope(newProtons, newNeutrons);
                 const electron = new Electron();
-                if (intermediateFusionProduct.atomicMass + (2 * electron.atomicMass) > transmutation.atomicMass) {
+                let internalEnergy = -((intermediateFusionProduct.atomicMass - transmutation.atomicMass - electron.atomicMass) * elements.meVPerU);
+                if (
+                    (intermediateFusionProduct.atomicMass >= transmutation.atomicMass) &&
+                    (internalEnergy <= 0)
+                ) {
                     decays.push({
                         energy: -((intermediateFusionProduct.atomicMass - transmutation.atomicMass - electron.atomicMass) * elements.meVPerU),
                         eject: electron,
@@ -271,11 +296,11 @@ class Isotope {
                 return a.eject.name !== 'Unknown'
             }).filter((a) => {
                 return a.product.name !== 'Unknown'
-            });
+            });//.filter((a) => a.energy >=0);
 
             //add the "no Decay" aka the isotope stays as is
-            if (intermediateFusionProduct.hasValidNucleide()
-                && intermediateFusionProduct.isStableForFusion()) {
+            if (intermediateFusionProduct.hasValidNucleide() &&
+                intermediateFusionProduct.isStableForFusion()) {
                 decays.push({
                     energy: fusionEnergy,
                     eject: undefined,
@@ -288,13 +313,21 @@ class Isotope {
                 //return (a.energy - b.energy);
                 const bindingA = a.product.nuclearBindingEnergy() + ((a.eject !== undefined) ? a.eject.nuclearBindingEnergy() : 0);
                 const bindingB = b.product.nuclearBindingEnergy() + ((b.eject !== undefined) ? b.eject.nuclearBindingEnergy() : 0);
-                return (bindingB - bindingA) - (intermediateFusionProduct.nuclearBindingEnergy() + fusionEnergy);
+                return (bindingA - bindingB) - (intermediateFusionProduct.nuclearBindingEnergy() + fusionEnergy);
             });
 
             debugdecayList.push(decays, intermediateFusionProduct);
 
-            chosenDecay = decays[0];
-            energyLostByConversions -= chosenDecay.energy;
+            if (decays.length === 0) {
+                chosenDecay = {
+                    energy: 0,
+                    eject: undefined,
+                    product: intermediateFusionProduct
+                };
+            } else {
+                chosenDecay = decays[0];
+                energyLostByConversions -= chosenDecay.energy;
+            }
 
             if (chosenDecay.eject === undefined) {
                 decayProducts.push(chosenDecay.product);
@@ -328,14 +361,31 @@ class Isotope {
             };
         }
 
+        //0.511MeV per participants = 1.022MeV
+        //Mass of produced neutrino: (elements.NeutronMass-(elements.ProtonMass+(new Positron()).atomicMass))*elements.meVPerU = 0.2713777741148183
+        const numberPositrons = decayProducts.reduce((acc, cur) => acc + (cur.name === 'Positron' ? 1 : 0), 0);
+        const annihilationEnergy = numberPositrons * (1.022);
+
+        debugdecayList.push({before:1,decayProducts:decayProducts});
+        decayProducts = decayProducts.filter((a) => {
+            return a.name !== 'Positron'
+        });
+
+        //const numberElectrons = decayProducts.reduce((acc, cur) => acc + (cur.name === 'Electron' ? 1 : 0), 0);
+        //const ElectronEnergy = numberPositrons * (1.022);
+        //decayProducts = decayProducts.filter((a) => {
+        //    return a.name !== 'Positron'
+        //});
+
+        const Q_Value = annihilationEnergy + (((isotope_a.atomicMass + isotope_b.atomicMass) - decayProducts.reduce((acc, cur) => acc + cur.atomicMass, 0)) * elements.meVPerU);
+        const Q_Value2 = annihilationEnergy + ((isotope_a.atomicMass + isotope_b.atomicMass)* elements.meVPerU - decayProducts.reduce((acc, cur) => acc + cur.atomicMass, 0) * elements.meVPerU);
+
         return {
             debugdecayList: debugdecayList,
             resultIsotopes: decayProducts,
-            energy: fusionEnergy - chosenDecay.energy - ((fusionEnergy + chosenDecay.energy) - (energy_a + energy_b)),
-            deltaEnergy: fusionEnergy - (energy_a + energy_b) - energyLostByConversions,
-            energyLostByConversions: energyLostByConversions,
-            test: Isotope.isBalanced([isotope_a, isotope_b], decayProducts),
-            yield: ((isotope_a.nuclearEnergy() + isotope_b.nuclearEnergy()) - decayProducts.reduce((acc, cur) => acc + cur.nuclearEnergy(), 0)) * elements.meVPerU
+            energy: (fusionEnergy+Q_Value) - chosenDecay.energy - ((fusionEnergy + chosenDecay.energy) - (energy_a + energy_b)),
+            Q: Q_Value,
+            Q2:Q_Value2
         };
     }
 }
@@ -356,9 +406,9 @@ class Electron extends Isotope {
 
         this.name = 'Electron';
         this.symbol = 'e';
-        this.protons = -1;
-        this.neutrons = 1;
-        this.atomicMass = 0.51099895;
+        this.protons = 0;
+        this.neutrons = -1;
+        this.atomicMass = 5.48579909065e-4;//0.51099895;
         this.massNumber = 0;
     }
 
@@ -374,8 +424,8 @@ class Positron extends Isotope {
         this.name = 'Positron';
         this.symbol = 'e+';
         this.protons = 1;
-        this.neutrons = -1;
-        this.atomicMass = 0.5109989461;
+        this.neutrons = 0;
+        this.atomicMass = 5.48579909065e-4;//0.51099895;
         this.massNumber = 0;
     }
 
