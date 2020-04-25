@@ -16,7 +16,7 @@ game.t.list = [
         header: "Get",
         desc: "Get 10 Hydrogen",
         test: () => {
-            return game.resources.owned.Hydrogen > 10;
+            return game.resources.owned.Hydrogen >= 10;
         }
     },
     {
