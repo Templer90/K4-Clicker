@@ -40,18 +40,63 @@ class Isotope {
         {protons: 4, neutrons: 12, halfLife: 200e-9},
         {protons: 84, neutrons: 128, halfLife: 299e-9},
     ];
-    
-    constructor(protons, neutrons = 0, energy = 0) {
+
+    constructor(a, b) {
+        this.protons = -1;
+        this.neutrons = -1;
+        this.atomicMass = -1;
+        this.massNumber = -1;
+        this.name = 'Unknown';
+        this.symbol = '-i';
+
+        if (typeof a === 'object') {
+            this.ElementObjectConstructor(a, b);
+        } else {
+            this.ProtonNeutronConstructor(a, b);
+        }
+    }
+
+    InvalidConstructor() {
+        this.name = 'Invalid';
+        this.symbol = '-i';
+        this.protons = 0;
+        this.neutrons = 0;
+        this.atomicMass = 0;
+        this.massNumber = 0;
+    }
+
+    ElementObjectConstructor(obj, isotopeNumber = undefined) {
+        this.atomicMass = obj['atomic_mass'];
+        this.massNumber = obj['#m'];
+        this.name = obj['name'];
+        this.symbol = obj['symbol'];
+
+        if (isotopeNumber === undefined) {
+            this.protons = this.massNumber;
+            this.neutrons = Math.floor(this.atomicMass) - this.massNumber;
+        } else {
+            const iso = obj.isotopes.find((e) => e['#m'] == isotopeNumber)
+            if (iso === undefined) {
+                this.InvalidConstructor();
+                console.error('invalid Isotope');
+            } else {
+                this.atomicMass = iso["relAM"];
+                this.massNumber = iso["#m"];
+
+                this.protons = obj['#m'];
+                this.neutrons = this.massNumber - this.protons;
+            }
+        }
+    }
+
+
+    ProtonNeutronConstructor(protons, neutrons = 0, energy = 0) {
         if (protons === 0 && neutrons === 0) {
             //Energy? Radiation? debug?
         }
 
         this.protons = protons;
         this.neutrons = neutrons;
-        this.atomicMass = -1;
-        this.massNumber = -1;
-        this.name = 'Unknown';
-        this.symbol = '-i';
 
         if (protons === 1) {
             let element;
@@ -85,7 +130,7 @@ class Isotope {
                 return;
             }
 
-            if (neutrons === undefined) {
+            if (neutrons === 0) {
                 this.atomicMass = element["atomic_mass"];
                 this.massNumber = element["#m"];
                 this.neutrons = Math.floor(this.atomicMass) - this.massNumber;
@@ -130,7 +175,7 @@ class Isotope {
     }
 
     nuclearEnergy() {
-        return  this.theoreticalMass() * elements.meVPerU - this.massDifferenceEnergy();
+        return this.theoreticalMass() * elements.meVPerU - this.massDifferenceEnergy();
     }
 
     nuclearBindingEnergy() {
@@ -185,7 +230,7 @@ class Isotope {
      * @param energy_b Number
      * @returns {{Q: number, Q2: number, resultIsotopes: [], debugdecayList: [], energy: number}|{resultIsotopes: [*, *], type: string, energy: number}|{input: [*, *], resultIsotopes: [], debugdecayList: [], test: *, decayProducts: [], chosenDecay: *, decays: *, type: string}}
      */
-    static fuseIsotopes(isotope_a , isotope_b, energy_a = 0, energy_b = 0) {
+    static fuseIsotopes(isotope_a, isotope_b, energy_a = 0, energy_b = 0) {
         // http://hyperphysics.phy-astr.gsu.edu/hbase/NucEne/coubar.html
         const coulomb_barrier = (iso1, iso2 = undefined) => {
             const mul = 1.43997218e-15; //1.43997218e-9;  e²/(4*pi*permeability of vacuum); because I want MeV, I divide by a million 
@@ -226,7 +271,7 @@ class Isotope {
         let decays;
         let energyLostByConversions = 0;
         for (let i = 0; (i < 10) && Isotope.isBalanced([isotope_a, isotope_b], decayProducts) === false; i++) {
-            
+
             //Add the potential decays of Beta radiation, Alpha radiation, and ejecting a proton
             decays = potentialDecays.map((eject) => {
                 const protonDiff = intermediateFusionProduct.protons - eject.protons;
@@ -286,8 +331,7 @@ class Isotope {
                     });
                 }
             }
-            
-            
+
 
             //remove invalid entries
             decays = decays.filter((a) => {
@@ -329,7 +373,7 @@ class Isotope {
                 chosenDecay = decays[0];
                 energyLostByConversions += chosenDecay.energy;
             }
-            
+
 
             //If we chose to not decay then we are done
             if (chosenDecay.eject === undefined) {
@@ -398,12 +442,7 @@ class Isotope {
 class Invalid extends Isotope {
     constructor() {
         super(0, 0);
-        this.name = 'Invalid';
-        this.symbol = '-i';
-        this.protons = 0;
-        this.neutrons = 0;
-        this.atomicMass = 0;
-        this.massNumber = 0;
+        this.InvalidConstructor()
     }
 
     hasValidNuclide() {
