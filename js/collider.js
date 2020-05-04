@@ -173,6 +173,10 @@ g.collider.emitters = {
 
             g.collider.currentCollider = statistic;
         }
+
+        this.pseudo.forEach((pseudo) => {
+            pseudo.calcTrajectoryBoundary(g.collider.borders);
+        });
     },
     addEmitter(x, y, element, energy = 1) {
         if (this.emitter.length >= g.collider.options.maxEmitter) return;
@@ -209,7 +213,7 @@ g.collider.emitters = {
     },
     load(x, y, indicatorX, indicatorY, element) {
         let holder = new Holder(indicatorX, indicatorY);
-        let emitter = new Emitter(x, y, this.emitter.length, holder, elements.find(element));
+        let emitter = new Emitter(x, y, this.emitter.length, holder, elements.findIsotope(element));
 
         emitter.addDirIndicator(holder);
         holder.addEmitter(emitter);
@@ -246,17 +250,26 @@ game.collider.unMarkDirty = (text = 'Save') => {
 game.collider.sliderInit = () => {
     const EmitterEnergySlider = document.getElementById('EmitterEnergySlider');
     EmitterEnergySlider.label = document.getElementById('EmitterEnergySliderLabel');
+
     EmitterEnergySlider.getNormalizedEnergy = function () {
         return EmitterEnergySlider.value / EmitterEnergySlider.max;
     };
+    
     EmitterEnergySlider.setNormalizedEnergy = function (value) {
-        EmitterEnergySlider.label.innerHTML = value + ' MeV';
-        EmitterEnergySlider.value = value * EmitterEnergySlider.max;
+        const fixedValue = value.toFixed(1);
+        const mev = (EmitterEnergySlider.max * fixedValue) + ' MeV ';
+        const percent = '(' + (fixedValue * 100) + '%)';
+
+        EmitterEnergySlider.label.innerHTML = mev + ' ' + percent;
+        console.log(value);
+        EmitterEnergySlider.value = value *EmitterEnergySlider.max;
     };
+    
     EmitterEnergySlider.disable = function () {
         EmitterEnergySlider.setAttribute('disabled', 'disabled');
         EmitterEnergySlider.classList.add('disabled');
     };
+    
     EmitterEnergySlider.enable = function () {
         EmitterEnergySlider.removeAttribute('disabled');
         EmitterEnergySlider.classList.remove('disabled');
@@ -354,9 +367,10 @@ game.collider.init = () => {
                     dragging.start("move", overCircle);
                     overCircle = null;
                 } else {
-                    let element = document.getElementById('emitterSelect').value;
+                    let elementName = document.getElementById('emitterSelect').value;
                     let energy = document.getElementById('EmitterEnergySlider').getNormalizedEnergy();
-                    let newEmitter = g.collider.emitters.addEmitter(mouse.x, mouse.y, elements.find(element), energy);
+
+                    let newEmitter = g.collider.emitters.addEmitter(mouse.x, mouse.y, elements.findIsotope(elementName), energy);
                     if (newEmitter !== undefined) {
                         dragging.start("create", newEmitter);
                     } else {
@@ -409,7 +423,7 @@ game.collider.init = () => {
 };
 game.collider.changeEmitterType = (selector) => {
     if (game.collider.selectedEmitter !== undefined) {
-        game.collider.selectedEmitter.element = elements.find(selector.value);
+        game.collider.selectedEmitter.element = elements.findIsotope(selector.value);
         game.collider.changed = true
     }
 };
@@ -448,7 +462,7 @@ game.collider.compileStatistics = () => {
     };
 
     accumulate(statistic.inputEmitters, ([key, value]) => {
-        if (g.collider.options.autoElements.includes(elements.find(key).symbol)) {
+        if (g.collider.options.autoElements.includes(elements.findIsotope(key).symbol)) {
             inputText += "<br>(" + key + ": " + value + ")";
         } else {
             inputText += "<br>" + key + ": " + value;
@@ -495,8 +509,8 @@ game.collider.updateAllowedElements = () => {
 
     let map = new Map();
     g.collider.options.usableElements.sort((a, b) => {
-        if (!map.has(a)) map.set(a, elements.find(a).atomic_mass);
-        if (!map.has(b)) map.set(b, elements.find(b).atomic_mass);
+        if (!map.has(a)) map.set(a, elements.findIsotope(a).atomicMass);
+        if (!map.has(b)) map.set(b, elements.findIsotope(b).atomicMass);
         return map.get(a) - map.get(b);
     }).forEach((element, i) => {
         let option = document.createElement('option');

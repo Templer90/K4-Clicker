@@ -5,6 +5,18 @@ debug.help=()=>{
         console.log(key);
     });
 };
+debug.styleTests = () => {
+    const styles = ['short', 'name', 'long', 'aze-short', 'aze'];
+    const el = [Isotope.Hydrogen(), Isotope.Deuterium(), new Isotope(1, 2), new Isotope(2, 2), new Isotope(1, 3), elements.findIsotope('Uranium')];
+
+    el.forEach((ele) => {
+        console.log(ele.name);
+        styles.forEach((styles) => {
+            console.log(styles,elements.getHTML(ele, styles));
+        });
+        console.log('--------------------------------');
+    });
+};
 debug.protonChain = (a, b) => {
     const containsAll = (arr1, arr2) => arr2.every(arr2Item => arr1.includes(arr2Item));
     const sameMembers = (arr1, arr2) => containsAll(arr1, arr2) && containsAll(arr2, arr1);

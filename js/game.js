@@ -87,7 +87,7 @@ game.init = () => {
 
 
 
-    debug.protonChain(1,1);
+    //debug.protonChain(1,1);
     
 };
 game.initStash = () => {
@@ -415,8 +415,14 @@ game.displayHorde = (force = false) => {
                 numbers.zeroPad(rawNumber, 22) + " eV<br>"
                 + numbers.zeroPad(perClick, 22) + " perClick";
         } else {
+            let isotopeCount = '';
+            if (element.isotopes.length > 1) {
+                isotopeCount = element.isotopes.length + " Isotopes<br>"
+            }
+
             element.stashPanel.innerHTML =
-                numbers.beautify(avogadro, 20) + " mol<br>"
+                isotopeCount
+                + numbers.beautify(avogadro, 20) + " mol<br>"
                 + numbers.massString(kilo, game.options.weight) + "<br>"
                 + numbers.zeroPad(rawNumber, 22) + " Atoms<br>"
                 + numbers.zeroPad(total, 22) + " Total Atoms created<br>"

@@ -49,7 +49,7 @@ class Isotope {
         this.name = 'Unknown';
         this.symbol = '-i';
 
-        if (typeof a === 'object') {
+        if (elements.isElementArray(a)) {
             this.ElementObjectConstructor(a, b);
         } else {
             this.ProtonNeutronConstructor(a, b);
@@ -120,6 +120,11 @@ class Isotope {
             this.symbol = element.symbol;
             this.atomicMass = element["atomic_mass"];
             this.massNumber = element["#m"];
+        } else if (protons === 2 && neutrons === 0) {
+            this.name = 'DiHydrogen';
+            this.symbol = 'di';
+            this.atomicMass = 2;
+            this.massNumber = 2;
         } else {
             const element = elements.list.find((e) => {
                 return e["#m"] === protons;
@@ -416,9 +421,7 @@ class Isotope {
         const annihilationEnergy = numberPositrons * (1.022);
 
         debuggedList.push({before: 1, decayProducts: decayProducts});
-        decayProducts = decayProducts.filter((cur) => {
-            return !(cur instanceof Positron);
-        });
+        //decayProducts = decayProducts.filter((cur) => {return !(cur instanceof Positron);});
 
         //const numberElectrons = decayProducts.reduce((acc, cur) => acc + (cur.name === 'Electron' ? 1 : 0), 0);
         //const ElectronEnergy = numberPositrons * (1.022);
@@ -426,10 +429,16 @@ class Isotope {
         //    return a.name !== 'Positron'
         //});
 
+        //Sorting
+        decayProducts = decayProducts.sort((a, b) => {
+            return (b.atomicMass - a.atomicMass)
+        });
+
         const Q_Value = annihilationEnergy + (((isotope_a.atomicMass + isotope_b.atomicMass) - decayProducts.reduce((acc, cur) => acc + cur.atomicMass, 0)) * elements.meVPerU);
         const Q_Value2 = annihilationEnergy + decayProducts.reduce((acc, cur) => acc + cur.nuclearBindingEnergy(), 0) - isotope_a.nuclearBindingEnergy() - isotope_b.nuclearBindingEnergy();
 
         return {
+            type: 'fusion',
             debuggedList: debuggedList,
             resultIsotopes: decayProducts,
             energy: (fusionEnergy + Q_Value) - chosenDecay.energy - ((fusionEnergy + chosenDecay.energy) - (energy_a + energy_b)),

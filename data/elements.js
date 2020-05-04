@@ -89,41 +89,65 @@ elements.getHTML = (elementInput, style = undefined) => {
     } else {
         style = style.toLowerCase();
     }
-    const element = elements.map.get(elementInput);
-    if (element === undefined) {
-        if (elementInput === 'Energy') {
-            switch (style) {
-                case 'short':
-                    return 'eV';
-                case 'name':
-                case 'long':
-                    return 'Energy';
-                case 'aze-short':
-                case 'aze':
-                    const main = document.createElement('span');
-                    main.classList.add('aze-main');
-                    const spanAZ = document.createElement('span');
-                    spanAZ.classList.add('aze-span');
-                    main.append(spanAZ);
 
-                    const mass = document.createElement('sup');
-                    mass.innerHTML = '&nbsp;';
-                    mass.classList.add('aze');
+    let element = {
+        name: 'Unknown',
+        symbol: '-i',
+        mass: -1,
+        number: -1
+    };
 
-                    const number = document.createElement('sub');
-                    number.innerHTML = '&nbsp;';
-                    number.classList.add('aze');
+    if (elementInput instanceof Isotope) {
+        element = {
+            name: elementInput.name,
+            symbol: elementInput.symbol,
+            mass: elementInput.protons + elementInput.neutrons,
+            number: elementInput.protons
+        };
+    } else {
+        let found = elements.map.get(elementInput);
+        if (found === undefined) {
+            if (elementInput === 'Energy') {
+                switch (style) {
+                    case 'short':
+                        return 'eV';
+                    case 'name':
+                    case 'long':
+                        return 'Energy';
+                    case 'aze-short':
+                    case 'aze':
+                        const main = document.createElement('span');
+                        main.classList.add('aze-main');
+                        const spanAZ = document.createElement('span');
+                        spanAZ.classList.add('aze-span');
+                        main.append(spanAZ);
 
-                    spanAZ.append(mass);
-                    spanAZ.append(document.createElement('br'));
-                    spanAZ.append(number);
+                        const mass = document.createElement('sup');
+                        mass.innerHTML = '&nbsp;';
+                        mass.classList.add('aze');
 
-                    main.append('eV');
-                    return main;
+                        const number = document.createElement('sub');
+                        number.innerHTML = '&nbsp;';
+                        number.classList.add('aze');
+
+                        spanAZ.append(mass);
+                        spanAZ.append(document.createElement('br'));
+                        spanAZ.append(number);
+
+                        main.append('eV');
+                        return main;
+                }
+            } else {
+                return '';
             }
-        } else {
-            return '';
         }
+
+        element = {
+            name: found.name,
+            symbol: found.symbol,
+            mass: Math.floor(found.atomic_mass),
+            number: found['#m']
+        };
     }
 
     switch (style) {
@@ -135,7 +159,12 @@ elements.getHTML = (elementInput, style = undefined) => {
             if (element.symbol === 'eV') {
                 return element.name;
             } else {
-                return element.name + elements.longNameSeperator + Math.floor(element.atomic_mass);
+                //A budge because I treat Deuterium and Tritium as separate Elements from Hydrogen
+                if (element.symbol === 'D' || element.symbol === 'T') {
+                    element.name = 'Hydrogen';
+                }
+
+                return element.name + elements.longNameSeperator + element.mass;
             }
         case 'aze-short':
         case 'aze':
@@ -149,7 +178,7 @@ elements.getHTML = (elementInput, style = undefined) => {
             if (element.symbol === 'eV') {
                 mass.innerHTML = '&nbsp;';
             } else {
-                mass.innerHTML = Math.floor(element.atomic_mass);
+                mass.innerHTML = element.mass;
             }
             mass.classList.add('aze');
 
@@ -183,13 +212,25 @@ elements.find = (a) => {
 
     return undefined;
 };
+elements.isElementArray = (obj) => {
+    if (obj === undefined) return false;
+    if (typeof obj !== 'object') return false;
+
+    const listOfAttributes = ["name", "atomic_mass", "#m", "symbol", "xpos", "ypos", "isotopes"];
+    let found = true;
+    listOfAttributes.forEach((attr) => {
+        if (obj[attr] === undefined) found = false;
+    });
+
+    return found;
+};
 
 elements.findIsotope = (a) => {
     if (a === undefined) return new Invalid();
     if (a instanceof Isotope) {
         return new Isotope(a.protons, a.neutrons);
     }
-    
+
     let atomicIndex = '';
 
     let name = '';
@@ -206,11 +247,11 @@ elements.findIsotope = (a) => {
     if (atomicIndex === '') {
         return new Isotope(element);
     }
-    
+
     const iso = element.isotopes.find((e) => e['#m'] == atomicIndex)
     if (iso === undefined) {
         return new Invalid();
-    }else{
+    } else {
         return new Isotope(element, iso['#m']);
     }
 };

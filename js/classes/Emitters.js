@@ -42,8 +42,8 @@ class Emitter extends Drawable {
     calcTrajectoryBoundary(list) {
         this.angle = Math.atan2(this.dirIndicator.x - this.x, this.dirIndicator.y - this.y);
 
-        this.xEnd = this.x + Math.sin(this.angle) * this.maxLength * this.energy;
-        this.yEnd = this.y + Math.cos(this.angle) * this.maxLength * this.energy;
+        this.xEnd = this.x + Math.sin(this.angle) * this.maxLength;//* this.energy;
+        this.yEnd = this.y + Math.cos(this.angle) * this.maxLength;//* this.energy;
 
         let max = this.length;
         for (let i = 0; i < list.length; i++) {
@@ -54,7 +54,7 @@ class Emitter extends Drawable {
             if (e !== undefined) {
                 let len = g.collider.length(this.xEnd, this.yEnd, e.x, e.y);
                 if (len <= max) {
-                    this.endPos(e.x,e.y);
+                    this.endPos(e.x, e.y);
                     max = len;
                 }
             }
@@ -123,6 +123,69 @@ class Emitter extends Drawable {
     }
 }
 
+class SingleEmitter extends Emitter {
+    constructor(x, y, emitter, element) {
+        super(x, y);
+        delete this.whileDrag;
+        this.emitter = emitter;
+        this.element = element;
+        this.efficiency = 1;
+
+        let angle1 = Math.atan2(this.emitter.emitterA.x - this.x, this.emitter.emitterA.y - this.y);
+        let angle2 = Math.atan2(this.emitter.emitterB.x - this.x, this.emitter.emitterB.y - this.y);
+
+        noise.seed(emitter.angle);
+        this.angle = noise.simplex2(x / 10 + element.atomicMass, y / 10 + element.massNumber) * Math.PI * 2;
+
+        this.radius = 2;
+        this.maxLength = 400;
+        this.length = this.maxLength;
+
+        this.xEnd = this.x + Math.sin(this.angle) * this.length;
+        this.yEnd = this.y + Math.cos(this.angle) * this.length;
+
+        if (this.element instanceof Positron) {
+            this.color = "rgb(218,181,133)";
+        } else if (this.element instanceof Electron) {
+            this.color = "rgba(128,128,255,1)";
+        } else {
+            this.color = "rgb(75,20,79)";
+        }
+    }
+
+    draw(ctx) {
+        ctx.moveTo(this.x, this.y);
+        ctx.strokeStyle = null;
+        ctx.strokeStyle = this.color;
+        ctx.lineTo(this.xEnd, this.yEnd);
+        ctx.stroke();  
+
+        ctx.fillStyle = "rgba(0,0,0)";
+        ctx.textAlign = "center";
+        ctx.fillText(this.element.symbol, (this.xEnd - this.x) / 2 + this.x, (this.yEnd - this.y) / 2 + this.y);
+        ctx.textAlign = "start";
+    }
+
+    calcTrajectoryBoundary(list) {
+        this.xEnd = this.x + Math.sin(this.angle) * this.maxLength;//* this.energy;
+        this.yEnd = this.y + Math.cos(this.angle) * this.maxLength;//* this.energy;
+
+        let max = this.length;
+        for (let i = 0; i < list.length; i++) {
+            let intersect = g.collider.intersect(this.x, this.y, this.xEnd, this.yEnd,
+                list[i].x1, list[i].y1, list[i].x2, list[i].y2
+            );
+
+            if (intersect !== undefined) {
+                const len = g.collider.length(this.xEnd, this.yEnd, intersect.x, intersect.y);
+                if (len <= max) {
+                    this.endPos(intersect.x, intersect.y);
+                    max = len;
+                }
+            }
+        }
+    }
+}
 
 class NeutronEmitter extends Emitter {
     constructor(x, y, emitter) {
@@ -134,10 +197,10 @@ class NeutronEmitter extends Emitter {
 
         let angle1 = Math.atan2(this.emitter.emitterA.x - this.x, this.emitter.emitterA.y - this.y);
         let angle2 = Math.atan2(this.emitter.emitterB.x - this.x, this.emitter.emitterB.y - this.y);
-        
+
         noise.seed(emitter.angle);
         this.angle = noise.simplex2(x / 10, y / 10) * Math.PI * 2;
-        
+
         this.radius = 2;
         this.maxLength = 400;
         this.length = this.maxLength;
@@ -157,11 +220,11 @@ class NeutronEmitter extends Emitter {
         ctx.fillStyle = "rgba(0,0,0)";
         ctx.fillText(this.element.symbol, this.x, this.y);
     }
-    
 }
+
 class PseudoEmitter extends Emitter {
     /**
-     * 
+     *
      * @param x
      * @param y
      * @param emitterA Emitter
@@ -199,19 +262,39 @@ class PseudoEmitter extends Emitter {
             this.efficiency = eff;
         }
 
-
+        this.emitters = [this];
+        
         if (emitterA.element === undefined || emitterB.element === undefined) {
             this.element = undefined;
-            this.emitters = [this];
         } else {
-            this.element = elements.combine(emitterA.element, emitterB.element);
-            this.emitters = [this];
+            const result = Isotope.fuseIsotopes(emitterA.element, emitterB.element, emitterA.energy, emitterB.energy);
 
-            if (((emitterA.element.symbol === "D") && (emitterB.element.symbol === "T")) || ((emitterA.element.symbol === "T") && (emitterB.element.symbol === "D"))) {
-                this.element = elements.find("He");
-                const em = new NeutronEmitter(x, y, this);
-                this.emitters.push(em);
+            if (result.type === 'reflection') {
+                this.element = emitterA.element;
+                this.angle = angle2 + Math.PI;
+
+                const other = new SingleEmitter(x, y, this, emitterB.element);
+                other.angle = angle1 + Math.PI;
+                this.emitters.push(other);
+            } else if (result.type === 'fusion') {
+                result.resultIsotopes.forEach((isotope, i) => {
+                    if (i === 0) {
+                        this.element = isotope;
+                    }else{
+                        this.emitters.push(new SingleEmitter(x, y, this, isotope));
+                    }
+                });
+            } else {
+                this.element = emitterA.element;
+                this.emitters = [this];
             }
+
+            //this.element = elements.combine(emitterA.element, emitterB.element);
+            //if (((emitterA.element.symbol === "D") && (emitterB.element.symbol === "T")) || ((emitterA.element.symbol === "T") && (emitterB.element.symbol === "D"))) {
+            //    this.element = elements.find("He");
+            //    const em = new NeutronEmitter(x, y, this);
+            //    this.emitters.push(em);
+            //}
         }
 
         this.xEnd = this.x + Math.sin(this.angle) * this.length;
@@ -224,8 +307,8 @@ class PseudoEmitter extends Emitter {
     }
 
     draw(ctx) {
-        const abs = g.collider.length(this.emitterA.x, this.emitterA.y, this.emitterB.x, this.emitterB.y)-20;
-        if (abs < (this.emitterA.length + this.emitterB.length)/1.5) {
+        const abs = g.collider.length(this.emitterA.x, this.emitterA.y, this.emitterB.x, this.emitterB.y) - 20;
+        if (abs < (this.emitterA.length + this.emitterB.length) / 1.5) {
             ctx.beginPath();
             ctx.strokeStyle = "rgba(255,242,15,0.5)";
             ctx.lineWidth = 30 - abs;
@@ -234,11 +317,11 @@ class PseudoEmitter extends Emitter {
             ctx.stroke();
             ctx.lineWidth = 1;
         }
-        
+
         ctx.beginPath();
 
 
-        if ( this.element !== undefined) {
+        if (this.element !== undefined) {
             ctx.fillStyle = "rgba(141,255,40,0.1)";
         } else {
             ctx.fillStyle = "rgba(255,20,57,0.22)";
@@ -265,11 +348,15 @@ class PseudoEmitter extends Emitter {
 
         ctx.fillStyle = "rgb(0,0,0)";
         if (this.element !== undefined) {
-            ctx.fillText(this.element.symbol, this.x, this.y);
+            ctx.textAlign = "center";
+            ctx.fillText(this.element.symbol, (this.xEnd - this.x) / 2 + this.x, (this.yEnd - this.y) / 2 + this.y);
+            ctx.textAlign = "start";
         } else {
             ctx.fillText("-i", this.x, this.y);
         }
     }
+
+    calcTrajectoryBoundary(list) {}
 }
 
 class Holder extends Drawable {
@@ -277,7 +364,7 @@ class Holder extends Drawable {
         super(x, y);
         this.radius = 8;
     }
-    
+
     draw(ctx) {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
@@ -297,7 +384,7 @@ class Holder extends Drawable {
     whileDrag(ctx) {
         this.selectDraw(ctx);
     }
-    
+
 
     addEmitter(emitter) {
         this.emitter = emitter;
