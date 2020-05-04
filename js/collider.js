@@ -261,7 +261,6 @@ game.collider.sliderInit = () => {
         const percent = '(' + (fixedValue * 100) + '%)';
 
         EmitterEnergySlider.label.innerHTML = mev + ' ' + percent;
-        console.log(value);
         EmitterEnergySlider.value = value *EmitterEnergySlider.max;
     };
     
