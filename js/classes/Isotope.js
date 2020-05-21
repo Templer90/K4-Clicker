@@ -48,6 +48,7 @@ class Isotope {
         this.massNumber = -1;
         this.name = 'Unknown';
         this.symbol = '-i';
+        this.energy = 0;
 
         if (elements.isElementArray(a)) {
             this.ElementObjectConstructor(a, b);
@@ -250,6 +251,9 @@ class Isotope {
             return mul * (iso1.protons * mass2) / (r1 + r2); // in MeV
         };
 
+        energy_a = Number(energy_a);
+        energy_b = Number(energy_b);
+
         const barrierEnergy = coulomb_barrier(isotope_a, isotope_b);
         if ((energy_a + energy_b) < barrierEnergy) {
             return {
@@ -370,7 +374,7 @@ class Isotope {
             //If we can not chose a decay-path, we stay
             if (decays.length === 0) {
                 chosenDecay = {
-                    energy: 0,
+                    energy: intermediateFusionProduct.energy,
                     eject: undefined,
                     product: intermediateFusionProduct
                 };
@@ -382,19 +386,26 @@ class Isotope {
 
             //If we chose to not decay then we are done
             if (chosenDecay.eject === undefined) {
-                decayProducts.push(chosenDecay.product);
+                const decay = chosenDecay.product;
+                decay.energy = fusionEnergy;
+                decayProducts.push(decay);
                 break;
             } else {
                 const {atomicMass: ejectAtomicMass} = chosenDecay.eject;
+                let smaller;
                 if (ejectAtomicMass > chosenDecay.product.atomicMass) {
-                    decayProducts.push(chosenDecay.product);
+                    smaller = chosenDecay.product;
+
                     intermediateFusionProduct = chosenDecay.eject;
                     fusionEnergy = fusionEnergy * ((ejectAtomicMass + chosenDecay.product.atomicMass) / chosenDecay.product.atomicMass);
                 } else {
-                    decayProducts.push(chosenDecay.eject);
+                    smaller = chosenDecay.eject;
+
                     intermediateFusionProduct = chosenDecay.product;
                     fusionEnergy = fusionEnergy * ((ejectAtomicMass + chosenDecay.product.atomicMass) / ejectAtomicMass);
                 }
+                smaller.energy = fusionEnergy - chosenDecay.energy;
+                decayProducts.push(smaller);
             }
         }
 
@@ -418,30 +429,28 @@ class Isotope {
         //0.511MeV per participants = 1.022MeV
         //Mass of produced neutrino: (elements.NeutronMass-(elements.ProtonMass+(new Positron()).atomicMass))*elements.meVPerU = 0.2713777741148183
         const numberPositrons = decayProducts.reduce((acc, cur) => acc + ((cur instanceof Positron) ? 1 : 0), 0);
-        const annihilationEnergy = numberPositrons * (1.022);
-
-        debuggedList.push({before: 1, decayProducts: decayProducts});
-        //decayProducts = decayProducts.filter((cur) => {return !(cur instanceof Positron);});
-
-        //const numberElectrons = decayProducts.reduce((acc, cur) => acc + (cur.name === 'Electron' ? 1 : 0), 0);
-        //const ElectronEnergy = numberPositrons * (1.022);
-        //decayProducts = decayProducts.filter((a) => {
-        //    return a.name !== 'Positron'
-        //});
+        const annihilationEnergy = numberPositrons * Positron.AnnihilationEnergy;
+        
+        const Q_Value = annihilationEnergy + (((isotope_a.atomicMass + isotope_b.atomicMass) - decayProducts.reduce((acc, cur) => acc + cur.atomicMass, 0)) * elements.meVPerU);
+        const Q_Value2 = Q_Value + (numberPositrons * Positron.AnnihilationEnergy) - (numberPositrons * Positron.AtomicMass * elements.meVPerU);
+        const energy = ((fusionEnergy + Q_Value) - chosenDecay.energy - ((fusionEnergy + chosenDecay.energy) - (energy_a + energy_b))) / 1000000; // in MeV
 
         //Sorting
         decayProducts = decayProducts.sort((a, b) => {
             return (b.atomicMass - a.atomicMass)
         });
+        debuggedList.push({before: 1, decayProducts: decayProducts});
+        
+        //convert internal Energy to MeV
+        decayProducts.forEach((e) => e.energy /= 100000);
 
-        const Q_Value = annihilationEnergy + (((isotope_a.atomicMass + isotope_b.atomicMass) - decayProducts.reduce((acc, cur) => acc + cur.atomicMass, 0)) * elements.meVPerU);
-        const Q_Value2 = annihilationEnergy + decayProducts.reduce((acc, cur) => acc + cur.nuclearBindingEnergy(), 0) - isotope_a.nuclearBindingEnergy() - isotope_b.nuclearBindingEnergy();
+        if (isNaN(energy)) debugger;
 
         return {
             type: 'fusion',
             debuggedList: debuggedList,
             resultIsotopes: decayProducts,
-            energy: (fusionEnergy + Q_Value) - chosenDecay.energy - ((fusionEnergy + chosenDecay.energy) - (energy_a + energy_b)),
+            energy: energy,
             Q: Q_Value,
             Q2: Q_Value2
         };
@@ -477,9 +486,15 @@ class Electron extends Isotope {
         this.symbol = 'e';
         this.protons = 0;
         this.neutrons = -1;
-        this.atomicMass = 5.48579909065e-4;//0.51099895;
+        this.atomicMass = Electron.AtomicMass;
         this.massNumber = 0;
     }
+
+    //0.511MeV per participants = 1.022MeV
+    //Mass of produced neutrino: (elements.NeutronMass-(elements.ProtonMass+(new Positron()).atomicMass))*elements.meVPerU = 0.2713777741148183
+    static AnnihilationEnergy = 1.022;//MeV
+
+    static AtomicMass = 5.48579909065e-4;//0.51099895;
 
     hasValidNuclide() {
         return true;
@@ -494,9 +509,15 @@ class Positron extends Isotope {
         this.symbol = 'e+';
         this.protons = 1;
         this.neutrons = 0;
-        this.atomicMass = 5.48579909065e-4;//0.51099895;
+        this.atomicMass = Positron.AtomicMass;
         this.massNumber = 0;
     }
+
+    //0.511MeV per participants = 1.022MeV
+    //Mass of produced neutrino: (elements.NeutronMass-(elements.ProtonMass+(new Positron()).atomicMass))*elements.meVPerU = 0.2713777741148183
+    static AnnihilationEnergy = 1.022;//MeV
+
+    static AtomicMass = 5.48579909065e-4;//0.51099895;
 
     hasValidNuclide() {
         return true;

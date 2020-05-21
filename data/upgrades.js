@@ -131,6 +131,14 @@ g.u.list = [
         visible: true
     }),
 
+    new Upgrade('Black Hole', 'Detonate a Sun.', 'Sun,BlackHole', {
+        'Hydrogen': 1
+    }, () => {
+        console.log("Boom?");
+    }, {
+        visible: true
+    }),
+
 
     new Upgrade('Add Tritium to Collider', 'Add Tritium', 'Collider,Tritium', {'Deuterium': 1000}, () => {
             g.collider.options.usableElements.push('T');

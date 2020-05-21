@@ -19,7 +19,7 @@ class Emitter extends Drawable {
         this.radius = 10;
         //this.id = id;
         this.maxLength = 100;
-        this.energy = energy;
+        this.energy = Number(energy);
         this.length = 0;
         this.xEnd = -10;
         this.yEnd = -10;
@@ -124,19 +124,25 @@ class Emitter extends Drawable {
 }
 
 class SingleEmitter extends Emitter {
-    constructor(x, y, emitter, element) {
+    constructor(x, y, emitter, element, energy, angle = undefined) {
         super(x, y);
         delete this.whileDrag;
         this.emitter = emitter;
+        this.energy = Number(energy);
         this.element = element;
+        this.element.energy = this.energy;
         this.efficiency = 1;
 
         let angle1 = Math.atan2(this.emitter.emitterA.x - this.x, this.emitter.emitterA.y - this.y);
         let angle2 = Math.atan2(this.emitter.emitterB.x - this.x, this.emitter.emitterB.y - this.y);
 
         noise.seed(emitter.angle);
-        this.angle = noise.simplex2(x / 10 + element.atomicMass, y / 10 + element.massNumber) * Math.PI * 2;
-
+        if (angle === undefined) {
+            this.angle = noise.simplex2(x / 10 + element.atomicMass, y / 10 + element.massNumber) * Math.PI * 2;
+        } else {
+            this.angle = angle;
+        }
+      
         this.radius = 2;
         this.maxLength = 400;
         this.length = this.maxLength;
@@ -158,7 +164,7 @@ class SingleEmitter extends Emitter {
         ctx.strokeStyle = null;
         ctx.strokeStyle = this.color;
         ctx.lineTo(this.xEnd, this.yEnd);
-        ctx.stroke();  
+        ctx.stroke();
 
         ctx.fillStyle = "rgba(0,0,0)";
         ctx.textAlign = "center";
@@ -167,8 +173,6 @@ class SingleEmitter extends Emitter {
     }
 
     calcTrajectoryBoundary(list) {
-        this.xEnd = this.x + Math.sin(this.angle) * this.maxLength;//* this.energy;
-        this.yEnd = this.y + Math.cos(this.angle) * this.maxLength;//* this.energy;
 
         let max = this.length;
         for (let i = 0; i < list.length; i++) {
@@ -239,12 +243,16 @@ class PseudoEmitter extends Emitter {
         this.emitterB = emitterB;
 
         //this is not working correctly
-        let angle1 = Math.atan2(this.emitterA.x - this.x, this.emitterA.y - this.y);
-        let angle2 = Math.atan2(this.emitterB.x - this.x, this.emitterB.y - this.y);
+        let angle1 = Math.atan2(this.emitterA.y - this.y, this.emitterA.x - this.x);
+        let angle2 = Math.atan2(this.emitterB.y - this.y, this.emitterB.x - this.x);
         let angle3 = Math.atan2(this.emitterA.y - this.emitterB.y, this.emitterA.x - this.emitterB.x);
 
         if (angle1 > Math.PI) angle1 = -(Math.PI - angle1);
         if (angle2 > Math.PI) angle2 = -(Math.PI - angle2);
+
+        if (angle1 < 0) angle1 = -angle1 - Math.PI;
+        if (angle2 < 0) angle2 = -angle2 - Math.PI;
+        
         this.angle = Math.PI + angle1 + (angle2 - angle1) / 2;// diffAngle + ((diffAngle > Math.PI) ? +Math.PI : -Math.PI);
 
         this.radius = 6;
@@ -263,29 +271,37 @@ class PseudoEmitter extends Emitter {
         }
 
         this.emitters = [this];
-        
+
         if (emitterA.element === undefined || emitterB.element === undefined) {
             this.element = undefined;
+            this.energy = Number(0);
         } else {
             const result = Isotope.fuseIsotopes(emitterA.element, emitterB.element, emitterA.energy, emitterB.energy);
 
             if (result.type === 'reflection') {
                 this.element = emitterA.element;
-                this.angle = angle2 + Math.PI;
+                this.energy = Number(emitterA.energy);
+                this.angle = angle2 +Math.PI;
 
-                const other = new SingleEmitter(x, y, this, emitterB.element);
-                other.angle = angle1 + Math.PI;
+                const other = new SingleEmitter(x, y, this, emitterB.element,  emitterB.energy,angle1-Math.PI);
                 this.emitters.push(other);
             } else if (result.type === 'fusion') {
                 result.resultIsotopes.forEach((isotope, i) => {
                     if (i === 0) {
                         this.element = isotope;
-                    }else{
-                        this.emitters.push(new SingleEmitter(x, y, this, isotope));
+                        this.energy = Number(isotope.energy);
+                    } else {
+                        const other = new SingleEmitter(x, y, this, isotope, isotope.energy);
+                        this.emitters.push(other);
                     }
-                });
+                })
+            } else if (result.type === 'error') {
+                this.element = null;
+                this.energy = Number(0);
+                this.emitters = [];
             } else {
                 this.element = emitterA.element;
+                this.energy = Number(emitterA.energy);
                 this.emitters = [this];
             }
 
@@ -356,7 +372,8 @@ class PseudoEmitter extends Emitter {
         }
     }
 
-    calcTrajectoryBoundary(list) {}
+    calcTrajectoryBoundary(list) {
+    }
 }
 
 class Holder extends Drawable {

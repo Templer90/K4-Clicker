@@ -14,7 +14,7 @@ g.options.weight = "kg";
 g.options.length = "m";
 g.options.temperature = "C";
 g.options.elemental = "name";
-g.options.version = "0.002 Alpha";
+g.options.version = "0.1 Alpha";
 
 g.resources = {};
 g.resources.special = ["Energy", "Collider", "Water", "Cells", "Meat", "Sun", "Atmosphere Generator"];

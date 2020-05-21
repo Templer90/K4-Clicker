@@ -12,7 +12,7 @@ game.resources.specialInit = () => {
             const perClick = this.amount * multi;
 
             if (statistic.unstable) return false;
-            if (owned.Energy <= statistic.inputEnergy * multi) return false;
+            if (owned.Energy < statistic.inputEnergy * multi) return false;
             let found = statistic.inputElements.find((obj) => {
                 return owned[obj.element] <= obj.value * perClick;
             });
@@ -30,6 +30,7 @@ game.resources.specialInit = () => {
             statistic.outputElements.forEach((obj) => {
                 owned[obj.element] += obj.value * perClick;
             });
+            owned.Energy += statistic.outputEnergy * multi;
 
             return this.amount;
         }

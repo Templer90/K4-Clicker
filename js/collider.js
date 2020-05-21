@@ -52,7 +52,9 @@ g.collider.options = {
     maxEmitter: 5,
     usableElements: ['H', 'He'],
     autoElements: [], //TODO Is this really Implemented right?
-    collider: 1
+    collider: 1, // Number of colliders that can be defined
+    inputEfficiency: 0.1, //1 ist best = no energy lost on conversion
+    outputEfficiency: 0.05,//1 ist best = no energy lost on conversion
 };
 g.collider.emitters = {
     drawable: [],
@@ -211,9 +213,9 @@ g.collider.emitters = {
         this.drawable = [];
         this.emitter = [];
     },
-    load(x, y, indicatorX, indicatorY, element) {
+    load(x, y, indicatorX, indicatorY, element, energy) {
         let holder = new Holder(indicatorX, indicatorY);
-        let emitter = new Emitter(x, y, this.emitter.length, holder, elements.findIsotope(element));
+        let emitter = new Emitter(x, y, this.emitter.length, holder, elements.findIsotope(element), energy);
 
         emitter.addDirIndicator(holder);
         holder.addEmitter(emitter);
@@ -247,34 +249,55 @@ game.collider.unMarkDirty = (text = 'Save') => {
     game.collider.saveButton.classList.replace('btn-outline-secondary', 'btn-outline-primary');
     game.collider.saveButton.textContent = text;
 };
+
+// These do not reliably work
 game.collider.sliderInit = () => {
-    const EmitterEnergySlider = document.getElementById('EmitterEnergySlider');
-    EmitterEnergySlider.label = document.getElementById('EmitterEnergySliderLabel');
-
-    EmitterEnergySlider.getNormalizedEnergy = function () {
-        return EmitterEnergySlider.value / EmitterEnergySlider.max;
-    };
-    
-    EmitterEnergySlider.setNormalizedEnergy = function (value) {
-        const fixedValue = value.toFixed(1);
-        const mev = (EmitterEnergySlider.max * fixedValue) + ' MeV ';
-        const percent = '(' + (fixedValue * 100) + '%)';
-
-        EmitterEnergySlider.label.innerHTML = mev + ' ' + percent;
-        EmitterEnergySlider.value = value *EmitterEnergySlider.max;
-    };
-    
-    EmitterEnergySlider.disable = function () {
-        EmitterEnergySlider.setAttribute('disabled', 'disabled');
-        EmitterEnergySlider.classList.add('disabled');
-    };
-    
-    EmitterEnergySlider.enable = function () {
-        EmitterEnergySlider.removeAttribute('disabled');
-        EmitterEnergySlider.classList.remove('disabled');
+    const sliderPrefab = {
+        htmlElement: document.getElementById('EmitterEnergySlider'),
+        label: document.getElementById('EmitterEnergySliderLabel')
     };
 
-    EmitterEnergySlider.setNormalizedEnergy(1);
+    sliderPrefab.getEnergy = function () {
+        return sliderPrefab.htmlElement.value;
+    };
+
+    sliderPrefab.setEnergy = function (value) {
+        sliderPrefab.htmlElement.value = Number(value);
+        sliderPrefab.calcLabelString();
+    };
+
+    sliderPrefab.calcLabelString = function () {
+        const value = parseFloat(sliderPrefab.htmlElement.value);
+        const normalized = value / sliderPrefab.htmlElement.max;
+        const mev = (sliderPrefab.htmlElement.max * normalized).toFixed(1).padStart(4, '0');
+        const percent = (normalized * 100).toFixed(1).padStart(5, '0');
+
+        sliderPrefab.label.innerHTML = mev + ' MeV<br>' + percent + '%';
+    };
+
+    sliderPrefab.getNormalizedEnergy = function () {
+        sliderPrefab.calcLabelString();
+        return sliderPrefab.htmlElement.value / sliderPrefab.htmlElement.max;
+    };
+
+    sliderPrefab.setNormalizedEnergy = function (value) {
+        sliderPrefab.htmlElement.value = value * sliderPrefab.htmlElement.max;
+        sliderPrefab.calcLabelString();
+    };
+
+    sliderPrefab.disable = function () {
+        sliderPrefab.htmlElement.setAttribute('disabled', 'disabled');
+        sliderPrefab.htmlElement.classList.add('disabled');
+    };
+
+    sliderPrefab.enable = function () {
+        sliderPrefab.htmlElement.removeAttribute('disabled');
+        sliderPrefab.htmlElement.classList.remove('disabled');
+    };
+
+    sliderPrefab.setNormalizedEnergy(0.0);
+    
+    game.collider.EmitterEnergySlider = sliderPrefab;
 };
 game.collider.init = () => {
     game.collider.sliderInit();
@@ -367,8 +390,7 @@ game.collider.init = () => {
                     overCircle = null;
                 } else {
                     let elementName = document.getElementById('emitterSelect').value;
-                    let energy = document.getElementById('EmitterEnergySlider').getNormalizedEnergy();
-
+                    let energy = game.collider.EmitterEnergySlider.getEnergy();
                     let newEmitter = g.collider.emitters.addEmitter(mouse.x, mouse.y, elements.findIsotope(elementName), energy);
                     if (newEmitter !== undefined) {
                         dragging.start("create", newEmitter);
@@ -428,7 +450,7 @@ game.collider.changeEmitterType = (selector) => {
 };
 game.collider.changeEmitterEnergy = (selector) => {
     if (game.collider.selectedEmitter !== undefined) {
-        game.collider.selectedEmitter.energy = selector.getNormalizedEnergy();
+        game.collider.selectedEmitter.energy =  game.collider.EmitterEnergySlider.getEnergy();
         game.collider.changed = true
     }
 };
@@ -460,6 +482,7 @@ game.collider.compileStatistics = () => {
         Object.entries(acc).forEach(callback);
     };
 
+    //accumulate inputs
     accumulate(statistic.inputEmitters, ([key, value]) => {
         if (g.collider.options.autoElements.includes(elements.findIsotope(key).symbol)) {
             inputText += "<br>(" + key + ": " + value + ")";
@@ -468,32 +491,55 @@ game.collider.compileStatistics = () => {
             statistic.inputElements.push({element: key, value: value});
         }
     });
-
-    let energy = 0;
+    let inputEnergy = 0;
     statistic.inputEmitters.forEach((obj) => {
-        let percent = obj.length / obj.maxLength;
-        energy += percent * 10;
-    });
-    statistic.pseudo.forEach((obj) => {
-        energy /= obj.efficiency;
-    });
-    statistic.inputEnergy = energy;
-    inputText += "<br>Energy " + numbers.fix(energy < 1 ? 1 : energy, 0);
+        //let percent = obj.length / obj.maxLength;
+        //energy += percent * 10;
 
+        inputEnergy += obj.energy * 1000;
+    });
+    //statistic.pseudo.forEach((obj) => {
+    //    inputEnergy /= obj.efficiency;
+    //});
+    statistic.inputEnergy = inputEnergy * (1.0 / g.collider.options.inputEfficiency);
+    inputText += "<br>Energy " + numbers.fix(statistic.inputEnergy < 1 ? 1 : statistic.inputEnergy, 0);
+
+    //accumulate outputs
     accumulate(statistic.outputEmitters, ([key, value]) => {
         outputText += "<br>\t" + key + " :" + value;
         statistic.outputElements.push({element: key, value: value});
     });
+    let outputEnergy = 0;
+    statistic.outputEmitters.forEach((obj) => {
+        outputEnergy += obj.element.energy * 1000;
 
+        if (obj instanceof Positron) {
+            outputEnergy += 1.022 * 1000;
+        }
+    });
+    statistic.outputEnergy = outputEnergy * g.collider.options.outputEfficiency;
+    outputText += "<br>Energy " + numbers.fix(statistic.outputEnergy < 1 ? 1 : statistic.outputEnergy, 0);
+
+
+    //Remove Not not savable Elements
+    const isValid = (e) => {
+        const f = elements.findIsotope(e.element);
+        return (f !== undefined) && !(f instanceof Invalid);
+    };
+    statistic.outputElements = statistic.outputElements.filter(isValid);
+    statistic.inputElements = statistic.inputElements.filter(isValid);
+
+    // TODO Implement efficiency display
+    
     g.c.selectedEmitter = g.c.emitters.emitter.find((obj) => (obj.selected));
     if (g.c.selectedEmitter !== undefined) {
         document.getElementById('emitterId').innerText = g.c.selectedEmitter.id;
         document.getElementById('emitterLength').innerText = (g.c.selectedEmitter.length / g.c.selectedEmitter.maxLength);
         document.getElementById('emitterSelect').value = g.c.selectedEmitter.element.symbol;
-        document.getElementById('EmitterEnergySlider').enable();
-        document.getElementById('EmitterEnergySlider').setNormalizedEnergy(g.c.selectedEmitter.energy);
+        game.collider.EmitterEnergySlider.enable();
+        game.collider.EmitterEnergySlider.setEnergy(g.c.selectedEmitter.energy);
     } else {
-        document.getElementById('EmitterEnergySlider').disable();
+        game.collider.EmitterEnergySlider.disable();
     }
 
     document.getElementById('colliderInput').innerHTML = inputText;
@@ -529,7 +575,8 @@ game.collider.save = () => {
                 x: emitter.x,
                 y: emitter.y,
                 dirIndicator: {x: emitter.dirIndicator.x, y: emitter.dirIndicator.y},
-                element: emitter.element.symbol
+                element: emitter.element.symbol,
+                energy:emitter.energy
             });
         });
     });
@@ -544,7 +591,7 @@ game.collider.load = (saveObj) => {
         g.collider.currentCollider = g.collider.newStatistic();
         g.collider.currentColliderID = i;
         collider.forEach((emitter) => {
-            g.collider.emitters.load(emitter.x, emitter.y, emitter.dirIndicator.x, emitter.dirIndicator.y, emitter.element);
+            g.collider.emitters.load(emitter.x, emitter.y, emitter.dirIndicator.x, emitter.dirIndicator.y, emitter.element, emitter.energy);
             g.collider.emitters.calcTrajectory();
             g.collider.compileStatistics();
             g.collider.statistic[i] = g.collider.currentCollider;
@@ -555,7 +602,7 @@ game.collider.load = (saveObj) => {
     g.collider.emitters.reset();
     g.collider.currentCollider = g.collider.statistic[g.collider.currentColliderID];
     g.collider.currentCollider.inputEmitters.forEach((obj) => {
-        g.collider.emitters.load(obj.x, obj.y, obj.dirIndicator.x, obj.dirIndicator.y, obj.element);
+        g.collider.emitters.load(obj.x, obj.y, obj.dirIndicator.x, obj.dirIndicator.y, obj.element, obj.energy);
     });
 
     g.collider.options = saveObj.options;
@@ -569,7 +616,7 @@ game.collider.changeCollider = (selector) => {
     g.collider.emitters.reset();
     g.collider.currentCollider = g.collider.statistic[g.collider.currentColliderID];
     g.collider.currentCollider.inputEmitters.forEach((obj) => {
-        g.collider.emitters.load(obj.x, obj.y, obj.dirIndicator.x, obj.dirIndicator.y, obj.element);
+        g.collider.emitters.load(obj.x, obj.y, obj.dirIndicator.x, obj.dirIndicator.y, obj.element, obj.energy);
     });
     game.collider.changed = true;
 };
