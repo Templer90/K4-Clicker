@@ -23,7 +23,7 @@ debug.protonChain = (a, b) => {
     
     const testCases = [
        // {q: 1.442, string: "Proton + Proton => Deuterium + 1,442 MeV", a: {i: Isotope.Hydrogen(), e: 1.442}, b: {i: Isotope.Hydrogen(), e: 1.442}, result:[ "Deuterium"]},
-        {q: 0.931, string: "Proton + Proton => Deuterium + 0.931 MeV", a: {i: Isotope.Hydrogen(), e: 1.442}, b: {i: Isotope.Hydrogen(), e: 0}, result:[ "Deuterium"]},
+        {q: 0.931, string: "Proton + Proton => Deuterium + 0.931 MeV", a: {i: Isotope.Hydrogen(), e: 1.442}, b: {i: Isotope.Hydrogen(), e: 0}, result:[ "Deuterium", "Positron"]},
         {q: 4.98, string: "Deuterium + Proton => Helium-3 + 4.98 MeV", a: {i: Isotope.Deuterium(), e: 5.50}, b: {i: Isotope.Hydrogen(), e: 0}, result:["Helium"]},
         {q: 12.87, string: "Helium-3 + Helium-3 => Helium + 2Protons + 12.86MeV", a: {i: new Isotope(2, 1), e: 10}, b: {i: new Isotope(2, 1), e: 0},result:["Hydrogen", "Helium", "Hydrogen"]},
         {q: 3.27, string: "Deuterium + Deuterium => Helium-3 + Neutron + 3.27MeV", a: {i:  Isotope.Deuterium(), e: 3.3}, b: {i:  Isotope.Deuterium(), e: 0}},
@@ -47,6 +47,7 @@ debug.protonChain = (a, b) => {
                 console.log(output, output.resultIsotopes.map((a) => a.name));
             }
         }
+        console.log('----------------------------------');
     });
 };
 debug.builds = () => {

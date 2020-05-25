@@ -53,8 +53,8 @@ g.collider.options = {
     usableElements: ['H', 'He'],
     autoElements: [], //TODO Is this really Implemented right?
     collider: 1, // Number of colliders that can be defined
-    inputEfficiency: 0.1, //1 ist best = no energy lost on conversion
-    outputEfficiency: 0.05,//1 ist best = no energy lost on conversion
+    inputEfficiency: 1, //1 ist best = no energy lost on conversion
+    outputEfficiency: 1,//1 ist best = no energy lost on conversion
 };
 g.collider.emitters = {
     drawable: [],

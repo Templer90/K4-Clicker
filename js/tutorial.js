@@ -1,33 +1,18 @@
 game.tutorial = game.t = {};
 game.t.counter = 0;
 game.t.done = false;
-game.t.list = [
-    {
-        header: "Welcome to " + game.gameName,
-        desc: "Welcome to " + game.gameName + "<br>Do you wish to see the tutorial? <br><div class='row'>" +
-            '<a id="tut-start" type="button" class="col-md-8 btn btn-sm btn-success" onClick="game.t.startTutorial();"> Yes </a>' +
-            '<a id="tut-end" type="button" class="col-md-4 btn btn-sm btn-danger" onClick="game.t.endTutorial();"> No </a>' +
-            '</div>',
-        test: () => {
-            return false;
-        }
-    },
-    {
-        header: "Get",
-        desc: "Get 10 Hydrogen",
-        test: () => {
-            return game.resources.owned.Hydrogen >= 10;
-        }
-    },
-    {
-        header: "Done",
-        desc: "Have fun with " + game.gameName,
-        test: () => {
-            game.t.done = true;
-            return false;
-        }
-    }
-];
+game.t.tutorialMessages = [];
+game.t.messages = {};
+game.t.standartTemplates = {"[GAME_NAME]": game.gameName};
+
+templateFormatter = (input, replacementArray = undefined) => {
+    if (replacementArray === undefined) replacementArray = game.t.standartTemplates;
+    Object.keys(replacementArray).forEach((replacementKey) => {
+        input = input.replace(replacementKey, replacementArray[replacementKey]);
+    });
+    return input
+}
+
 game.tutorial.startTutorial = function () {
     document.getElementById("tut-start").remove();
     document.getElementById("tut-end").remove();
@@ -37,7 +22,10 @@ game.tutorial.startTutorial = function () {
 game.tutorial.endTutorial = function () {
     document.getElementById("tut-start").remove();
     document.getElementById("tut-end").remove();
-    game.t.counter = game.t.list.length;
+
+    game.tutorial.genMessageText("noTutorial");
+    
+    game.t.counter = game.t.tutorialMessages.length;
     game.t.done = true;
 };
 game.tutorial.next = function () {
@@ -45,12 +33,18 @@ game.tutorial.next = function () {
     game.tutorial.tutorial();
 };
 game.tutorial.tutorial = function () {
-    if ((game.t.counter === game.t.list.length) || (game.t.done === true)) {
+    if ((game.t.counter === game.t.tutorialMessages.length) || (game.t.done === true)) {
         return;
     }
-    const data = game.t.list[game.t.counter];
+    const data = game.t.tutorialMessages[game.t.counter];
     game.tutorial.genText(data.header, data.desc);
 };
+
+game.tutorial.genMessageText = (MessageKey) => {
+    const message=game.t.messages[MessageKey]
+    game.tutorial.genText(message.header, message.desc);
+};
+
 game.tutorial.genText = (title, text, func) => {
     let main = document.createElement('div');
     main.setAttribute('id', 'tutorial-' + title.replace(' ', '_'));
@@ -58,29 +52,30 @@ game.tutorial.genText = (title, text, func) => {
 
     let infoBox = document.createElement('p');
     infoBox.setAttribute('class', 'col-md-12 text-center');
-    infoBox.innerHTML = title;
+    infoBox.innerHTML = templateFormatter(title);
     main.append(infoBox);
 
     let paragraph = document.createElement('p');
     paragraph.setAttribute('class', 'col-md-12');
-    paragraph.innerHTML = text;
+    paragraph.innerHTML =  templateFormatter(text);
     main.append(paragraph);
 
     document.getElementById('log-well').appendChild(main);
+    main.scrollIntoView();
 };
 game.tutorial.check = () => {
-    if (game.t.list[game.t.counter].test()) {
+    if (game.t.tutorialMessages[game.t.counter].test()) {
         game.tutorial.next();
     }
 };
 game.tutorial.checkSave = function () {
-    if ( game.t.counter === game.t.list.length) {
+    if ( game.t.counter === game.t.tutorialMessages.length) {
         game.t.done = true;
         return;
     }
 
     for (let i = 1; i < game.t.counter; i++) {
-        const data = game.t.list[i];
+        const data = game.t.tutorialMessages[i];
         game.tutorial.genText(data.header, data.desc);
     }
     

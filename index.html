@@ -32,7 +32,7 @@
 <!-- game container -->
 <div class="container no-select">
     <div class="row">
-        <div class="col-md-4">
+        <div id="sidePanel" class="col-md-4">
             <div id="resources-well" class="well">
                 <p><u>Resources :</u></p>
                 <p id="resources-display" class="no-margin">Resources</p>
@@ -57,7 +57,9 @@
                    data-element="Helium">Create Helium (+1)</a>
             </p>
             <p>
-
+                <div id="infoPanel" class= "">
+                    
+                </div>
             </p>
             <!--<p>
                 <a id="btn-buy-multiplier" type="button" class="btn btn-success btn-block" onclick="game.changeBuy()">Buy x1</a>
@@ -136,6 +138,7 @@
 <script src="data/upgrades.js"></script>
 <script src="data/builds.js"></script>
 <script src="data/achievements.js"></script>
+<script src="data/tutorial.js"></script>
 
 <script src="js/debug.js"></script>
 </body>

@@ -29,7 +29,7 @@ g.cellCost = 5;
 g.buyMultiplier = 1;
 
 g.username = undefined;
-g.currentTab = 'stash';
+g.currentTab = 'log';
 g.holding = [];
 
 // CORE FUNCTIONS
@@ -62,7 +62,7 @@ game.init = () => {
     g.builds.update();
     g.buttons();
 
-    if ( game.t.counter !== game.t.list.length) {
+    if ( game.t.counter !== game.t.tutorialMessages.length) {
         game.tutorial.tutorial();
     }
 
@@ -315,13 +315,14 @@ game.changeBuy = () => {
 game.devMode = () => {
     const dev = localStorage.getItem(save.devKey);
     if ((g.options.devMode === true) || (dev !== null)) {
+        console.warn("Dev mode enabled!");
+        g.options.devMode = true;
+        
         if (dev !== null) {
             eval(dev);
         }
 
-        console.warn("Dev mode enabled!");
         g.t.done = true;
-        g.options.devMode = true;
     }
 };
 game.changeSaveInterval = () => {
