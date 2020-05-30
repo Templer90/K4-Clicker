@@ -75,6 +75,11 @@ class Isotope {
         if (isotopeNumber === undefined) {
             this.protons = this.massNumber;
             this.neutrons = Math.floor(this.atomicMass) - this.massNumber;
+
+            if (obj.isotopes.length === 1) {
+                this.atomicMass = obj.isotopes[0]["relAM"];
+                this.massNumber = obj.isotopes[0]["#m"];
+            }
         } else {
             const iso = obj.isotopes.find((e) => e['#m'] == isotopeNumber)
             if (iso === undefined) {
@@ -112,7 +117,7 @@ class Isotope {
             }
             this.name = element.name;
             this.symbol = element.symbol;
-            this.atomicMass = element["atomic_mass"];
+            this.atomicMass = element.isotopes[0]["relAM"];
             this.massNumber = element.isotopes[0]["#m"];
         } else if (protons === 0 && neutrons === 1) {
             let element = elements.find("Neutron");

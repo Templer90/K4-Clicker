@@ -48,8 +48,7 @@ g.b.list = [
             startCost: {'Hydrogen': 10},
             inflation: 1.15
         },
-        {perSec: 1, type: 'Collider.click'},
-        {visible: true}),
+        {perSec: 1, type: 'Collider.click'}),
     new ColliderBuilding('Autonomous Collider II', 'Run the Collider', {
             startCost: {'Hydrogen': 1.0e+6, 'Helium': 1.0e+6},
             inflation: 1.17

@@ -45,6 +45,26 @@ game.t.tutorialMessages = [
         }
     },
     {
+        header: "Collider Info",
+        desc: "Click and hold the Left Mousebutton to create an Emmiter.<br>Move the small circle (or the Emitter itself) to reorintate the trajectory of the emitted Atom.<br>Click on an Emitter to select it. You can change the energy of the emitted Atom.<br>Overlay the pathes to fuse the Atoms (if they have the energy).<br>",
+        test: () => {
+            return true;
+        }
+    },
+    {
+        header: "Tutorial Goal #5",
+        desc: "Create 2 Deuterium.",
+        test: () => {
+            if (game.resources.owned.Deuterium >= 2) {
+                game.collider.options.inputEfficiency = 1;
+                return true;
+            } else {
+                game.collider.options.inputEfficiency = 30;
+                return false;
+            }
+        }
+    },
+    {
         header: "Done",
         desc: "Have fun with [GAME_NAME]",
         test: () => {

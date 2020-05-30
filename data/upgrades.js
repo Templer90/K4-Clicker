@@ -60,6 +60,7 @@ g.u.list = [
     new Upgrade('Buildings can be used', '', 'Building', {'Hydrogen': 1024, 'Energy': 1024}, () => {
         game.builds.find('Hydrogen_build').visible = true;
         game.builds.find('Energy_build').visible = true;
+        game.builds.find('Autonomous_Collider_I').visible = true;
     }, {
         visible: {
             list: ['Hydrogen II', 'Energy II'],

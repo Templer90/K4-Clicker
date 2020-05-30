@@ -1,20 +1,21 @@
 const game = g = {};
 
 g.gameName = 'Element Clicker';
-g.options = {};
-g.options.devMode = false;
-g.options.fps = 60;
-g.options.hold = 100;
-g.options.saveIntervalTime = 10000;
-g.options.interval = (1000 / g.options.fps);
-g.options.init = false;
-g.options.before = new Date().getTime();
-g.options.now = new Date().getTime();
-g.options.weight = "kg";
-g.options.length = "m";
-g.options.temperature = "C";
-g.options.elemental = "name";
-g.options.version = "0.1 Alpha";
+g.options = {
+    devMode: false,
+    fps: 60,
+    interval: (1000 / 60),//1000/options.fps
+    hold: 100,
+    saveIntervalTime: 10000,
+    init: false,
+    before: new Date().getTime(),
+    now: new Date().getTime(),
+    weight: "kg",
+    length: "m",
+    temperature: "C",
+    elemental: "name",
+    version: "0.1 Alpha"
+};
 
 g.resources = {};
 g.resources.special = ["Energy", "Collider", "Water", "Cells", "Meat", "Sun", "Atmosphere Generator"];
@@ -317,7 +318,8 @@ game.devMode = () => {
     if ((g.options.devMode === true) || (dev !== null)) {
         console.warn("Dev mode enabled!");
         g.options.devMode = true;
-        
+        g.options.hold = 10;
+
         if (dev !== null) {
             eval(dev);
         }
