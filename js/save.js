@@ -20,6 +20,7 @@ save.removeData = function () {
 save.loadData = function () {
     if (localStorage.getItem(save.key) === null) {
         console.warn("No save found!");
+        return undefined;
     } else {
         let saveGame = JSON.parse(localStorage.getItem(save.key));
         let sg = saveGame.game;
@@ -33,6 +34,8 @@ save.loadData = function () {
         game.collider.load(saveGame.collider);
         game.builds.load(saveGame.builds);
         game.achievements.load(saveGame.achievements);
+        
+        return saveGame;
     }
 };
 

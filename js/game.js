@@ -45,9 +45,9 @@ game.init = () => {
     game.builds.init();
     game.initStash();
 
-    save.loadData();
+    const loadedSave = save.loadData();
     save.checkSave();
-    
+
     g.builds.checkSave();
     g.upgrades.checkSave();
     g.tutorial.checkSave();
@@ -55,15 +55,16 @@ game.init = () => {
 
     g.c.emitters.calcTrajectory();
     g.c.compileStatistics();
-    
-    g.upgrades.check();
 
-    
+    g.upgrades.check();
     g.collider.update();
     g.builds.update();
+
+    g.builds.calcAutonomousResources(loadedSave);
+    
     g.buttons();
 
-    if ( game.t.counter !== game.t.tutorialMessages.length) {
+    if (game.t.counter !== game.t.tutorialMessages.length) {
         game.tutorial.tutorial();
     }
 
@@ -84,12 +85,8 @@ game.init = () => {
 
     g.options.init = true;
     g.upgrades.hide();
-
-
-
-
-    //debug.protonChain(1,1);
     
+    //debug.protonChain(1,1);
 };
 game.initStash = () => {
     const stashWell = document.getElementById('stash-well');

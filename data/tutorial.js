@@ -79,4 +79,8 @@ game.t.messages = {
         header: "Have Fun Playing [GAME_NAME]",
         desc: "Have Fun Playing [GAME_NAME]<br><br>"
     },
+    "welcomeBack": {
+        header: "Welcome Back to [GAME_NAME]",
+        desc: "You were gone for [timeString], in total [seconds] seconds."
+    },
 };

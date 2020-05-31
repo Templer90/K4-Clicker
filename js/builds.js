@@ -61,6 +61,15 @@ game.builds.updateCost = () => {
         build.updateCostStyle();
     });
 };
+game.builds.calcAutonomousResources = (loadedSave = undefined) => {
+    if (loadedSave !== undefined) {
+        const diff = (new Date().getTime()) - loadedSave.game.options.now;//in milliseconds
+        game.builds.earn(diff / 1000);
+
+        const timeString = numbers.secondsToFormat(diff);
+        game.tutorial.genMessageText("welcomeBack", {"[timeString]": timeString, "[seconds]": diff});
+    }
+};
 game.builds.update = () => {
     g.b.list.forEach((build, i) => {
         const row = document.getElementById("builds-row-" + i);

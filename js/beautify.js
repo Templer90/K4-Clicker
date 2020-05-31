@@ -65,3 +65,27 @@ numbers.fix = function (x, n) {
 numbers.element = function (value) {
     return numbers.fix(value, 0) + ((value > elements.avogadro) ? " " + numbers.fix(value / elements.avogadro, 0) + " mol" : "");
 };
+
+numbers.secondsToFormat = function (interval) {
+    const cbFun = (d, c) => {
+        let bb = d[1] % c[0],
+            aa = (d[1] - bb) / c[0];
+        aa = aa > 0 ? aa + c[1] : '';
+
+        return [d[0] + aa, bb];
+    };
+
+    const levels = {
+        scale: [24, 60, 60, 1],
+        units: ['d ', 'h ', 'm ', 's ']
+    }
+
+    const rslt = levels.scale.map(
+        (d, i, a) =>
+            a.slice(i).reduce((d, c) => d * c)
+    )
+        .map((d, i) => ([d, levels.units[i]]))
+        .reduce(cbFun, ['', interval]);
+    
+    return rslt[0];
+};

@@ -3,10 +3,10 @@ game.t.counter = 0;
 game.t.done = false;
 game.t.tutorialMessages = [];
 game.t.messages = {};
-game.t.standartTemplates = {"[GAME_NAME]": game.gameName};
+game.t.standartTemplates = {"[GAME_NAME]": game.gameName, "[GAME_VERSION]": game.options.version};
 
-templateFormatter = (input, replacementArray = undefined) => {
-    if (replacementArray === undefined) replacementArray = game.t.standartTemplates;
+templateFormatter = (input, additions = {}) => {
+    const replacementArray = {...game.t.standartTemplates, ...additions};
     Object.keys(replacementArray).forEach((replacementKey) => {
         input = input.replace(replacementKey, replacementArray[replacementKey]);
     });
@@ -40,24 +40,24 @@ game.tutorial.tutorial = function () {
     game.tutorial.genText(data.header, data.desc);
 };
 
-game.tutorial.genMessageText = (MessageKey) => {
-    const message=game.t.messages[MessageKey]
-    game.tutorial.genText(message.header, message.desc);
+game.tutorial.genMessageText = (MessageKey, additions = {}) => {
+    const message = game.t.messages[MessageKey]
+    game.tutorial.genText(message.header, message.desc, additions);
 };
 
-game.tutorial.genText = (title, text, func) => {
+game.tutorial.genText = (title, text, additions) => {
     let main = document.createElement('div');
     main.setAttribute('id', 'tutorial-' + title.replace(' ', '_'));
     main.setAttribute('class', 'row bottom-spacer outlined');
 
     let infoBox = document.createElement('p');
     infoBox.setAttribute('class', 'col-md-12 text-center');
-    infoBox.innerHTML = templateFormatter(title);
+    infoBox.innerHTML = templateFormatter(title, additions);
     main.append(infoBox);
 
     let paragraph = document.createElement('p');
     paragraph.setAttribute('class', 'col-md-12');
-    paragraph.innerHTML =  templateFormatter(text);
+    paragraph.innerHTML = templateFormatter(text, additions);
     main.append(paragraph);
 
     document.getElementById('log-well').appendChild(main);
