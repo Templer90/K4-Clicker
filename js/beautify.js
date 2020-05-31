@@ -68,8 +68,8 @@ numbers.element = function (value) {
 
 numbers.secondsToFormat = function (interval) {
     const cbFun = (d, c) => {
-        let bb = d[1] % c[0],
-            aa = (d[1] - bb) / c[0];
+        let bb = d[1] % c[0];
+        let aa = (d[1] - bb) / c[0];
         aa = aa > 0 ? aa + c[1] : '';
 
         return [d[0] + aa, bb];

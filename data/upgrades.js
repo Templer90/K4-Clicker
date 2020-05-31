@@ -85,7 +85,7 @@ g.u.list = [
     }, 4, () => {
         g.b.multiplier = g.b.multiplier.map((x) => x * 2);
     }, {
-        visible: true
+        visible: 'Buildings can be used'
     }),
 
     new Upgrade('Deuterium I', 'Deuterium++', 'Deuterium', {'Deuterium': 100000, 'Energy': 100000}, () => {
@@ -137,7 +137,7 @@ g.u.list = [
     }, () => {
         console.log("Boom?");
     }, {
-        visible: true
+        visible: false
     }),
 
 

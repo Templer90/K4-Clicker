@@ -63,9 +63,10 @@ game.builds.updateCost = () => {
 };
 game.builds.calcAutonomousResources = (loadedSave = undefined) => {
     if (loadedSave !== undefined) {
-        const diff = (new Date().getTime()) - loadedSave.game.options.now;//in milliseconds
-        game.builds.earn(diff / 1000);
+        const diff = ((new Date().getTime()) - loadedSave.game.options.now)/1000;//in milliseconds
+        game.builds.earn(diff);
 
+        console.log(diff);
         const timeString = numbers.secondsToFormat(diff);
         game.tutorial.genMessageText("welcomeBack", {"[timeString]": timeString, "[seconds]": diff});
     }
